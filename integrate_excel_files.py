@@ -86,6 +86,7 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
         pass
 
     if add_annotation == "Gene location":
+        #reading from external file (not the user files)
         wb_location = openpyxl.load_workbook('/home/hp/Desktop/COVID blood samples/locations.xlsx', data_only=True)
         sheet_location = wb_location.active
         c_location = sheet_location.cell
@@ -102,13 +103,12 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
             else:
                 if key in locations:
                     c2(row=i, column=starting_column_file2+len(columns_of_interest_from_file1)).value = locations[key]
-
+    #saving the 2 files
     wb2.save('/home/hp/Desktop/COVID blood samples/Integrated_file_test.xlsx')
     if add_report == True:
         f = open("/home/hp/Desktop/COVID blood samples/Analysis Report.txt", "w+")
         f.write('Analysis Report will be written here')
         f.close()
-
 
 from_file = '/home/hp/Desktop/COVID blood samples/from_file1_path.xlsx'
 to_file = '/home/hp/Desktop/COVID blood samples/Paste To.xlsx'
