@@ -100,3 +100,11 @@ def integrate_DEG_cluster_wise(folder_path, adj_p = 0.05, logFC_cutoff = 0.2, fi
             c(row=i, column=len(DEG_all_files) + 4).value = 'Yes'
 
     wb.save(folder_path + '/'+'Integrated_adj p '+str(adj_p)+'_LogFC '+str(logFC_cutoff)+'.xlsx')
+
+
+severe_healthy_path = '/media/hp/c51f8730-9fa0-448c-9d6f-ba156316844f/Research/---(((((Active ___ Research)))))---/COVID scRNA-seq for COVID blood (Mild vs Severe)/Analysis 2: Mild vs Severe vs Normal/2021 DEG/Severe vs Healthy'
+severe_vs_healthy = integrate_DEG_cluster_wise(severe_healthy_path, adj_p = 0.05, logFC_cutoff = 0.2, fill_zeros=True)
+
+
+
+

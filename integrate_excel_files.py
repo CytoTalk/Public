@@ -108,3 +108,11 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
         f = open("/home/hp/Desktop/COVID blood samples/Analysis Report.txt", "w+")
         f.write('Analysis Report will be written here')
         f.close()
+
+
+from_file = '/home/hp/Desktop/COVID blood samples/from_file1_path.xlsx'
+to_file = '/home/hp/Desktop/COVID blood samples/Paste To.xlsx'
+
+integrate_excel(from_file, to_file, columns_of_interest_from_file1=[3,5], key_from_file1=1, key_to_file2=1,
+                starting_column_file2=3, new_column_name='Test', add_annotation = "Gene location", add_report=True)
+
