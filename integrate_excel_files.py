@@ -1,6 +1,7 @@
 def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_file1=[], key_from_file1=0, key_to_file2=0,
-                    starting_column_file2=0, new_column_name='', add_annotation = "No", add_report = False):
+                    starting_column_file2=0, new_column_name='', add_annotation="No", add_report=False):
     """
+    :param add_report:
     :param from_file1_path: the path of file that contain information we need to add to the other file
     :param to_file2_path: the path of the file that we will paste information to
     :param columns_of_interest_from_file1: a list of columns numbers to be added from file 1
@@ -24,11 +25,10 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
         if i < 0:
             return 'The number of each column of interest should be greater than 0'
     if type(key_to_file2) != int or type(key_from_file1) != int:
-        return 'The key column should be the number of the column to be a key to match the 2 files and should be greated than zero'
+        return 'The key column should be the number of the column to be a key to match the 2 files and should be ' \
+               'greated than zero '
     if key_to_file2 < 1 or key_from_file1 < 1:
         return 'The number of the key column must be at least 1'
-
-
 
     # load the package that will open the excel files
     import openpyxl
@@ -86,12 +86,12 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
         pass
 
     if add_annotation == "Gene location":
-        wb_location = openpyxl.load_workbook('/home/hp/Desktop/COVID blood samples/locations.xlsx', data_only=True)
+        wb_location = openpyxl.load_workbook('./assets/locations.xlsx', data_only=True)
         sheet_location = wb_location.active
         c_location = sheet_location.cell
 
         locations = {}
-        for i in range(2,38944):
+        for i in range(2, 38944):
             locations[c_location(row=i, column=1).value] = c_location(row=i, column=2).value
 
         c2(row=1, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = "Gene location"
@@ -101,11 +101,11 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
                 break
             else:
                 if key in locations:
-                    c2(row=i, column=starting_column_file2+len(columns_of_interest_from_file1)).value = locations[key]
+                    c2(row=i, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = locations[key]
 
-    wb2.save('/home/hp/Desktop/COVID blood samples/Integrated_file_test.xlsx')
-    if add_report == True:
-        f = open("/home/hp/Desktop/COVID blood samples/Analysis Report.txt", "w+")
+    wb2.save('./output_location/Integrated_file_test.xlsx')
+    if add_report:
+        f = open("./output_location/Analysis Report.txt", "w+")
         f.write('Analysis Report will be written here')
         f.close()
 
@@ -113,6 +113,5 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
 from_file = '/home/hp/Desktop/COVID blood samples/from_file1_path.xlsx'
 to_file = '/home/hp/Desktop/COVID blood samples/Paste To.xlsx'
 
-integrate_excel(from_file, to_file, columns_of_interest_from_file1=[3,5], key_from_file1=1, key_to_file2=1,
-                starting_column_file2=3, new_column_name='Test', add_annotation = "Gene location", add_report=True)
-
+integrate_excel(from_file, to_file, columns_of_interest_from_file1=[3, 5], key_from_file1=1, key_to_file2=1,
+                starting_column_file2=3, new_column_name='Test', add_annotation="Gene location", add_report=True)

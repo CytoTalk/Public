@@ -1,4 +1,4 @@
-def integrate_DEG_cluster_wise(folder_path, adj_p = 0.05, logFC_cutoff = 0.2, fill_zeros = False):
+def integrate_DEG_cluster_wise(folder_path, adj_p=0.05, logFC_cutoff=0.2, fill_zeros=False):
     import openpyxl
     from openpyxl.styles import Color, PatternFill, Font, Border
     from openpyxl.styles import colors
@@ -27,11 +27,11 @@ def integrate_DEG_cluster_wise(folder_path, adj_p = 0.05, logFC_cutoff = 0.2, fi
         sheet = wb.active
         c = sheet.cell
 
-        for i in range(2,1000000):
-            gene = c(row=i,column=1).value
-            if gene != None:
-                gene_adj_p = c(row=i,column=6).value
-                gene_logFC = c(row=i,column=3).value
+        for i in range(2, 1000000):
+            gene = c(row=i, column=1).value
+            if gene is not None:
+                gene_adj_p = c(row=i, column=6).value
+                gene_logFC = c(row=i, column=3).value
                 if gene_adj_p < adj_p:
                     if gene_logFC > logFC_cutoff or gene_logFC == logFC_cutoff:
                         DEG_all_files[current_file_name][gene] = []
@@ -59,31 +59,31 @@ def integrate_DEG_cluster_wise(folder_path, adj_p = 0.05, logFC_cutoff = 0.2, fi
     col = 2
     for j in DEG_all_files:
         c(row=1, column=col).value = j
-        col+=1
+        col += 1
     r = 2
     for i in all_genes:
         c(row=r, column=1).value = i
-        r+=1
+        r += 1
 
     c(row=1, column=len(DEG_all_files) + 2).value = 'Upregulated'
     c(row=1, column=len(DEG_all_files) + 3).value = 'Downregulated'
     c(row=1, column=len(DEG_all_files) + 4).value = 'Bidirectional'
 
-    for i in range(2, len(all_genes)+2):
+    for i in range(2, len(all_genes) + 2):
         current_gene = c(row=i, column=1).value
         up = 0
         down = 0
-        for j in range(2, len(DEG_all_files)+2):
+        for j in range(2, len(DEG_all_files) + 2):
             current_celltype = c(row=1, column=j).value
             if current_gene in DEG_all_files[current_celltype]:
                 current_logFC = DEG_all_files[current_celltype][current_gene][0]
                 c(row=i, column=j).value = current_logFC
                 if current_logFC > 0:
-                    c(row=i,column=j).fill = my_red_fill
-                    up+=1
+                    c(row=i, column=j).fill = my_red_fill
+                    up += 1
                 elif current_logFC < 0:
-                    c(row=i,column=j).fill = my_green_fill
-                    down+=1
+                    c(row=i, column=j).fill = my_green_fill
+                    down += 1
                 else:
                     continue
             else:
@@ -92,19 +92,15 @@ def integrate_DEG_cluster_wise(folder_path, adj_p = 0.05, logFC_cutoff = 0.2, fi
                 else:
                     continue
 
-        c(row=i, column=len(DEG_all_files)+2).value = up
+        c(row=i, column=len(DEG_all_files) + 2).value = up
         c(row=i, column=len(DEG_all_files) + 3).value = down
         if up == 0 or down == 0:
             c(row=i, column=len(DEG_all_files) + 4).value = 'No'
         else:
             c(row=i, column=len(DEG_all_files) + 4).value = 'Yes'
 
-    wb.save(folder_path + '/'+'Integrated_adj p '+str(adj_p)+'_LogFC '+str(logFC_cutoff)+'.xlsx')
+    wb.save(folder_path + '/' + 'Integrated_adj p ' + str(adj_p) + '_LogFC ' + str(logFC_cutoff) + '.xlsx')
 
 
 severe_healthy_path = '/media/hp/c51f8730-9fa0-448c-9d6f-ba156316844f/Research/---(((((Active ___ Research)))))---/COVID scRNA-seq for COVID blood (Mild vs Severe)/Analysis 2: Mild vs Severe vs Normal/2021 DEG/Severe vs Healthy'
-severe_vs_healthy = integrate_DEG_cluster_wise(severe_healthy_path, adj_p = 0.05, logFC_cutoff = 0.2, fill_zeros=True)
-
-
-
-
+severe_vs_healthy = integrate_DEG_cluster_wise(severe_healthy_path, adj_p=0.05, logFC_cutoff=0.2, fill_zeros=True)
