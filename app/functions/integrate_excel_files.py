@@ -1,3 +1,9 @@
+import os
+import uuid
+
+from flask import current_app
+
+
 def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_file1=[], key_from_file1=0, key_to_file2=0,
                     starting_column_file2=0, new_column_name='', add_annotation="No", add_report=False):
     """
@@ -13,6 +19,7 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
 
     :return:
     """
+    config = current_app.config
 
     """
     Check User errors
@@ -87,7 +94,8 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
 
     if add_annotation == "Gene location":
         # reading from external file (not the user files)
-        wb_location = openpyxl.load_workbook('/home/hp/Desktop/COVID blood samples/locations.xlsx', data_only=True)
+        wb_location = openpyxl.load_workbook(os.path.join(config['PROJECT_PATH'], 'assets', 'locations.xlsx'),
+                                             data_only=True)
         sheet_location = wb_location.active
         c_location = sheet_location.cell
 
@@ -98,21 +106,20 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
         c2(row=1, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = "Gene location"
         for i in range(2, 1000000):
             key = c2(row=i, column=key_to_file2).value
-            if key == None:
+            if key is None:
                 break
             else:
                 if key in locations:
                     c2(row=i, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = locations[key]
     # saving the 2 files
-    wb2.save('/home/hp/Desktop/COVID blood samples/Integrated_file_test.xlsx')
-    if add_report == True:
-        f = open("/home/hp/Desktop/COVID blood samples/Analysis Report.txt", "w+")
-        f.write('Analysis Report will be written here')
-        f.close()
+    output_name = str(uuid.uuid4())
+    wb2.save(os.path.join(config['OUTPUT_PATH'], output_name + '.xlsx'))
+    if add_report:
+        with open(os.path.join(config['OUTPUT_PATH'], 'reports', output_name + '.txt'), "w+") as writer:
+            writer.write('Analysis Report will be written here')
 
-
-from_file = '/home/hp/Desktop/COVID blood samples/from_file1_path.xlsx'
-to_file = '/home/hp/Desktop/COVID blood samples/Paste To.xlsx'
-
-integrate_excel(from_file, to_file, columns_of_interest_from_file1=[3, 5], key_from_file1=1, key_to_file2=1,
-                starting_column_file2=3, new_column_name='Test', add_annotation="Gene location", add_report=True)
+# from_file = '/home/hp/Desktop/COVID blood samples/from_file1_path.xlsx'
+# to_file = '/home/hp/Desktop/COVID blood samples/past_to.xlsx'
+#
+# integrate_excel(from_file, to_file, columns_of_interest_from_file1=[3, 5], key_from_file1=1, key_to_file2=1,
+#                 starting_column_file2=3, new_column_name='Test', add_annotation="Gene location", add_report=True)
