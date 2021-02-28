@@ -50,7 +50,7 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
     # get all the data from all rows (i)
     for i in range(2, 1000000):
         key = c1(row=i, column=key_from_file1).value
-        if key == None:  # if the ~row is empty (~end of file)
+        if key is None:  # if the ~row is empty (~end of file)
             break
         else:
             file1_data[key] = []
@@ -71,7 +71,7 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
     # Check all rows using the key column to match key from file1 with key from file 2
     for i in range(2, 10000000):
         key = c2(row=i, column=key_to_file2).value
-        if key == None:
+        if key is None:
             break
         else:
             if key in file1_data:
@@ -86,7 +86,8 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
         pass
 
     if add_annotation == "Gene location":
-        wb_location = openpyxl.load_workbook('./assets/locations.xlsx', data_only=True)
+        # reading from external file (not the user files)
+        wb_location = openpyxl.load_workbook('/home/hp/Desktop/COVID blood samples/locations.xlsx', data_only=True)
         sheet_location = wb_location.active
         c_location = sheet_location.cell
 
@@ -102,10 +103,10 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
             else:
                 if key in locations:
                     c2(row=i, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = locations[key]
-
-    wb2.save('./output_location/Integrated_file_test.xlsx')
-    if add_report:
-        f = open("./output_location/Analysis Report.txt", "w+")
+    # saving the 2 files
+    wb2.save('/home/hp/Desktop/COVID blood samples/Integrated_file_test.xlsx')
+    if add_report == True:
+        f = open("/home/hp/Desktop/COVID blood samples/Analysis Report.txt", "w+")
         f.write('Analysis Report will be written here')
         f.close()
 
