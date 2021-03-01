@@ -10,6 +10,8 @@ class Config:
     PROJECT_PATH = Path(__file__).parent.parent
     OUTPUT_PATH = Path.joinpath(PROJECT_PATH, 'output_location')
     ASSETS_PATH = Path.joinpath(PROJECT_PATH, 'assets')
+    ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+    UPLOAD_FOLDER = Path.joinpath(PROJECT_PATH, 'uploads')
 
 
 class DevConfig(Config):

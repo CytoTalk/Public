@@ -1,3 +1,5 @@
+import uuid
+
 from flask import current_app
 
 
@@ -5,12 +7,12 @@ from flask import current_app
 
 
 def integrate_DEG_cluster_wise(folder_path: str, adj_p: float = 0.05, logFC_cutoff: float = 0.2,
-                               fill_zeros: bool = False):
+                               fill_zeros: bool = False) -> str:
     import openpyxl
     from openpyxl.styles import Color
     import os
     import glob
-    print(current_app.config)
+    # print(current_app.config)
 
     my_red = openpyxl.styles.colors.Color(rgb='ffcccc')
     my_green = openpyxl.styles.colors.Color(rgb='ccffcc')
@@ -21,11 +23,11 @@ def integrate_DEG_cluster_wise(folder_path: str, adj_p: float = 0.05, logFC_cuto
     deg_all_files = {}
     all_genes = []
 
-    for filepath in glob.glob(os.path.join(current_app.config['PROJECT_PATH'], folder_path, '*.xlsx')):
+    for filepath in glob.glob(os.path.join(folder_path, '*.xlsx')):
         current_file_name = filepath[to_exclude + 1:-5]
         deg_all_files[current_file_name] = {}
 
-    for filepath in glob.glob(os.path.join(current_app.config['PROJECT_PATH'], folder_path, '*.xlsx')):
+    for filepath in glob.glob(os.path.join(folder_path, '*.xlsx')):
         current_file_name = filepath[to_exclude + 1:-5]
 
         wb = openpyxl.load_workbook(filepath, data_only=True)
@@ -105,8 +107,9 @@ def integrate_DEG_cluster_wise(folder_path: str, adj_p: float = 0.05, logFC_cuto
             c(row=i, column=len(deg_all_files) + 4).value = 'Yes'
     # import pdb;
     # pdb.set_trace()
-    wb.save(os.path.join(current_app.config['OUTPUT_PATH'], 'Integrated_adj p ' + str(adj_p) + '_LogFC ' + str(
-        logFC_cutoff) + '.xlsx'))
+    file_name = str(uuid.uuid4()) + '.xlsx'
+    wb.save(os.path.join(current_app.config['OUTPUT_PATH'], file_name))
+    return file_name
 
 # severe_healthy_path = 'assets/Severe_vs_Healthy'
 # severe_vs_healthy = integrate_DEG_cluster_wise(severe_healthy_path, adj_p=0.05, logFC_cutoff=0.2, fill_zeros=True)
