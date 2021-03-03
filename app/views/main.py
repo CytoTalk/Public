@@ -6,8 +6,9 @@ from flask import render_template, current_app, send_from_directory, abort, requ
 from werkzeug.utils import secure_filename
 
 from app.functions.Integrate_DEG import integrate_DEG_cluster_wise
+from app.functions.integrate_excel_files import integrate_excel
 from app.main import main
-from app.views.helpers import allowed_file
+from app.views.helpers import allowed_file, save_file, zip_files
 
 
 @main.route('/')
@@ -59,11 +60,11 @@ def integrate_deg():
 
     try:
         adj_p = float(req.get('adj_p'))
-    except:
+    except ValueError:
         adj_p = 0.05
     try:
         logFC_cutoff = float(req.get('logFC_cutoff'))
-    except:
+    except ValueError:
         logFC_cutoff = 0.2
     fill_zeros = req.get('fill_zeros') == '1'
 
@@ -73,5 +74,32 @@ def integrate_deg():
     try:
         shutil.rmtree(folder_path)
         return send_from_directory(config['OUTPUT_PATH'], filename=file_name, as_attachment=True)
+    except FileNotFoundError:
+        abort(404)
+
+
+@main.route('/integrate_excel_files', methods=('POST',))
+def integrate_excel_files():
+    data = request.form
+    if 'from_file1_path' not in request.files or 'to_file2_path' not in request.files:
+        flash('Please add all the files')
+        return redirect(request.url)
+    config = current_app.config
+
+    saved_file_1_path = save_file(request.files.get('from_file1_path'))
+    saved_file_2_path = save_file(request.files.get('to_file2_path'))
+
+    file_name = integrate_excel(saved_file_1_path, saved_file_2_path, columns_of_interest_from_file1=[3, 5],
+                                key_from_file1=1, key_to_file2=1,
+                                starting_column_file2=3, new_column_name='Test', add_annotation="Gene location",
+                                add_report=True)
+    files = [str(Path.joinpath(config['OUTPUT_PATH'], file_name + '.xlsx'))]
+
+    report_name = str(Path.joinpath(config['OUTPUT_PATH'], 'reports', file_name + '.txt'))
+    files.append(report_name)
+
+    zipped_filename = zip_files(files)
+    try:
+        return send_from_directory(config['OUTPUT_PATH'], filename=zipped_filename, as_attachment=True)
     except FileNotFoundError:
         abort(404)

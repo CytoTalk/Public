@@ -4,8 +4,11 @@ import uuid
 from flask import current_app
 
 
-def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_file1=[], key_from_file1=0, key_to_file2=0,
-                    starting_column_file2=0, new_column_name='', add_annotation="No", add_report=False):
+def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interest_from_file1=None,
+                    key_from_file1: int = 0,
+                    key_to_file2: int = 0,
+                    starting_column_file2: int = 0, new_column_name: str = '', add_annotation: str = "No",
+                    add_report: bool = False) -> str:
     """
     :param add_report:
     :param from_file1_path: the path of file that contain information we need to add to the other file
@@ -19,6 +22,8 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
 
     :return:
     """
+    if columns_of_interest_from_file1 is None:
+        columns_of_interest_from_file1 = []
     config = current_app.config
 
     """
@@ -117,6 +122,7 @@ def integrate_excel(from_file1_path, to_file2_path, columns_of_interest_from_fil
     if add_report:
         with open(os.path.join(config['OUTPUT_PATH'], 'reports', output_name + '.txt'), "w+") as writer:
             writer.write('Analysis Report will be written here')
+    return output_name
 
 # from_file = '/home/hp/Desktop/COVID blood samples/from_file1_path.xlsx'
 # to_file = '/home/hp/Desktop/COVID blood samples/past_to.xlsx'

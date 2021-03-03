@@ -36,7 +36,77 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm-6"></div>
+
+        <div class="col-sm-6">
+            <h1 class="text-primary">
+                Integrate Excel files
+            </h1>
+            <form enctype="multipart/form-data" method="post" action="{{ url_for('main.integrate_excel_files') }}">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="from_file1_path">from_file1_path</label>
+                            <input class="form-control" type="file" name="from_file1_path" id="from_file1_path">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="to_file2_path">to_file2_path</label>
+                            <input class="form-control" type="file" name="to_file2_path" id="to_file2_path">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="columns_of_interest_from_file1">columns_of_interest_from_file1</label>
+                    <input class="form-control" type="text" name="columns_of_interest_from_file1"
+                           id="columns_of_interest_from_file1">
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <div class="form-group">
+                            <label for="key_from_file1">key_from_file1</label>
+                            <input class="form-control" type="number" name="key_from_file1" id="key_from_file1">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+
+                        <div class="form-group">
+                            <label for="key_to_file2">key_to_file2</label>
+                            <input class="form-control" type="number" name="key_to_file2" id="key_to_file2">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="starting_column_file2">starting_column_file2</label>
+                    <input class="form-control" type="number" name="starting_column_file2" id="starting_column_file2">
+                </div>
+                <div class="form-group">
+                    <label for="new_column_name">new_column_name</label>
+                    <input class="form-control" type="number" name="new_column_name" id="new_column_name">
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <div class="form-group">
+                            <label for="add_annotation">
+                                <input type="checkbox" name="add_annotation" class="pr-3">add_annotation
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="add_report">
+                                <input type="checkbox" name="add_report" id="add_report" class="pr-3">add_report
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {#                <div class="form-control">#}
+                <button class="btn btn-secondary" type="submit">Submit</button>
+                {#                </div>#}
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
