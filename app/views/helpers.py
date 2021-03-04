@@ -1,4 +1,8 @@
 from pathlib import Path
+import glob
+import os
+import time
+from pathlib import Path
 from uuid import uuid4
 from zipfile import ZipFile
 
@@ -38,3 +42,30 @@ def zip_files(file_paths=None, output_folder: str = '') -> str:
             arcname = 'Generated.xlsx' if '.xlsx' in file else 'Report.txt'
             zipfile.write(file, arcname)
     return file_name
+
+
+def delete_files(app):
+    config = app.config
+    now = time.time()
+
+    folders = [config['OUTPUT_PATH'], config['UPLOAD_FOLDER'], str(Path.joinpath(config['OUTPUT_PATH'], 'reports'))]
+    thirty = 60 * 30
+    file_extensions = ('*.xlsx', '*.txt', '*.zip',)
+
+    for folder in folders:
+        print(folder)
+        files = []
+        for ext in file_extensions:
+
+            try:
+                print(glob.glob(str(Path.joinpath(folder, ext))))
+                files.extend(glob.glob(str(Path.joinpath(folder, ext))))
+            except AttributeError:
+                pass
+        print(files)
+        for filename in files:
+            if (now - os.stat(filename).st_mtime) > thirty:
+                os.remove(filename)
+                # command = f"rm {filename}"
+                # subprocess.call(command, shell=True)
+                print(f"removed {filename}")
