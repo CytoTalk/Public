@@ -7,7 +7,7 @@ from flask import current_app
 def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interest_from_file1=None,
                     key_from_file1: int = 0,
                     key_to_file2: int = 0,
-                    starting_column_file2: int = 0, new_column_name: str = '', add_annotation: str = "No",
+                    starting_column_file2: int = 0, new_column_name: str = 'Merged', add_annotation: str = "No",
                     add_report: bool = False) -> str:
     """
     :param add_report:
