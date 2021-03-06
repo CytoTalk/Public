@@ -1,0 +1,11 @@
+{% extends 'layout/front/main.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="text-primary text-center">Our Applications</h1>
+
+    <div class="text-center">
+        <a href="{{ url_for('main.integrate_deg') }}" class="m-5 btn btn-light btn-md  js-scroll-trigger">Integrated DEG</a>
+        <a href="{{ url_for('main.integrate_excel_files') }}" class="m-5 btn btn-light btn-md  js-scroll-trigger">Integrated Excel files</a>
+    </div>
+    </div>
+{% endblock %}
