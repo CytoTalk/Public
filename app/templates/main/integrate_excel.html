@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-sm-12 m-auto">
                 <h1 class="text-dark">
-                    Integrate CSV files
+                    Integrate Excel files
                 </h1>
                 <p class="text-dark text-center">This function takes 2 excel (*.xlsx) files to integrate values from file 2 to file 1.<br /><br />
                 File 1: The file which contains columns to be merged to the other file (file 2).<br />
@@ -13,6 +13,7 @@
                 File 2: The file that you want to paste new information to.<br />
                 File 2 key: The column in file 2 that includes key values to be matched with file 1.<br />
                 Starting column: The column number in file 2 that the new information will be pasted starting from it.<br />
+                Note: Currently, the function is case sensetive. "hi" is not equal than "HI" while matching keys from both files.
                 </p>
                 <form enctype="multipart/form-data" method="post" action="{{ url_for('main.integrate_excel_files') }}">
                     <div class="row">
