@@ -8,7 +8,7 @@
                 </h1>
                 <p class="text-dark text-center">This function takes 2 excel (*.xlsx) files to integrate values from file 2 to file 1.<br /><br />
                 File 1: The file which contains columns to be merged to the other file (file 2).<br />
-                File 1 key 1: The column in file 1 that includes key values to be matched with file 2.<br />
+                File 1 key: The column in file 1 that includes key values to be matched with file 2.<br />
                 Columns of interest: The columns in file 1 which you want to merge to file 2. It should be comma separated as this 2,3,5<br /><br />
                 File 2: The file that you want to paste new information to.<br />
                 File 2 key: The column in file 2 that includes key values to be matched with file 1.<br />
@@ -18,27 +18,27 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="csv_file_1">CSV File 1</label>
+                                <label for="csv_file_1">File 1</label>
                                 <input class="form-control" type="file" name="csv_file_1" id="csv_file_1">
                             </div>
                             <div class="form-group">
-                                <label for="key_column_from_file_1">Key column from file 1</label>
+                                <label for="key_column_from_file_1">File 1 Key</label>
                                 <input class="form-control" type="number" name="key_column_from_file_1" id="key_column_from_file_1">
                             </div>
 
                             <div class="form-group">
-                                <label for="columns_of_interest_from_file1">Columns of interest from file 1 <span class="text-sm">(Separate by commas)</span></label>
+                                <label for="columns_of_interest_from_file1">Columns of interest <span class="text-sm">(Separate by commas)</span></label>
                                 <input class="form-control" type="text" name="columns_of_interest_from_file1"
                                        id="columns_of_interest_from_file1" placeholder="2,5">
                             </div>
                         </div>
                         <div class="col-sm-6 border-left">
                             <div class="form-group">
-                                <label for="csv_file_2">CSV File 2</label>
+                                <label for="csv_file_2">File 2</label>
                                 <input class="form-control" type="file" name="csv_file_2" id="csv_file_2">
                             </div>
                              <div class="form-group">
-                                <label for="key_column_from_file_2">Key column from file 2</label>
+                                <label for="key_column_from_file_2">File 2 Key</label>
                                 <input class="form-control" type="number" name="key_column_from_file_2" id="key_column_from_file_2">
                             </div>
                             {#<div class="form-group">
@@ -47,7 +47,7 @@
                                        id="columns_of_interest_from_file_2" placeholder="2,5">
                             </div>#}
                             <div class="form-group">
-                                <label for="starting_column_file_2">Starting column in file 2</label>
+                                <label for="starting_column_file_2">Starting column</label>
                                 <input class="form-control" type="number" name="starting_column_file_2"
                                        id="starting_column_file_2">
                             </div>
