@@ -40,4 +40,5 @@ jobs:
             git pull origin main
             python -m pip install -r requirements.txt
             systemctl restart gunicorn
+            chmod a+rw /home/django/flask.socket
             echo "Deployment successfull"
