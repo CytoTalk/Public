@@ -1,112 +1,11 @@
 {% extends 'layout/front/main.html' %}
 {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-sm-6">
-            <h1 class="text-primary text-center">
-                Integrate DEB
-            </h1>
-            <form action="{{ url_for('main.integrate_deg') }}" enctype="multipart/form-data" method="post">
-                <div class="form-group">
-                    <label for="integrate_deg_files">Files</label>
-                    <input accept=".xlsx,.xls" class="form-control" id="integrate_deg_files" multiple name="deg_files"
-                           required type="file">
+    <h1 class="text-primary text-center">Our Applications</h1>
 
-                </div>
-                <div class="form-group">
-                    <label for="adj_p">adj_p</label>
-                    <input class="form-control" id="adj_p" name="adj_p" required type="text">
-
-                </div>
-                <div class="form-group">
-                    <label for="logFC_cutoff">logFC_cutoff</label>
-                    <input class="form-control" id="logFC_cutoff" name="logFC_cutoff" required type="text">
-
-                </div>
-                <div class="form-group">
-                    <label for="fill_zeros">fill_zeros</label>
-                    <select class="form-control" id="fill_zeros" name="fill_zeros" required>
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
-
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success btn-md" type="submit"> Submit</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="col-sm-6">
-            <h1 class="text-primary">
-                Integrate Excel files
-            </h1>
-            <form enctype="multipart/form-data" method="post" action="{{ url_for('main.integrate_excel_files') }}">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="from_file1_path">from_file1_path</label>
-                            <input class="form-control" type="file" name="from_file1_path" id="from_file1_path">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="to_file2_path">to_file2_path</label>
-                            <input class="form-control" type="file" name="to_file2_path" id="to_file2_path">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="columns_of_interest_from_file1">columns_of_interest_from_file1</label>
-                    <input class="form-control" type="text" name="columns_of_interest_from_file1"
-                           id="columns_of_interest_from_file1">
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-
-                        <div class="form-group">
-                            <label for="key_from_file1">key_from_file1</label>
-                            <input class="form-control" type="number" name="key_from_file1" id="key_from_file1">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-
-                        <div class="form-group">
-                            <label for="key_to_file2">key_to_file2</label>
-                            <input class="form-control" type="number" name="key_to_file2" id="key_to_file2">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="starting_column_file2">starting_column_file2</label>
-                    <input class="form-control" type="number" name="starting_column_file2" id="starting_column_file2">
-                </div>
-                <div class="form-group">
-                    <label for="new_column_name">new_column_name</label>
-                    <input class="form-control" type="number" name="new_column_name" id="new_column_name">
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-
-                        <div class="form-group">
-                            <label for="add_annotation">
-                                <input type="checkbox" name="add_annotation" class="pr-3">add_annotation
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="add_report">
-                                <input type="checkbox" name="add_report" id="add_report" class="pr-3">add_report
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                {#                <div class="form-control">#}
-                <button class="btn btn-secondary" type="submit">Submit</button>
-                {#                </div>#}
-            </form>
-        </div>
+    <div class="text-center">
+        <a href="{{ url_for('main.integrate_deg') }}" class="m-5 btn btn-light btn-md  js-scroll-trigger">Integrated DEG</a>
+        <a href="{{ url_for('main.integrate_excel_files') }}" class="m-5 btn btn-light btn-md  js-scroll-trigger">Integrated Excel files</a>
     </div>
-</div>
+    </div>
 {% endblock %}

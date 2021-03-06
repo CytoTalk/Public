@@ -1,5 +1,5 @@
 /venv
 .idea
 __pycache__
-output_location
-uploads
+output_location/*
+uploads/*

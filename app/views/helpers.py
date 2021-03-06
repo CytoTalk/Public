@@ -20,10 +20,11 @@ def save_file(file: FileStorage, folder_path: str = '') -> str:
     if not folder_path:
         folder_path = current_app.config['UPLOAD_FOLDER']
     if file.filename == '':
+        print("Wrong Filename")
         raise Exception
 
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+        filename = str(uuid4()) + '-' + secure_filename(file.filename)
         file_path = Path.joinpath(folder_path, filename)
         file.save(file_path)
         return file_path

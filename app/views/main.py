@@ -30,8 +30,10 @@ def applications():
     return render_template('main/applications.html')
 
 
-@main.route('/inegrate_deg', methods=('POST',))
+@main.route('/inegrate_deg', methods=('POST', 'GET'))
 def integrate_deg():
+    if request.method == 'GET':
+        return render_template('main/integrate_GED.html')
     req = request.form
     print(req)
     config = current_app.config
@@ -78,21 +80,60 @@ def integrate_deg():
         abort(404)
 
 
-@main.route('/integrate_excel_files', methods=('POST',))
+@main.route('/integrate_excel_files', methods=('POST', 'GET'))
 def integrate_excel_files():
-    data = request.form
-    if 'from_file1_path' not in request.files or 'to_file2_path' not in request.files:
-        flash('Please add all the files')
+    if request.method == 'GET':
+        return render_template('main/integrate_excel.html')
+    data = request.form.to_dict()
+
+    if 'csv_file_1' not in request.files or 'csv_file_2' not in request.files:
+        flash('Please add all the files', 'error')
         return redirect(request.url)
     config = current_app.config
 
-    saved_file_1_path = save_file(request.files.get('from_file1_path'))
-    saved_file_2_path = save_file(request.files.get('to_file2_path'))
+    # print(request.files.get('csv_file_1'))
+    print(data)
+    # key_from_file2 = int(request.form.get('key_from_file_2'))
+    # key_from_file1 = int(request.form.get('key_from_file_1'))
+    # columns_of_interest_from_file1 = request.form.get('columns_of_interest_from_file1').split(',')
+    # starting_column_file2 = int(request.form.get('starting_column_file_2'))
 
-    file_name = integrate_excel(saved_file_1_path, saved_file_2_path, columns_of_interest_from_file1=[3, 5],
-                                key_from_file1=1, key_to_file2=1,
-                                starting_column_file2=3, new_column_name='Test', add_annotation="Gene location",
+    try:
+        saved_file_1_path = save_file(request.files.get('csv_file_1'))
+        saved_file_2_path = save_file(request.files.get('csv_file_2'))
+    except Exception:
+        flash(' Make sure to add the correct files', 'error')
+        return redirect(request.url)
+    try:
+        columns_of_interest_from_file1 = list(int(x) for x in data.get('columns_of_interest_from_file1').split(','))
+    except:
+        flash('Column of interest is invalid. Please separate the columns by a comma(,)', 'error')
+        return redirect(request.url)
+    try:
+        starting_column_file2 = int(data.get('starting_column_file_2'))
+    except:
+        flash('Starting column from file 2 must be an integer', 'error')
+        return redirect(request.url)
+    try:
+        key_from_file1 = int(data.get('key_column_from_file_1'))
+    except:
+        flash('Key column from file 1 is invalid. make sure it is a number', 'error')
+        return redirect(request.url)
+    try:
+        key_from_file2 = int(data.get('key_column_from_file_2'))
+    except:
+        flash('Key column from file 2 is invalid. make sure it is a number', 'error')
+        return redirect(request.url)
+
+    file_name = integrate_excel(saved_file_1_path, saved_file_2_path,
+                                columns_of_interest_from_file1=columns_of_interest_from_file1,
+                                key_from_file1=key_from_file1, key_to_file2=key_from_file2,
+                                starting_column_file2=starting_column_file2, new_column_name='Test',
+                                add_annotation="Gene location",
                                 add_report=True)
+    if not file_name:
+        flash('An error occurred while integrating the files. Please check the input and try again', 'error')
+        return redirect(request.url)
     files = [str(Path.joinpath(config['OUTPUT_PATH'], file_name + '.xlsx'))]
 
     report_name = str(Path.joinpath(config['OUTPUT_PATH'], 'reports', file_name + '.txt'))
