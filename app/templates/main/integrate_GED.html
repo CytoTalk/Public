@@ -6,7 +6,7 @@
             <h1 class="text-dark text-center">
                 Integrate DEGs
             </h1>
-            <h4 class="text-dark text-center">This function takes Seurat output (the differentially expressed genes) between each cluster in 2 conditions.<br />Column 1 should be gene names.<br />Column 3 should be Fold change.<br /> Column 5 should be adjusted p value.<br />Note: Files should be *.xlsx</h4>
+            <p class="text-dark text-center">This function takes Seurat output (the differentially expressed genes) between each cluster in 2 conditions.<br />Column 1 should be gene names.<br />Column 3 should be Fold change.<br /> Column 5 should be adjusted p value.<br />Note: Files should be *.xlsx</p>
             <form action="{{ url_for('main.integrate_deg') }}" enctype="multipart/form-data" method="post">
                 <div class="form-group">
                     <label for="integrate_deg_files">Files</label>
