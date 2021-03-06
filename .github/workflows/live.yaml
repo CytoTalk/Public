@@ -40,5 +40,6 @@ jobs:
             git pull origin main
             python3 -m pip install -r requirements.txt
             systemctl restart gunicorn
-            chmod -R 777 /home/django/flask_app
+            chmod -R 777 /home/django/flask_app/uploads
+            chmod -R 777 /home/django/flask_app/output_location
             echo "Deployment successfull"
