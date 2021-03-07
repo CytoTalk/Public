@@ -98,7 +98,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
         pass
 
     if add_annotation == "Gene location":
-         reading from external file (not the user files)
+         #reading from external file (not the user files)
         wb_location = openpyxl.load_workbook(os.path.join(config['PROJECT_PATH'], 'assets', 'locations.xlsx'),
                                              data_only=True)
         sheet_location = wb_location.active
