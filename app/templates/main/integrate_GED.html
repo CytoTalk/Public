@@ -10,7 +10,7 @@
             <br /><br />Column 1 should be gene names.<br />
             Column 3 should be Fold change.<br /> 
             Column 5 should be adjusted p value.<br />
-            Fill zero: if Yes, genes' values that are not < adjusted p value or < fold change cutoff will be replaced with zero.<br /><br />
+            Fill zeros: if Yes, genes' values that are not < adjusted p value or < fold change cutoff will be replaced with zero.<br /><br />
             Note: Files should be *.xlsx</p>
             <form action="{{ url_for('main.integrate_deg') }}" enctype="multipart/form-data" method="post">
                 <div class="form-group">
@@ -30,7 +30,7 @@
 
                 </div>
                 <div class="form-group">
-                    <label for="fill_zeros">fill_zeros</label>
+                    <label for="fill_zeros">fill zeros</label>
                     <select class="form-control" id="fill_zeros" name="fill_zeros" required>
                         <option value="0">No</option>
                         <option value="1">Yes</option>
