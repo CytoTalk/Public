@@ -10,6 +10,7 @@
             <br /><br />Column 1 should be gene names.<br />
             Column 3 should be Fold change.<br /> 
             Column 5 should be adjusted p value.<br />
+            Fill zero: if Yes, genes' values that are not < adjusted p value or < fold change cutoff will be replaced with zero.  
             Note: Files should be *.xlsx</p>
             <form action="{{ url_for('main.integrate_deg') }}" enctype="multipart/form-data" method="post">
                 <div class="form-group">
@@ -24,7 +25,7 @@
 
                 </div>
                 <div class="form-group">
-                    <label for="logFC_cutoff">logFC_cutoff (if 0.2, it will consider genes with > 0.2 or < -0.2).</label>
+                    <label for="logFC_cutoff">Fold change cutoff (if 0.2, it will consider genes with > 0.2 or < -0.2).</label>
                     <input class="form-control" id="logFC_cutoff" name="logFC_cutoff" required type="text">
 
                 </div>
