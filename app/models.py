@@ -1,28 +1,33 @@
 from . import db
-# from . import db, login_manager
-# from werkzeug.security import generate_password_hash,check_password_hash
-# from flask_login import UserMixin
-# from datetime import datetime
-# from . import login_manager
 
-class Posts(db.Model):
-    __tablename__ = 'posts'
+
+class Project(db.Model):
+    __tablename__ = 'project'
     id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(255),nullable=False)
-    image = db.Column(db.String(),nullable=False)
-    category = db.Column(db.String(255),nullable=False)
-    description = db.Column(db.Integer, db.ForeignKey('users.id'))
+    project_name = db.Column(db.String(255),nullable=False)
+    project_category = db.relationship('Category', backref='project', lazy='dynamic')
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
+    def __repr__(self):
+        return f'Project {self.project_name}'
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
-    @classmethod
-    def get_post(id):
-        post = Blog.query.filter_by(id=id).first()
+class Category(db.Model):
+    __tablename__ = 'category'
+    id = db.Column(db.Integer,primary_key=True)
+    category_name = db.Column(db.String(255),nullable=False)
+    project_id = db.Column(db.Integer,db.ForeignKey("project.id"))
+    images = db.relationship('Image', backref='category', lazy='dynamic')
 
-        return post
+    def __repr__(self):
+        return f'Category {self.category_name}'
+    
+
+class Image(db.Model):
+    __tablename__ = 'images'
+    id = db.Column(db.Integer,primary_key=True)
+    image_path = db.Column(db.String())
+    category_id = db.Column(db.Integer,db.ForeignKey("category.id"))
+
+    def __repr__(self):
+        return f'Project {self.image_path}'
+
