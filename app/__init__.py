@@ -16,7 +16,7 @@ def create_app(config_name='production'):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_options[config_name])
     db.init_app(app)
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'auth.login_get'
     login_manager.init_app(app)
     sched.add_job(delete_files, 'interval', minutes=1, args=(app,))
     try:

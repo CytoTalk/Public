@@ -1,5 +1,5 @@
 from decouple import config
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
@@ -41,11 +41,8 @@ def login_post():
     return redirect(url_for('admin.dashboard'))
 
 
-@auth.route('/signup')
-def signup():
-    return 'Signup'
-
-
 @auth.route('/logout')
+@login_required
 def logout():
-    return 'Logout'
+    logout_user()
+    return redirect(url_for('main.homepage'))

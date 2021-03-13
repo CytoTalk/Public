@@ -1,7 +1,7 @@
 name: Build & Deploy
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   build:
@@ -39,6 +39,9 @@ jobs:
             cd /home/django/flask_app
             git pull origin main
             python3 -m pip install -r requirements.txt
+            python3 manage.py init
+            python3 manage.py migrate
+            python3 manage.py upgrade
             systemctl restart gunicorn
             chmod -R 777 /home/django/flask_app/uploads
             chmod -R 777 /home/django/flask_app/output_location
