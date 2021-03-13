@@ -2,7 +2,6 @@ from flask_login import login_required
 
 from app.admin import admin
 from flask import render_template, request, redirect, url_for
-from ..models import Posts
 
 
 @admin.route('/dashboard', methods=('GET', ))
@@ -19,4 +18,5 @@ def uploaded_file():
             uploaded_file.save(uploaded_file.filename)
         return redirect(url_for('main.projects'))
     return render_template('admin/upload_form.html')
+
 
