@@ -5,3 +5,4 @@ uploads
 output_location
 .env
 migrations
+*.pyc
