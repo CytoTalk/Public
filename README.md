@@ -2,7 +2,7 @@
 ## Installation process
 1. create a virtual environment and activate it
 2. Run `pip install -r requirements.txt`
-3. Create a .env in the project directory
+3. Create a `.env` file in the project directory (`touch .env`)
 4. Add the following variables to the env file
 ```
 DB_USER=<Postgres db username>
