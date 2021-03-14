@@ -1,18 +1,12 @@
-from flask import render_template, flash, redirect,  abort, url_for
+from pathlib import Path
+from uuid import uuid4
+
+from flask import render_template, flash, redirect, abort, url_for, current_app, send_from_directory
 from flask.views import View
+from werkzeug.utils import secure_filename
 
 from app.forms.admin.Image import ImageForm
 from app.models.Image import Image
-
-
-class ImageIndex(View):
-    methods = ['GET']
-
-    def dispatch_request(self, category_id):
-        form = ImageForm()
-        images = Image.query.all()
-
-        return render_template('admin/category/index.html', projects=projects, form=form)
 
 
 class ImagePost(View):
@@ -21,11 +15,16 @@ class ImagePost(View):
     def dispatch_request(self, category_id):
         form = ImageForm()
         if form.validate_on_submit():
-            image = Image(description=form.description.data, title=form.title.data, category_id=category_id)
-            image.create()
-            flash('Image was created successfully', 'success')
-            return redirect(url_for('admin.project_show', category_id=category_id))
-        return abort(403)
+            for image in form.images.data:
+                name = str(Path(image.filename).stem)
+                filename = str(uuid4())+'-'+ secure_filename(image.filename)
+                path = str(Path('images', filename))
+                image.save(Path(current_app.config['ASSETS_PATH'],path))
+                image = Image(name=name, path=path, category_id=category_id)
+                image.create()
+            flash('Images were uploaded successfully', 'success')
+            return redirect(url_for('admin.category_show', category_id=category_id))
+        return abort(400, description="Make sure you have uploaded the correct files")
 
 
 class ImageCreate(View):
@@ -43,8 +42,9 @@ class ImageDelete(View):
         image = Image.query.filter_by(id=image_id).first_or_404()
         category_id = image.category_id
         image.delete()
+        Path.unlink(Path(current_app.config['ASSETS_PATH'], image.path))
         flash('Image was deleted successfully', 'success')
-        return redirect(url_for('admin.project_show', category_id=category_id))
+        return redirect(url_for('admin.category_show', category_id=category_id))
 
 
 class ImageEdit(View):
@@ -63,10 +63,9 @@ class ImageUpdate(View):
         form = ImageForm()
         if form.validate_on_submit():
             image = Image.query.filter_by(id=image_id).first_or_404()
-            image.description = form.description.data
             image.title = form.title.data
             flash('Image was updated successfully', 'success')
-            image.save()
+            image.save(current_app.config['ASSETS_PATH'])
             return redirect(url_for('admin.project_show', category_id=image.category_id))
         else:
             abort(403)
@@ -77,4 +76,4 @@ class ImageShow(View):
 
     def dispatch_request(self, image_id):
         image = Image.query.filter_by(id=image_id).first_or_404()
-        return render_template('admin/image/show.html', image=image)
+        return send_from_directory(str(Path(current_app.config['ASSETS_PATH'])),filename=image.path ,as_attachment=True)

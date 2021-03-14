@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField
-from wtforms.validators import DataRequired
+from flask_wtf.file import  FileAllowed
+from wtforms import SubmitField, MultipleFileField
 
 
 class ImageForm(FlaskForm):
-    name = StringField('Image Name', validators=[DataRequired()])
-    path = FileField('Category description',  validators=[DataRequired()])
+    images = MultipleFileField('Images', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField('Submit')
