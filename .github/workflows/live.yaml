@@ -38,6 +38,13 @@ jobs:
       - name: Test with unittest
         run: |
           python -m unittest
+        env:
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: github_actions
+          ADMIN_EMAIL: ${{ ecrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ ecrets.ADMIN_PASSWORD }}
+
       - name: Deploy Via SSH
         uses: appleboy/ssh-action@master
         with:
