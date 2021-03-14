@@ -6,7 +6,7 @@ from app import db, login_manager
 from app.auth import auth
 from flask import render_template, request, flash, redirect, url_for
 
-from app.migrations.User import User
+from app.models.User import User
 
 
 @login_manager.user_loader

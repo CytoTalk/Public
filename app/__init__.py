@@ -6,6 +6,7 @@ from app.main import main
 from app.views.helpers import delete_files
 from instance.config import config_options
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 
 sched = BackgroundScheduler(daemon=True)
 db = SQLAlchemy()
@@ -30,4 +31,5 @@ def create_app(config_name='production'):
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
+    Bootstrap(app)
     return app
