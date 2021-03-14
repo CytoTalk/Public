@@ -25,7 +25,7 @@
 
 <body id="page-top">
 <!-- Navigation-->
-<div style="margin-top: 100px" >
+<div class="pt-5">
     {% with messages = get_flashed_messages(category_filter=["error"]) %}
         {% if messages %}
             <div class=flashes>
@@ -35,12 +35,22 @@
             </div>
         {% endif %}
     {% endwith %}
+
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="row">
         <div style="width: 200px" class="col-sm-4">
             <nav class="navbar navbar-expand-lg  bg-dark  navbar-dark" id="mainNav">
                 <div class="container">
                     <ul class="navbar-nav d-flex flex-column text-right text-uppercase ">
-                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('admin.create_project') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('admin.project_index') }}">Projects</a></li>
                         <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('auth.logout') }}">Logout</a></li>
                     </ul>
                 </div>

@@ -15,5 +15,8 @@ class Project(db.Model):
         db.session.commit()
 
     def delete(self):
-        self.delete()
+        db.session.delete(self)
+        db.session.commit()
+
+    def save(self):
         db.session.commit()
