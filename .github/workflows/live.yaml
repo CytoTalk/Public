@@ -18,7 +18,6 @@ jobs:
           pip install -r requirements.txt;
       - name: Lint with flake8
         run: |
-          echo ${{ secrets.SSH_HOST }}
           pip install flake8
           # stop the build if there are Python syntax errors or undefined names
           python -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -40,10 +39,10 @@ jobs:
             cd /home/django/flask_app
             git pull origin main
             python3 -m pip install -r requirements.txt
-            python3 manage.py init
             python3 manage.py migrate
             python3 manage.py upgrade
             systemctl restart gunicorn
             chmod -R 777 /home/django/flask_app/uploads
             chmod -R 777 /home/django/flask_app/output_location
+            chmod -R 777 /home/django/flask_app/assets
             echo "Deployment successfull"
