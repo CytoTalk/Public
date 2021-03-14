@@ -6,4 +6,4 @@ from wtforms.validators import DataRequired
 class CategoryForm(FlaskForm):
     title = StringField('Category Name', validators=[DataRequired()])
     description = StringField('Category description',  validators=[DataRequired()])
-    submit = SubmitField('Create')
+    submit = SubmitField('Submit')

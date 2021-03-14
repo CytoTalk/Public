@@ -1,0 +1,41 @@
+{% extends 'layout/front/main.html' %}
+{% block content %}
+    <h1 class="text-dark text-center">{{ project.title }}</h1>
+    <br>
+
+    <div class="row px-5">
+        <div class="col-sm-3">
+            <div class="container">
+                {% for category in project.categories %}
+                    <div class="border-bottom mb-2">
+
+                        <h3>{{ category.title }}</h3>
+                        <p>{{ category.description }}</p>
+                        <div class="form-group">
+                            <select class="form-control" name="current_image" id="{{ project.id }}">
+                                <option value="" selected>Select Image to preview</option>
+                                {% for image in category.images %}
+                                    <option onclick="return a=handle_image_render({path:'{{ url_for('project.get_image', image_id=image.id) }}',name:'{{ image.name }}'})" value="{{ image.path }}">{{ image.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div style="height: 80%" id="image_container" class="d-flex flex-column justify-content-center align-items-center overflow-auto">
+                <h1 class="text-black-50">Select image to preview</h1>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        const handle_image_render = image =>{
+            const element = `<img class="img-fluid" id="main_image" src="${image.path}" alt="${image.name}" style="width: 100%;height: auto">`
+            $('#image_container').html(element)
+        }
+    </script>
+{% endblock %}

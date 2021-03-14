@@ -30,11 +30,6 @@ def applications():
     return render_template('main/applications.html')
 
 
-@main.route('/projects', methods=('GET',))
-def projects():
-    return render_template('main/projects.html')
-
-
 @main.route('/inegrate_deg', methods=('POST', 'GET'))
 def integrate_deg():
     if request.method == 'GET':
