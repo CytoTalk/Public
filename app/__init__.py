@@ -12,6 +12,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 
 
+
 def create_app(config_name='production'):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_options[config_name])

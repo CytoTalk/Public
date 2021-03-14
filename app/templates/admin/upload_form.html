@@ -6,22 +6,18 @@
     <div class="col-md-4"></div>
 
     <div class="col-md-4">
-    <form action="{{ url_for('admin.uploaded_file') }}" enctype="multipart/form-data" method="post">
+    <form action="{{ url_for('admin.upload_pic') }}" enctype="multipart/form-data" method="post">
         <div class="form-group">
             <label for="image">Image</label>
             <input class="form-control" id="file" name="file" required type="file">
-        </div>
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input class="form-control" id="name" name="name" required type="text">
         </div>
         <div class="form-group">
             <label for="category">Category</label>
             <input class="form-control" id="category" name="category" required type="text">
         </div>
         <div class="form-group">
-            <label for="description">Description</label>
-            <input class="form-control" id="description" name="description" required type="text">
+            <label for="project">Project Name</label>
+            <input class="form-control" id="project" name="project" required type="text">
         </div>
         
         <div class="form-group">
