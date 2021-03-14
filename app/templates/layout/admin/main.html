@@ -25,42 +25,44 @@
 
 <body id="page-top">
 <!-- Navigation-->
+<div class="pt-5">
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-<nav class="navbar bg-dark navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-    <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top"><img alt="" src="assets/img/navbar-logo.svg"/></a>
-        <button aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"
-                class="navbar-toggler navbar-toggler-right" data-target="#navbarResponsive" data-toggle="collapse"
-                type="button">
-            Menu
-            <i class="fas fa-bars ml-1"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav text-uppercase ml-auto">
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#services">Services</a></li>
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a></li>
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#team">Team</a></li>
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#contact">Contact</a></li>
-                {% if current_user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
-                {% endif %}
-            </ul>
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="row">
+        <div style="width: 200px" class="col-sm-4">
+            <nav class="navbar navbar-expand-lg  bg-dark  navbar-dark" id="mainNav">
+                <div class="container">
+                    <ul class="navbar-nav d-flex flex-column text-right text-uppercase ">
+                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('admin.project_index') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('main.homepage') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <div class="col-sm-8">
+            {% block content %}
+            {% endblock %}
+
         </div>
     </div>
-</nav>
-<div style="margin-top: 100px" >
-{% with messages = get_flashed_messages(category_filter=["error"]) %}
-{% if messages %}
-<div class=flashes>
-    {% for message in messages %}
-    <div class="alert alert-danger alert-dismissible">{{ message }}</div>
-    {% endfor %}
-</div>
-{% endif %}
-{% endwith %}
-{% block content %}
-{% endblock %}
 </div>
 
 <!-- Footer-->
@@ -92,7 +94,6 @@
 <!-- Contact form JS-->
 <!-- Core theme JS-->
 <script src="{{ url_for('static', filename='main/js/scripts.js') }}"></script>
-{% block scripts %}{% endblock %}
 </body>
 
 </html>

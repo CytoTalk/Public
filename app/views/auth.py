@@ -1,12 +1,12 @@
 from decouple import config
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
 from app.auth import auth
 from flask import render_template, request, flash, redirect, url_for
 
-from app.migrations.User import User
+from app.models.User import User
 
 
 @login_manager.user_loader
@@ -36,16 +36,13 @@ def login_post():
 
     if not user or not check_password_hash(user.password, password):
         flash('Please check your login details and try again.', 'error')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login_get'))
     login_user(user, remember=remember)
     return redirect(url_for('admin.dashboard'))
 
 
-@auth.route('/signup')
-def signup():
-    return 'Signup'
-
-
 @auth.route('/logout')
+@login_required
 def logout():
-    return 'Logout'
+    logout_user()
+    return redirect(url_for('main.homepage'))

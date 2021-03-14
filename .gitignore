@@ -1,7 +1,8 @@
 /venv
 .idea
-__pycache__
+*/__pycache__
 uploads
 output_location
 .env
-migrations
+/migrations
+*.pyc
