@@ -12,7 +12,8 @@ class Config:
     ASSETS_PATH = Path.joinpath(PROJECT_PATH, 'assets')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{config("DB_USER")}:{config("DB_PASSWORD")}@localhost/{config("DB_NAME")}'
-    ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+    # ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     UPLOAD_FOLDER = Path.joinpath(PROJECT_PATH, 'uploads')
 
 
