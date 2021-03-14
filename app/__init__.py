@@ -1,4 +1,3 @@
-from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import LoginManager
 from flask import Flask
@@ -21,7 +20,7 @@ def create_app(config_name='production'):
     sched.add_job(delete_files, 'interval', minutes=1, args=(app,))
     try:
         sched.start()
-    except SchedulerAlreadyRunningError:
+    except:
         pass
     from app.main import main as main_blueprint
     from app.auth import auth as auth_blueprint
