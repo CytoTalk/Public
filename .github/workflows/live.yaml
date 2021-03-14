@@ -55,10 +55,9 @@ jobs:
             cd /home/django/flask_app
             git pull origin master
             python3 -m pip install -r requirements.txt
-            python3 manage.py migrate
-            python3 manage.py upgrade
+            python3 manage.py db migrate
+            python3 manage.py db upgrade
             systemctl restart gunicorn
             chmod -R 777 /home/django/flask_app/uploads
             chmod -R 777 /home/django/flask_app/output_location
             chmod -R 777 /home/django/flask_app/assets
-            echo "Deployment successfull"
