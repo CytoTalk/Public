@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /home/django/flask_app
-            git pull origin master
+            git pull -f origin master
             python3 -m pip install -r requirements.txt
             python3 manage.py db migrate
             python3 manage.py db upgrade
