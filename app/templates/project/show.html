@@ -12,10 +12,10 @@
                         <h3>{{ category.title }}</h3>
                         <p>{{ category.description }}</p>
                         <div class="form-group">
-                            <select class="form-control" name="current_image" id="{{ project.id }}">
+                            <select onchange="return handle_image_render(event)" class="form-control" name="current_image" id="{{ project.id }}">
                                 <option value="" selected>Select</option>
                                 {% for image in category.images %}
-                                    <option onclick="return a=handle_image_render({path:'{{ url_for('project.get_image', image_id=image.id) }}',name:'{{ image.name }}'})" value="{{ image.path }}">{{ image.name }}</option>
+                                    <option  value="{{ url_for('project.get_image', image_id=image.id) }}">{{ image.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -33,9 +33,11 @@
 {% endblock %}
 {% block scripts %}
     <script>
-        const handle_image_render = image =>{
-            const element = `<img id="main_image" src="${image.path}" style="max-width: 100%;max-height:100%;object-fit: scale-down "alt="${image.name}">`
-            $('#image_container').html(element)
+        function handle_image_render( event ){
+            console.log(event)
+            const image = event.target.value
+            console.log("called",image)
+            document.getElementById('image_container').innerHTML =`<img id="main_image" src="${image}" style="max-width: 100%;max-height:100%;object-fit: scale-down "alt="${image}">`
         }
     </script>
 {% endblock %}

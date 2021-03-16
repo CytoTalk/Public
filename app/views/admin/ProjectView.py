@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect, request, abort, url_for
 from flask.views import MethodView, View
+from flask_login import login_required
 
 from app.forms.admin.Project import ProjectForm
 from app.models.Project import Project
@@ -7,6 +8,7 @@ from app.models.Project import Project
 
 class ProjectIndex(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self):
         form = ProjectForm()
@@ -17,6 +19,7 @@ class ProjectIndex(View):
 
 class ProjectPost(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self):
         form = ProjectForm()
@@ -30,6 +33,7 @@ class ProjectPost(View):
 
 class ProjectCreate(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self):
         form = ProjectForm()
@@ -38,6 +42,7 @@ class ProjectCreate(View):
 
 class ProjectDelete(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self,project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
@@ -48,6 +53,7 @@ class ProjectDelete(View):
 
 class ProjectEdit(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
@@ -73,6 +79,7 @@ class ProjectUpdate(View):
 
 class ProjectShow(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()

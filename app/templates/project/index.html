@@ -1,12 +1,17 @@
 {% extends 'layout/front/main.html' %}
 {% block content %}
-<div class="container">
-    <h1 class="text-primary text-center">All Projects</h1>
+    <div class="container">
+        <h1 class="text-primary text-center">All Projects</h1>
 
-    <div class="text-center">
-        {% for project in projects %}
-        <a href="{{ url_for('project.show',project_id=project.id) }}" class="m-5 btn btn-light btn-md  js-scroll-trigger">{{ project.title }}</a>
-        {% endfor %}
-    </div>
+        <div class="text-center">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                {% for project in projects %}
+                    <div class="col-sm-3">
+
+                        <a href="{{ url_for('project.show',project_id=project.id) }}" class="m-2 btn-block btn btn-light btn-md  js-scroll-trigger">{{ project.title }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}
