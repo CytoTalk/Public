@@ -4,8 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
 from app.auth import auth
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, abort
 
+from app.forms.auth.ForgotPasswordForm import ForgotPasswordForm
+from app.forms.auth.LoginForm import LoginForm
+from app.forms.auth.RegistrationForm import RegistrationForm
 from app.models.User import User
 
 
@@ -17,6 +20,7 @@ def load_user(user_id):
 
 @auth.route('/login', methods=('GET',))
 def login_get():
+    form = LoginForm()
     user = User.query.filter_by(email=config('ADMIN_EMAIL')).first()
     if user is None:
         admin = User(email=config('ADMIN_EMAIL'),
@@ -24,7 +28,7 @@ def login_get():
 
         db.session.add(admin)
         db.session.commit()
-    return render_template('auth/login.html')
+    return render_template('auth/login.html', form=form)
 
 
 @auth.route('/login', methods=('POST',))
@@ -39,6 +43,38 @@ def login_post():
         return redirect(url_for('auth.login_get'))
     login_user(user, remember=remember)
     return redirect(url_for('admin.dashboard'))
+
+
+@auth.route('/register', methods=('GET',))
+def register_get():
+    form = RegistrationForm()
+    return render_template('auth/register.html', form=form)
+
+
+@auth.route('/register', methods=('POST',))
+def register_post():
+    form = RegistrationForm(request.form)
+    if form.validate_on_submit():
+        user = User(
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            email=form.email,
+            password=generate_password_hash(form.password.data, method='sha256'))
+
+
+@auth.route('/forgot_password', methods=('GET',))
+def forgot_password_get():
+    form = ForgotPasswordForm()
+    return render_template('auth/forgot_password.html', form=form)
+
+
+@auth.route('/forgot_password', methods=('POST',))
+def forgot_password_post():
+    form = ForgotPasswordForm(request.form)
+    if form.validate_on_submit():
+        pass
+    else:
+        abort(403)
 
 
 @auth.route('/logout')
