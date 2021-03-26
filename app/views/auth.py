@@ -1,5 +1,6 @@
 from decouple import config
 from flask_login import login_user, login_required, logout_user
+from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
@@ -11,6 +12,16 @@ from app.forms.auth.LoginForm import LoginForm
 from app.forms.auth.RegistrationForm import RegistrationForm
 from app.models.User import User
 
+
+def generate_token(email:str):
+    ts =  URLSafeTimedSerializer(config["SECRET_KEY"])
+    return ts.dumps(email, salt='email-confirm-key')
+
+def send_confirmation_email(to:str,token_url:str):
+    html = render_template(
+        'email/verify_email.html',
+        confirm_url=token_url)
+    send_email()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -58,8 +69,18 @@ def register_post():
         user = User(
             first_name=form.first_name.data,
             last_name=form.last_name.data,
-            email=form.email,
+            email=form.email.data,
             password=generate_password_hash(form.password.data, method='sha256'))
+        user.create()
+        flash("Account was created successfully", 'success')
+        token_url = url_for(
+            'confirm_email',
+            token=generate_token(user.email),
+            _external=True)
+        send_confirmation_email(user.email,token_url)
+        return redirect(url_for('auth.verify_email'))
+    else:
+        return render_template('auth/register.html', form=form)
 
 
 @auth.route('/forgot_password', methods=('GET',))
@@ -75,6 +96,16 @@ def forgot_password_post():
         pass
     else:
         abort(403)
+
+
+@auth.route('verify_email', methods=('GET',))
+def verify_email():
+    return render_template('auth/verify_email.html')
+
+@auth.route('/verify_email/<token>',methods=('GET',))
+def verify_token(token):
+    pass
+
 
 
 @auth.route('/logout')

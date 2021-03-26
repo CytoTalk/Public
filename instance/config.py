@@ -15,9 +15,20 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{config("DB_USER")}:{config("DB_PASSWORD")}@localhost/{config("DB_NAME")}'
     if os.environ.get('GITHUB_WORKFLOW'):
         SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:postgres@127.0.0.1/github_actions'
-
     ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
     UPLOAD_FOLDER = Path.joinpath(PROJECT_PATH, 'uploads')
+    # MAIL_SERVER = 'localhost'
+    # MAIL_PORT = 25
+    # MAIL_USE_TLS = False
+    # MAIL_USE_SSL = False
+    # MAIL_DEBUG = app.debug
+    # MAIL_USERNAME = None
+    # MAIL_PASSWORD = None
+    # MAIL_DEFAULT_SENDER = None
+    # MAIL_MAX_EMAILS = None
+    # MAIL_SUPPRESS_SEND = app.testing
+    # MAIL_ASCII_ATTACHMENTS = False
+
 
 
 class DevConfig(Config):

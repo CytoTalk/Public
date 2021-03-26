@@ -1,29 +1,19 @@
 {% extends 'layout/front/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% block content %}
+    <style>
+    .help-block{
+        color: darkred;
+    }
+    </style>
     <div class="column is-4 is-offset-4">
         <div class="col-sm-6 card m-auto p-5">
             <div class="p-10">
 
-                <h3 class="text-center p-2 border-bottom">Login</h3>
-                <form class="py-5" method="POST" action="{{ url_for('auth.login_post') }}">
-                    <div class="form-group">
-                        <input class="form-control lg " type="text" name="first_name" placeholder="First Name" autofocus="">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control lg " type="text" name="last_name" placeholder="Last Name" autofocus="">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control lg " type="email" name="email" placeholder="Email Address" autofocus="">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control lg" type="password" name="password" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control lg" type="password" name="confirm_password" placeholder="Confirm Password">
-                    </div>
-                    <div class="text-center form-group">
-                        <button type="submit" class="btn btn-success btn-block">Create Account</button>
-                    </div>
+                <h3 class="text-center p-2 border-bottom">Register</h3>
+                <form class="py-5" method="POST" action="{{ url_for('auth.register_post') }}">
+                    {{ wtf.quick_form(form) }}
                 </form>
             </div>
         </div>

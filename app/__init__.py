@@ -2,6 +2,9 @@ from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import LoginManager
 from flask import Flask
+from flask_mail import Mail
+from flask_wtf import CSRFProtect
+
 from app.main import main
 from app.views.helpers import delete_files
 from instance.config import config_options
@@ -11,7 +14,8 @@ from flask_bootstrap import Bootstrap
 sched = BackgroundScheduler(daemon=True)
 db = SQLAlchemy()
 login_manager = LoginManager()
-
+csrf = CSRFProtect()
+mail = Mail()
 
 
 def create_app(config_name='production'):
@@ -20,6 +24,8 @@ def create_app(config_name='production'):
     db.init_app(app)
     login_manager.login_view = 'auth.login_get'
     login_manager.init_app(app)
+    csrf.init_app(app)
+    mail.init_app(app)
     sched.add_job(delete_files, 'interval', minutes=1, args=(app,))
     try:
         sched.start()
