@@ -7,7 +7,7 @@ from app.forms.auth.ForgotPasswordForm import ForgotPasswordForm
 from app.forms.auth.ResetPasswordForm import ResetPasswordForm
 from app.models.User import User
 from app.token import confirm_token
-from app.views.auth import hash_password
+from app.auth.security import hash_password
 
 
 class ResetPasswordView(FlaskView):

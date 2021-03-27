@@ -18,7 +18,7 @@ def send_email(to: str, subject: str, template: str):
 
 def send_verification_email(user: User):
     token = generate_confirmation_token(user.email)
-    url = url_for('auth.VerificationEmail:get', token=token, _external=True)
+    url = url_for('auth.VerificationEmailView:get', token=token, _external=True)
     html = render_template(
         'email/verify_email.html',
         confirm_url=url)

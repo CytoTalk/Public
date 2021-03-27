@@ -5,8 +5,8 @@ from app import create_app, db
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
+from app.auth.security import hash_password
 from app.models.User import User
-from app.views.auth import hash_password
 
 app = create_app()
 

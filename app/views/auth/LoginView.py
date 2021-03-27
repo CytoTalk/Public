@@ -1,5 +1,5 @@
 from flask import request, flash, redirect, url_for, render_template
-from flask_classful import FlaskView,route
+from flask_classful import FlaskView, route
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
 from app.forms.auth.LoginForm import LoginForm
@@ -22,7 +22,10 @@ class LoginView(FlaskView):
             flash('Please check your login details and try again.', 'error')
             return redirect(url_for('auth.LoginView:index'))
         login_user(user, remember=remember)
-        return redirect(url_for('admin.dashboard'))
+        if user.is_admin:
+            return redirect(url_for('admin.dashboard'))
+        else:
+            return redirect(url_for('main.homepage'))
 
     @route('logout')
     @login_required
