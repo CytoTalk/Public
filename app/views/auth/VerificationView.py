@@ -31,5 +31,5 @@ class VerificationView(FlaskView):
             user.email_verified_at = datetime.datetime.now()
             user.save()
             flash('Your email has been confirmed successfully. Thanks!', 'success')
-        return redirect(url_for('LoginView:index'))
+        return redirect(url_for('auth.LoginView:index'))
 

@@ -1,7 +1,9 @@
-from flask import Blueprint, flash, redirect, url_for
+from flask import Blueprint
+
 from app.views.auth import LoginView, RegistrationView, ResetPasswordView, VerificationView
 
 auth = Blueprint('auth', __name__)
+
 
 LoginView.LoginView.register(auth, trailing_slash=False)
 RegistrationView.RegistrationView.register(auth, trailing_slash=False, route_base='/register')

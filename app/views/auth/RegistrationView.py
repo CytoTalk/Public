@@ -1,5 +1,6 @@
 from flask import request, flash, redirect, url_for, render_template
 from flask_classful import FlaskView
+from flask_login import current_user, login_user
 from werkzeug.security import generate_password_hash
 
 from app.auth.security import hash_password
@@ -11,6 +12,8 @@ from app.models.User import User
 class RegistrationView(FlaskView):
 
     def index(self):
+        if current_user.is_authenticated:
+            return redirect(url_for('main.homepage'))
         form = RegistrationForm()
         return render_template('auth/register.html', form=form)
 
@@ -28,8 +31,8 @@ class RegistrationView(FlaskView):
                 email=form.email.data,
                 password=hash_password(form.password.data))
             user.create()
-            send_verification_email(user)
             flash("Account was created successfully", 'success')
-            return redirect(url_for('auth.verify_email'))
+            login_user(user)
+            return redirect(url_for('auth.VerificationView:index'))
         else:
             return render_template('auth/register.html', form=form)

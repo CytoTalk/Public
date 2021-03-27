@@ -1,6 +1,6 @@
 from flask import request, flash, redirect, url_for, render_template
 from flask_classful import FlaskView, route
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from app.forms.auth.LoginForm import LoginForm
 from app.models.User import User
@@ -9,6 +9,8 @@ from app.models.User import User
 class LoginView(FlaskView):
 
     def index(self):
+        if current_user.is_authenticated:
+            return redirect(url_for('main.homepage'))
         form = LoginForm()
         return render_template('auth/login.html', form=form)
 

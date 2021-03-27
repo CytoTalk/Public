@@ -23,7 +23,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_options[config("APP_ENV")])
     db.init_app(app)
-    login_manager.login_view = 'auth.login_get'
+    login_manager.login_view = 'auth.LoginView:index'
     login_manager.init_app(app)
     csrf.init_app(app)
     mail.init_app(app)
