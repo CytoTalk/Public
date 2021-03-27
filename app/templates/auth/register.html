@@ -12,7 +12,7 @@
             <div class="p-10">
 
                 <h3 class="text-center p-2 border-bottom">Register</h3>
-                <form class="py-5" method="POST" action="{{ url_for('auth.register_post') }}">
+                <form class="py-5" method="POST" action="{{ url_for('auth.RegistrationView:post') }}">
                     {{ wtf.quick_form(form) }}
                 </form>
             </div>

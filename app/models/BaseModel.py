@@ -17,4 +17,4 @@ class BaseModel:
         db.session.commit()
 
     def save(self):
-        db.session.commit()
+        self.create()

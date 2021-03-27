@@ -1,5 +1,6 @@
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
+from decouple import config
 from flask_login import LoginManager
 from flask import Flask
 from flask_mail import Mail
@@ -18,9 +19,9 @@ csrf = CSRFProtect()
 mail = Mail()
 
 
-def create_app(config_name='production'):
+def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(config_options[config_name])
+    app.config.from_object(config_options[config("APP_ENV")])
     db.init_app(app)
     login_manager.login_view = 'auth.login_get'
     login_manager.init_app(app)
