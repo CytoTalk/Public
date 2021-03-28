@@ -1,99 +1,128 @@
 <!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
 <html lang="en">
-
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
-    <meta content="" name="description"/>
-    <meta content="" name="author"/>
-    <title> CytoTalk, LLC
-    </title>
-    <!--    Bootstrap-->
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" rel="stylesheet">
-    <link href="{{ url_for('static', filename='main/image/favicon.ico') }} " rel="icon" type="image/x-icon"/>
-    <!-- Font Awesome icons (free version)-->
-    <script crossorigin="anonymous" src="https://use.fontawesome.com/releases/v5.15.1/js/all.js"></script>
-    <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
-    <link href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic" rel="stylesheet"
-          type="text/css"/>
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css"/>
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="{{ url_for('static', filename='main/css/styles.css') }}" rel="stylesheet"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cytotalk | {% block title %}{% endblock %}</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/fontawesome-free/css/all.min.css') }}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/dist/css/adminlte.min.css') }}">
 </head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
 
-<body id="page-top">
-<!-- Navigation-->
-<div class="pt-5">
-    {% with messages = get_flashed_messages(category_filter=["error"]) %}
-        {% if messages %}
-            <div class=flashes>
-                {% for message in messages %}
-                    <div class="alert alert-danger alert-dismissible">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    {% with messages = get_flashed_messages(category_filter=["success"]) %}
-        {% if messages %}
-            <div class=flashes>
-                {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    <div class="row">
-        <div style="width: 200px" class="col-sm-4">
-            <nav class="navbar navbar-expand-lg  bg-dark  navbar-dark" id="mainNav">
-                <div class="container">
-                    <ul class="navbar-nav d-flex flex-column text-right text-uppercase ">
-                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('admin.project_index') }}">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('main.homepage') }}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('auth.LoginView:logout') }}">Logout</a></li>
-                    </ul>
-                </div>
-            </nav>
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Notifications Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <p><i class="far fa-user pr-2"></i>{{ current_user.first_name}} {{ current_user.last_name}}</p>
+        </a>
+        <div class="dropdown-menu dropdown-menu-sm-right dropdown-menu-right">
+          <div class="dropdown-divider"></div>
+          <a href="{{ url_for('auth.LoginView:logout') }}" class="dropdown-item">
+              <p><i class="fa fa-door-open"></i> Logout</p>
+          </a>
         </div>
-        <div class="col-sm-8">
-            {% block content %}
-            {% endblock %}
+      </li>
 
-        </div>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-link">
+      <span class="brand-text font-weight-light">Cytotalk</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <li class="nav-item">
+            <a href="{{ url_for('admin.project_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>Projects
+              </p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
     </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">{% block heading %}{% endblock %}</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        {% block content %}{% endblock %}
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="float-right d-none d-sm-inline">
+      Anything you want
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
 </div>
+<!-- ./wrapper -->
 
-<!-- Footer-->
-<footer class="footer py-4">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-4 text-lg-left">Copyright © 2020 CytoTalk - All Rights Reserved.</div>
-            <div class="col-lg-4 my-3 my-lg-0">
+<!-- REQUIRED SCRIPTS -->
 
-                <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/cytotalk/"><i
-                        class="fab fa-facebook-f"></i></a>
-                <a class="btn btn-dark btn-social mx-2" href="https://www.instagram.com/Cytotalk2020/"><i
-                        class="fab fa-instagram"></i> </a>
-            </div>
-            <div class="col-lg-4 text-lg-right">
-                <!-- <a class="mr-3" href="#!">Privacy Policy</a>
-                <a href="#!">Terms of Use</a> -->
-            </div>
-        </div>
-    </div>
-</footer>
-
-<!-- Bootstrap core JS-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script crossorigin="anonymous" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Third party plugin JS-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-<!-- Contact form JS-->
-<!-- Core theme JS-->
-<script src="{{ url_for('static', filename='main/js/scripts.js') }}"></script>
+<!-- jQuery -->
+<script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static',filename='vendor/AdminLTE/dist/js/adminlte.min.js') }}"></script>
 </body>
-
 </html>
