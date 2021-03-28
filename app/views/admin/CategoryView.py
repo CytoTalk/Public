@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect,  abort, url_for
 from flask.views import View
+from flask_login import login_required
 
 from app.forms.admin.Category import CategoryForm
 from app.models.Category import Category
@@ -7,6 +8,7 @@ from app.models.Category import Category
 
 class CategoryIndex(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         form = CategoryForm()
@@ -17,6 +19,7 @@ class CategoryIndex(View):
 
 class CategoryPost(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, project_id):
         form = CategoryForm()
@@ -30,6 +33,7 @@ class CategoryPost(View):
 
 class CategoryCreate(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self, project_id):
         form = CategoryForm()
@@ -38,6 +42,7 @@ class CategoryCreate(View):
 
 class CategoryDelete(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         category = Category.query.filter_by(id=category_id).first_or_404()
@@ -49,6 +54,7 @@ class CategoryDelete(View):
 
 class CategoryEdit(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         category = Category.query.filter_by(id=category_id).first_or_404()
@@ -58,6 +64,7 @@ class CategoryEdit(View):
 
 class CategoryUpdate(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         form = CategoryForm()
@@ -74,6 +81,7 @@ class CategoryUpdate(View):
 
 class CategoryShow(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         category = Category.query.filter_by(id=category_id).first_or_404()

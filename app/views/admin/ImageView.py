@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from flask import render_template, flash, redirect, abort, url_for, current_app, send_from_directory
 from flask.views import View
+from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app.forms.admin.Image import ImageForm
@@ -11,6 +12,7 @@ from app.models.Image import Image
 
 class ImagePost(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         form = ImageForm()
@@ -29,6 +31,7 @@ class ImagePost(View):
 
 class ImageCreate(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self, category_id):
         form = ImageForm()
@@ -37,6 +40,7 @@ class ImageCreate(View):
 
 class ImageDelete(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, image_id):
         image = Image.query.filter_by(id=image_id).first_or_404()
@@ -49,6 +53,7 @@ class ImageDelete(View):
 
 class ImageEdit(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, image_id):
         image = Image.query.filter_by(id=image_id).first_or_404()
@@ -58,6 +63,7 @@ class ImageEdit(View):
 
 class ImageUpdate(View):
     methods = ['POST']
+    decorators = [login_required]
 
     def dispatch_request(self, image_id):
         form = ImageForm()
@@ -73,6 +79,7 @@ class ImageUpdate(View):
 
 class ImageShow(View):
     methods = ['GET']
+    decorators = [login_required]
 
     def dispatch_request(self, image_id):
         image = Image.query.filter_by(id=image_id).first_or_404()
