@@ -54,8 +54,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-          <li class="nav-item">
-            <a href="{{ url_for('admin.project_index') }}" class="nav-link">
+          <li class="nav-item ">
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if url_for('admin.dashboard') in request.path  %}active{% endif %}">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Dashboard
+              </p>
+            </a>
+          </li>
+            <li class="nav-item">
+            <a href="{{ url_for('admin.project_index') }}" class="nav-link  {% if url_for('admin.project_index') in request.path  %}active{% endif %}">
               <i class="nav-icon fas fa-th"></i>
               <p>Projects
               </p>
@@ -111,7 +118,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       Anything you want
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2014-2021 <a href="/">Cytotalk LTD</a>.</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->

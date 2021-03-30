@@ -6,7 +6,9 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
 from app.auth.security import hash_password
+from app.models import Entity
 from app.models.User import User
+
 
 app = create_app()
 

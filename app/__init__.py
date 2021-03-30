@@ -36,9 +36,11 @@ def create_app():
     from app.auth import auth as auth_blueprint
     from app.admin import admin as admin_blueprint
     from app.project import project as project_blueprint
+    from app.excel_database import excel_db
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(project_blueprint)
+    app.register_blueprint(excel_db)
     Bootstrap(app)
     return app

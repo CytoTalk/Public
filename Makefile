@@ -7,3 +7,5 @@ migrate:
 		python3 manage.py db upgrade
 create_admin:
 		python3 manage.py create_admin
+db:
+		python3 manage.py db
