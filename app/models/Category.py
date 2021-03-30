@@ -8,4 +8,5 @@ class Category(db.Model, BaseModel):
     title = db.Column(db.String(1000))
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     description = db.Column(db.Text)
+    file_path = db.Column(db.String(1000))
     images = db.relationship('Image', backref='category', lazy=True)

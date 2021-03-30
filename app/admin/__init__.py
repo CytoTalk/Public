@@ -8,6 +8,7 @@ from app.views.admin.ImageView import (ImagePost, ImageCreate, ImageDelete, Imag
 from flask_login import login_required, current_user
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
+from app.views.admin.AllProjectView import AllProjectView
 
 
 @admin.before_request
@@ -16,6 +17,8 @@ def is_admin():
     if not current_user.is_admin:
         abort(401)
 
+
+AllProjectView.register(admin, trailing_slash=False)
 
 # Project Routes
 admin.add_url_rule('/projects/', view_func=ProjectIndex.as_view('project_index'), methods=['GET'])

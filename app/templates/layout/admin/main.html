@@ -5,121 +5,155 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cytotalk | {% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cytotalk | {% block title %}{% endblock %}</title>
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/fontawesome-free/css/all.min.css') }}">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/dist/css/adminlte.min.css') }}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/dist/css/adminlte.min.css') }}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
 
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <p><i class="far fa-user pr-2"></i>{{ current_user.first_name}} {{ current_user.last_name}}</p>
-        </a>
-        <div class="dropdown-menu dropdown-menu-sm-right dropdown-menu-right">
-          <div class="dropdown-divider"></div>
-          <a href="{{ url_for('auth.LoginView:logout') }}" class="dropdown-item">
-              <p><i class="fa fa-door-open"></i> Logout</p>
-          </a>
-        </div>
-      </li>
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <!-- Notifications Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <p><i class="far fa-user pr-2"></i>{{ current_user.first_name}} {{ current_user.last_name}}</p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-sm-right dropdown-menu-right">
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ url_for('auth.LoginView:logout') }}" class="dropdown-item">
+                        <p><i class="fa fa-door-open"></i> Logout</p>
+                    </a>
+                </div>
+            </li>
 
-    </ul>
-  </nav>
-  <!-- /.navbar -->
-
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="/" class="brand-link">
-      <span class="brand-text font-weight-light">Cytotalk</span>
-    </a>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-          <li class="nav-item ">
-            <a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if url_for('admin.dashboard') in request.path  %}active{% endif %}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard
-              </p>
-            </a>
-          </li>
-            <li class="nav-item">
-            <a href="{{ url_for('admin.project_index') }}" class="nav-link  {% if url_for('admin.project_index') in request.path  %}active{% endif %}">
-              <i class="nav-icon fas fa-th"></i>
-              <p>Projects
-              </p>
-            </a>
-          </li>
         </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
+    </nav>
+    <!-- /.navbar -->
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">{% block heading %}{% endblock %}</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="/" class="brand-link">
+            <span class="brand-text font-weight-light">Cytotalk</span>
+        </a>
 
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-        {% block content %}{% endblock %}
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+        <!-- Sidebar -->
+        <div class="sidebar">
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-    <div class="p-3">
-      <h5>Title</h5>
-      <p>Sidebar content</p>
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-  <!-- Main Footer -->
-  <footer class="main-footer">
-    <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-      Anything you want
+                    <li class="nav-item ">
+                        <a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if url_for('admin.dashboard') in request.path  %}active{% endif %}">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.project_index') }}" class="nav-link  {% if url_for('admin.project_index') in request.path  %}active{% endif %}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Projects
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.AllProjectView:index') }}" class="nav-link  {% if url_for('admin.AllProjectView:index') in request.path  %}active{% endif %}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Combined Project
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{% block heading %}{% endblock %}</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                {% with messages = get_flashed_messages(category_filter=["error"]) %}
+                    {% if messages %}
+                        <div class=flashes>
+                            {% for message in messages %}
+                                <div class="alert alert-danger alert-dismissible">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                        <div class=flashes>
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter=["warning"]) %}
+                    {% if messages %}
+                        <div class=flashes>
+                            {% for message in messages %}
+                                <div class="alert alert-warning alert-dismissible">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
     </div>
-    <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2021 <a href="/">Cytotalk LTD</a>.</strong> All rights reserved.
-  </footer>
+    <!-- /.content-wrapper -->
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+        <div class="p-3">
+            <h5>Title</h5>
+            <p>Sidebar content</p>
+        </div>
+    </aside>
+    <!-- /.control-sidebar -->
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <!-- To the right -->
+        <div class="float-right d-none d-sm-inline">
+            Anything you want
+        </div>
+        <!-- Default to the left -->
+        <strong>Copyright &copy; 2014-2021 <a href="/">Cytotalk LTD</a>.</strong> All rights reserved.
+    </footer>
 </div>
 <!-- ./wrapper -->
 
