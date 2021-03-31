@@ -7,4 +7,3 @@ class Project(db.Model, BaseModel):
     title = db.Column(db.String(1000))
     description = db.Column(db.Text)
     categories = db.relationship('Category', backref='project', lazy=True)
-    type = db.Column(db.Integer, default=0)
