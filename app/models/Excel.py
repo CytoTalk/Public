@@ -16,4 +16,4 @@ class ExcelRecord(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     column_id = db.Column(db.Integer, db.ForeignKey('excel_columns.id'))
     value = db.Column(db.Text)
-    batch_id = db.Column(db.String(200))
+    batch_id = db.Column(db.Integer)

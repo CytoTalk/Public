@@ -1,9 +1,9 @@
 {% extends 'layout/admin/main.html' %}
 
 {% block content %}
-    <h1>Data<span class="text-success">{{ category.title }}</span>  category</h1>
+    <h1>Columns in <span class="text-success">{{ category.title }}</span>  category</h1>
 
-    <a href="{{ url_for('admin.CategoryView',category_type='excel') }}" class="btn btn-success">Add Excel file</a>
+{#    <a href="{{ url_for('admin.CategoryView',category_type='excel') }}" class="btn btn-success">Add Excel file</a>#}
 
     <table class="table">
         <thead>
