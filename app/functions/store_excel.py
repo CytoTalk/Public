@@ -15,9 +15,10 @@ def create_columns(category_id: int, title: str, description: str = None):
     return column
 
 
-def store_records(batch_id: str, column_id: int, value):
+def store_records(batch_id: int, column_id: int, category_id: int, value):
     record = ExcelRecord(
         batch_id=batch_id,
+        category_id=category_id,
         column_id=column_id,
         value=value)
     record.save()
@@ -32,6 +33,7 @@ class HandleExcel:
         self.category = category
 
     def store_columns(self):
+        print(f"all coluns =={len(self.df.columns.to_list())}")
         for column in self.df.columns.to_list():
             create_columns(self.category.id, title=column, description="")
 
@@ -41,4 +43,4 @@ class HandleExcel:
         for row in self.df.itertuples():
             batch_id = batch_id + 1
             for key, column in enumerate(self.category.columns):
-                store_records(batch_id=batch_id, column_id=column.id, value=row[key])
+                store_records(batch_id=batch_id, column_id=column.id, category_id=self.category.id, value=row[key+1])

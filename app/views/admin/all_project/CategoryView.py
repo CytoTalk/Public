@@ -1,20 +1,22 @@
 from pathlib import Path
 from uuid import uuid4
-
-from flask import request, flash, redirect, url_for, render_template, abort, current_app
+import pandas as pd
+from flask import request, flash, redirect, url_for, render_template, abort, current_app, jsonify
 from flask_classful import FlaskView, route
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
+from app import db
 from app.forms.admin.project_all.Categories import ExcelCategoryForm, ImageCategoryForm
 from app.forms.admin.project_all.ProjectAll import ProjectAlLForm
 from app.functions.store_excel import HandleExcel
 from app.models.Category import Category
+from app.models.Excel import ExcelRecord
 from app.models.Project import Project
 
 
 def get_category(category_id):
-    return Category.query.filter_by(id=category_id, type=1).first_or_404()
+    return Category.query.filter_by(id=category_id).first_or_404()
 
 
 class CategoryView(FlaskView):
@@ -42,10 +44,18 @@ class CategoryView(FlaskView):
                 flash("Data was stored successfully", "success")
                 return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
 
-
         elif category_type == 'image':
             url = url_for('admin.CategoryView:store', category_type='image')
             form = ImageCategoryForm()
+
+            if form.validate_on_submit():
+                category = Category(description=form.description.data, title=form.title.data, project_id=project_id,
+                                    type='image')
+                category.create()
+                flash('Category was created successfully', 'success')
+                return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
+            else:
+                abort(403)
         else:
             abort(404)
         return render_template('admin/project_all/category/create.html', form=form, url=url)
@@ -82,7 +92,30 @@ class CategoryView(FlaskView):
     @route('category/<category_id>', methods=('GET',))
     def show(self, category_id):
         category = get_category(category_id)
-        return render_template('admin/project_all/show.html', category=category)
+        if category.type == 'excel':
+            records = ExcelRecord.query.filter_by(category_id=category_id)
+            # Log.query.filter(Log.proc_id == sq.c.proc_id).order_by(Log.proc_id).all()
+            df = pd.read_sql(records.statement, db.session.bind)
+            df.drop(['CREATED_AT', 'UPDATED_AT', 'category_id', 'id'], axis=1, inplace=True)
+            # df = df.set_index("batch_id")
+            # df = df.transpose()
+            # df.groupby('batch_id')
+            # return df.head()
+            records = []
+            for batch, df_batch in df.groupby('batch_id'):
+                # print(df_batch)
+                df_batch.drop(['batch_id', 'column_id'], axis=1, inplace=True)
+                print(df_batch)
+                # df_batch.set_index('column_id')
+                records.append(df_batch.to_dict('list')['value'])
+
+            # return jsonify(response)
+
+            # return df.to_dict()
+            # return jsonify(df.to_dict())
+            #
+            return render_template('admin/project_all/category/show/excel.html', category=category,records=records)
+        return render_template('admin/project_all/category/show/excel.html', category=category)
 
     @route('/<category_id>/edit', methods=('GET',))
     def edit(self, category_id):
@@ -103,9 +136,9 @@ class CategoryView(FlaskView):
         else:
             return redirect(request.url)
 
-    @route('<category_id>/delete', methods=('POST',))
-    def delete(self, category_id):
-        project = get_category(category_id)
-        project.delete()
+    @route('project/<project_id>/category/<category_id>/delete', methods=('POST',))
+    def delete(self, project_id, category_id):
+        category = get_category(category_id)
+        category.delete()
         flash("Project was deleted successfully", 'success')
-        return redirect(url_for('admin.AllProjectView:index'))
+        return redirect(url_for('admin.AllProjectView:show', project_id=project_id))

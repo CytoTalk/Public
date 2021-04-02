@@ -6,4 +6,4 @@ class Project(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
     description = db.Column(db.Text)
-    categories = db.relationship('Category', backref='project', lazy=True)
+    categories = db.relationship('Category', backref='project', lazy=True, cascade="all,delete")

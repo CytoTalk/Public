@@ -32,4 +32,24 @@
         </tbody>
     </table>
 
+    <h1>Table data</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            {% for column in category.columns %}
+            <th scope="col">{{ column.title }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+            {% for value in record %}
+                <td>{{ value}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}
