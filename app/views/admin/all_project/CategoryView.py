@@ -6,12 +6,12 @@ from flask_classful import FlaskView, route
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
-from app import db
+from app import db, csrf
 from app.forms.admin.project_all.Categories import ExcelCategoryForm, ImageCategoryForm
 from app.forms.admin.project_all.ProjectAll import ProjectAlLForm
 from app.functions.store_excel import HandleExcel
 from app.models.Category import Category
-from app.models.Excel import ExcelRecord
+from app.models.Excel import ExcelRecord, ExcelColumn
 from app.models.Project import Project
 
 
@@ -60,61 +60,19 @@ class CategoryView(FlaskView):
             abort(404)
         return render_template('admin/project_all/category/create.html', form=form, url=url)
 
-    @route('/store/<project_id>/<category_type>', methods=('POST',))
-    def store(self, project_id, category_type):
-        pass
-        # if category_type == 'excel':
-        #     form = ExcelCategoryForm(request.form)
-        #     if not form.validate_on_submit():
-        #         return redirect(
-        #             url_for("admin.CategoryView:create", project_id=project_id, category_type=category_type))
-        #
-        #     category = Category(title=form.title.data, description=form.description.data, type=category_type)
-        #     import pdb;
-        #     pdb.set_trace()
-        #
-        #     filename = str(uuid4()) + '-' + secure_filename(form.excel.data)
-        #     path = str(Path('excel_files', filename))
-        #     file_path = Path(current_app.config['ASSETS_PATH'], path)
-        #     form.file.data.save(file_path)
-        #     category.save()
-        #     excel = HandleExcel(file_path, category)
-        #     excel.store_columns()
-        #     flash("Data was stored successfully")
-        #     return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
-        #
-        # elif category_type == 'image':
-        #     form = ImageCategoryForm()
-        # else:
-        #     abort(404)
-        # return redirect(url_for("admin.CategoryView:index"))
-
     @route('category/<category_id>', methods=('GET',))
     def show(self, category_id):
         category = get_category(category_id)
         if category.type == 'excel':
             records = ExcelRecord.query.filter_by(category_id=category_id)
-            # Log.query.filter(Log.proc_id == sq.c.proc_id).order_by(Log.proc_id).all()
             df = pd.read_sql(records.statement, db.session.bind)
             df.drop(['CREATED_AT', 'UPDATED_AT', 'category_id', 'id'], axis=1, inplace=True)
-            # df = df.set_index("batch_id")
-            # df = df.transpose()
-            # df.groupby('batch_id')
-            # return df.head()
             records = []
             for batch, df_batch in df.groupby('batch_id'):
-                # print(df_batch)
                 df_batch.drop(['batch_id', 'column_id'], axis=1, inplace=True)
                 print(df_batch)
-                # df_batch.set_index('column_id')
                 records.append(df_batch.to_dict('list')['value'])
-
-            # return jsonify(response)
-
-            # return df.to_dict()
-            # return jsonify(df.to_dict())
-            #
-            return render_template('admin/project_all/category/show/excel.html', category=category,records=records)
+            return render_template('admin/project_all/category/show/excel.html', category=category, records=records)
         return render_template('admin/project_all/category/show/excel.html', category=category)
 
     @route('/<category_id>/edit', methods=('GET',))
@@ -122,6 +80,16 @@ class CategoryView(FlaskView):
         project = get_category(category_id)
         form = ProjectAlLForm(title=project.title, description=project.description)
         return render_template('admin/project_all/edit.html', form=form, category_id=category_id)
+
+    @route('/update_column/<column_id>', methods=('POST',))
+    @csrf.exempt
+    def update_column(self, column_id):
+        column = ExcelColumn.query.filter_by(id=column_id).first_or_404()
+        column.title = request.form.get('title')
+        column.description = request.form.get('description')
+        column.save()
+        flash('Column was updated successfully')
+        return redirect(url_for('admin.CategoryView:show', category_id=column.category_id))
 
     @route('/<category_id>/update', methods=('POST',))
     def update(self, category_id):

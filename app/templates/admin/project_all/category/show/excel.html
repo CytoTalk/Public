@@ -1,55 +1,120 @@
 {% extends 'layout/admin/main.html' %}
 
 {% block content %}
-    <h1>Columns in <span class="text-success">{{ category.title }}</span>  category</h1>
+    {#    <h1>Columns in <span class="text-success">{{ category.title }}</span>  category</h1>#}
 
-{#    <a href="{{ url_for('admin.CategoryView',category_type='excel') }}" class="btn btn-success">Add Excel file</a>#}
+    {#    <a href="{{ url_for('admin.CategoryView',category_type='excel') }}" class="btn btn-success">Add Excel file</a>#}
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Category</th>
-            <th scope="col">Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for column in category.columns %}
-            <tr>
-                <th scope="row">{{ column.id }}</th>
-                <td>
-                    {{ column.title }}
-                </td>
-                <td>{{ column.description}}</td>
-                <td>{{ column.category.name}}</td>
-                <td>
-                    <a href="" class="btn btn-dark">Edit</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                {#                  <i class="fas fa-edit"></i>#}
+                Columns
+            </h3>
+        </div>
+        <div class="card-body">
 
-    <h1>Table data</h1>
-    <table class="table">
-        <thead>
-        <tr>
-            {% for column in category.columns %}
-            <th scope="col">{{ column.title }}</th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for record in records %}
-            <tr>
-            {% for value in record %}
-                <td>{{ value}}</td>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for column in category.columns %}
+                    <tr>
+                        <th scope="row">{{ column.id }}</th>
+                        <td>
+                            {{ column.title }}
+                        </td>
+                        <td>{{ column.description}}</td>
+                        <td>{{ column.category.title}}</td>
+                        <td>
+                            <button onclick='handleFormEditModal({
+                                    url:"{{ url_for('admin.CategoryView:update_column',column_id=column.id) }}",
+                                    title:{{ column.title|tojson }},
+                                    description:{{ column.description|tojson }}
+                                    })' class="btn btn-dark">Edit</button>
+                        </td>
+                    </tr>
                 {% endfor %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Table Data
+            </h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    {% for column in category.columns %}
+                        <th scope="col">{{ column.title }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for record in records %}
+                    <tr>
+                        {% for value in record %}
+                            <td>{{ value}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade hide" id="edit_column_modal" tabindex="-1" role="dialog" aria-labelledby="edit_column_modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit column</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form id="edit_column_form" action="" method="post">
+
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Column Name</label>
+                            <input class="form-control" type="text" name="title" id="title">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" name="description" id="description"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const handleFormEditModal=data=>{
+            $('#edit_column_form').attr('action',data.url)
+            $('input#title').val(data.title)
+            $('textarea#description').val(data.description)
+            $('#edit_column_modal').modal('show')
+        }
+
+    </script>
 {% endblock %}
