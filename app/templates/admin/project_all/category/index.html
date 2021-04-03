@@ -1,0 +1,40 @@
+{% extends 'layout/admin/main.html' %}
+
+{% block content %}
+    <h1>Project Categories in #{{ category.title }}</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Type</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+            <tr>
+                <th scope="row">{{ category.id }}</th>
+                <td>{{ category.title}}</td>
+                <td>{{ category.description}}</td>
+                <td>{{ category.type}}</td>
+                <td>
+                    {% if category.type=='excel' %}
+                        <a href="{{ url_for('admin.CategoryView:show',category_id = category.id) }}" class="btn btn-warning">View</a>
+
+                    {% endif %}
+                    <a href="{{ url_for('admin.CategoryView:edit',category_id = category.id) }}" class="btn btn-warning">Edit</a>
+
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.CategoryView:delete',category_id = category.id) }}">
+
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -2,12 +2,16 @@ from flask import Blueprint, render_template, abort
 
 from app.views.admin.ProjectView import (ProjectUpdate, ProjectIndex, ProjectPost, ProjectCreate, ProjectDelete,
                                          ProjectEdit, ProjectShow)
-from app.views.admin.CategoryView import (CategoryUpdate, CategoryIndex, CategoryPost, CategoryCreate, CategoryDelete,
+from app.views.admin.CategoryView import (CategoryUpdate, CategoryPost, CategoryCreate, CategoryDelete,
                                           CategoryEdit, CategoryShow)
 from app.views.admin.ImageView import (ImagePost, ImageCreate, ImageDelete, ImageShow)
 from flask_login import login_required, current_user
 
+from app.views.admin.UserView import UserView
+from app.views.admin.all_project.CategoryView import CategoryView
+
 admin = Blueprint('admin', __name__, url_prefix='/admin')
+from app.views.admin.all_project.AllProjectView import AllProjectView
 
 
 @admin.before_request
@@ -16,6 +20,10 @@ def is_admin():
     if not current_user.is_admin:
         abort(401)
 
+
+AllProjectView.register(admin, trailing_slash=False)
+CategoryView.register(admin, trailing_slash=False)
+UserView.register(admin, trailing_slash=False)
 
 # Project Routes
 admin.add_url_rule('/projects/', view_func=ProjectIndex.as_view('project_index'), methods=['GET'])

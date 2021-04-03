@@ -1,6 +1,7 @@
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 from decouple import config
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask import Flask
 from flask_mail import Mail
@@ -17,6 +18,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
+cors = CORS()
 
 
 def create_app():
@@ -27,6 +29,7 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
     mail.init_app(app)
+    cors.init_app(app)
     sched.add_job(delete_files, 'interval', minutes=1, args=(app,))
     try:
         sched.start()
@@ -36,9 +39,11 @@ def create_app():
     from app.auth import auth as auth_blueprint
     from app.admin import admin as admin_blueprint
     from app.project import project as project_blueprint
+    from app.excel_database import excel_db
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(project_blueprint)
+    app.register_blueprint(excel_db)
     Bootstrap(app)
     return app

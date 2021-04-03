@@ -12,7 +12,7 @@ class ProjectIndex(View):
 
     def dispatch_request(self):
         form = ProjectForm()
-        projects = Project.query.all()
+        projects = Project.query.filter_by(type='single').all()
 
         return render_template('admin/project/index.html', projects=projects, form=form)
 
@@ -24,7 +24,7 @@ class ProjectPost(View):
     def dispatch_request(self):
         form = ProjectForm()
         if form.validate_on_submit():
-            project = Project(description=form.description.data, title=form.title.data)
+            project = Project(description=form.description.data, title=form.title.data, type='single')
             project.create()
             flash('Project was created successfully', 'success')
             return redirect(url_for('admin.project_index'))
@@ -44,7 +44,7 @@ class ProjectDelete(View):
     methods = ['POST']
     decorators = [login_required]
 
-    def dispatch_request(self,project_id):
+    def dispatch_request(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
         project.delete()
         flash('Project was deleted successfully', 'success')

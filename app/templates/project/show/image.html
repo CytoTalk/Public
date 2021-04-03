@@ -1,0 +1,41 @@
+{% extends 'layout/front/main.html' %}
+{% block content %}
+    <h1 class="text-dark text-center">{{ project.title }}</h1>
+    <p class="text-dark text-center">{{ project.description }}</p>
+    <br>
+
+    <div class="row px-5">
+        <div class="col-sm-3">
+            <div class="container">
+                {% for category in project.categories %}
+                    <div class="border-bottom mb-2">
+
+                        <h3>{{ category.title }}</h3>
+                        <p>{{ category.description }}</p>
+                        <div class="form-group">
+                            <select onchange="return handle_image_render(event)" class="form-control" name="current_image" id="{{ project.id }}">
+                                <option value="" selected>Select</option>
+                                {% for image in category.images %}
+                                    <option  value="{{ url_for('project.ProjectView:get_image', image_id=image.id) }}">{{ image.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div style="height: 500px" id="image_container" class="d-flex flex-column justify-content-center align-items-center">
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        function handle_image_render( event ){
+            const image = event.target.value
+            document.getElementById('image_container').innerHTML =`<img id="main_image" src="${image}" style="max-width: 100%;max-height:100%;object-fit: scale-down " alt="${image}">`
+        }
+    </script>
+{% endblock %}
