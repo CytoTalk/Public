@@ -1,41 +1,43 @@
 {% extends 'layout/front/main.html' %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-sm-6 m-auto">
-            <h1 class="text-dark text-center">
-                Integrate DEB
-            </h1>
-            <form action="{{ url_for('main.integrate_deg') }}" enctype="multipart/form-data" method="post">
-                <div class="form-group">
-                    <label for="integrate_deg_files">Files</label>
-                    <input accept=".xlsx,.xls" class="form-control" id="integrate_deg_files" multiple name="deg_files"
-                           required type="file">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 m-auto">
+                <h1 class="text-dark text-center">
+                    Integrate DEB
+                </h1>
+                <form action="{{ url_for('main.integrate_deg') }}" enctype="multipart/form-data" method="post">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 
-                </div>
-                <div class="form-group">
-                    <label for="adj_p">adj_p</label>
-                    <input class="form-control" id="adj_p" name="adj_p" required type="text">
+                    <div class="form-group">
+                        <label for="integrate_deg_files">Files</label>
+                        <input accept=".xlsx,.xls" class="form-control" id="integrate_deg_files" multiple name="deg_files"
+                               required type="file">
 
-                </div>
-                <div class="form-group">
-                    <label for="logFC_cutoff">logFC_cutoff</label>
-                    <input class="form-control" id="logFC_cutoff" name="logFC_cutoff" required type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="adj_p">adj_p</label>
+                        <input class="form-control" id="adj_p" name="adj_p" required type="text">
 
-                </div>
-                <div class="form-group">
-                    <label for="fill_zeros">fill_zeros</label>
-                    <select class="form-control" id="fill_zeros" name="fill_zeros" required>
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="logFC_cutoff">logFC_cutoff</label>
+                        <input class="form-control" id="logFC_cutoff" name="logFC_cutoff" required type="text">
 
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success btn-md" type="submit"> Submit</button>
-                </div>
-            </form>
+                    </div>
+                    <div class="form-group">
+                        <label for="fill_zeros">fill_zeros</label>
+                        <select class="form-control" id="fill_zeros" name="fill_zeros" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success btn-md" type="submit"> Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
