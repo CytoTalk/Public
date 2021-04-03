@@ -1,0 +1,11 @@
+{% extends 'layout/front/main.html' %}
+{% block content %}
+    <div class="column is-4 is-offset-4">
+        <div class="col-sm-6 card m-auto p-5">
+            <div class="p-10">
+                <p>A verification link has been sent to your email. Click the link on the email to activate your account</p>
+                <p>Did not receive a verification link? <a href="{{ url_for('auth.VerificationView:index') }}">Resend email</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
