@@ -1,0 +1,39 @@
+{% extends 'layout/admin/main.html' %}
+
+{% block content %}
+    <h1>Images in <span class="text-success">{{ category.title }}</span>  category</h1>
+
+    <a href="{{ url_for('admin.image_create',category_id=category.id) }}" class="btn btn-success">Add new image</a>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Preview</th>
+            <th scope="col">Image Name</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for image in category.images %}
+            <tr>
+                <th scope="row">{{ image.id }}</th>
+                <td>
+                    <div style="width: 150px;height: 100px" class="d-flex flex-column justify-content-center align-items-center">
+                        <img style="width: 100%;height: 100%" src="{{ url_for('admin.image_show',image_id=image.id) }}" alt="{{ image.name }}" class="w-100">
+                    </div>
+                </td>
+                <td>{{ image.name}}</td>
+                <td>{{ image.category.title}}</td>
+                <td>
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.image_delete',image_id = image.id) }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

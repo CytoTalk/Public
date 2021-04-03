@@ -7,7 +7,7 @@
     <div class="row px-5">
         <div class="col-sm-3">
             <div class="container">
-                {% for category in project.categories %}
+                {% for category in categories %}
                     <div class="border-bottom mb-2">
 
                         <h3>{{ category.title }}</h3>
@@ -16,7 +16,7 @@
                             <select onchange="return handle_image_render(event)" class="form-control" name="current_image" id="{{ project.id }}">
                                 <option value="" selected>Select</option>
                                 {% for image in category.images %}
-                                    <option  value="{{ url_for('project.get_image', image_id=image.id) }}">{{ image.name }}</option>
+                                    <option  value="{{ url_for('project.ProjectView:get_image', image_id=image.id) }}">{{ image.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
