@@ -1,0 +1,57 @@
+{% extends 'layout/front/main.html' %}
+{% block content %}
+    <h1 class="text-dark text-center">{{ category.title }}</h1>
+    <p class="text-dark text-center">{{ category.description }}</p>
+    <br>
+
+    <div class="row px-5">
+        <div class="col-sm-3">
+            <div class="container">
+                {% for column in category.columns %}
+                    <div class="border-bottom mb-2">
+
+                        <h3>{{ column.title }}</h3>
+                        <p>{{ column.description }}</p>
+                        <div class="form-group">
+                            <select onchange="return handle_image_render(event)" class="form-control" name="current_image" id="{{ column.id }}">
+
+                            </select>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div  class="d-flex flex-column justify-content-center align-items-center">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    {% for column in category.columns %}
+                        <th scope="col">{{ column.title }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for record in records %}
+                    <tr>
+                        {% for value in record %}
+                            <td>{{ value}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        function handle_image_render( event ){
+            const image = event.target.value
+            document.getElementById('image_container').innerHTML =`<img id="main_image" src="${image}" style="max-width: 100%;max-height:100%;object-fit: scale-down " alt="${image}">`
+        }
+    </script>
+{% endblock %}

@@ -18,3 +18,8 @@ class ExcelRecord(db.Model, BaseModel):
     column_id = db.Column(db.Integer, db.ForeignKey('excel_columns.id'))
     value = db.Column(db.Text)
     batch_id = db.Column(db.Integer)
+
+    def serialize(self):
+        return {
+            'value': self.value
+        }

@@ -1,3 +1,4 @@
+from app import db
 from app.models.Category import Category
 from app.models.Excel import ExcelColumn, ExcelRecord
 import pandas as pd
@@ -43,4 +44,15 @@ class HandleExcel:
         for row in self.df.itertuples():
             batch_id = batch_id + 1
             for key, column in enumerate(self.category.columns):
-                store_records(batch_id=batch_id, column_id=column.id, category_id=self.category.id, value=row[key+1])
+                store_records(batch_id=batch_id, column_id=column.id, category_id=self.category.id, value=row[key + 1])
+
+    @staticmethod
+    def handle_query(query):
+        records = ExcelRecord.query.filter_by(query)
+        df = pd.read_sql(records.statement, db.session.bind)
+        df.drop(['CREATED_AT', 'UPDATED_AT', 'category_id', 'id'], axis=1, inplace=True)
+        records = []
+        for batch, df_batch in df.groupby('batch_id'):
+            df_batch.drop(['batch_id', 'column_id'], axis=1, inplace=True)
+            records.append(df_batch.to_dict('list')['value'])
+        return records

@@ -7,3 +7,4 @@ class Project(db.Model, BaseModel):
     title = db.Column(db.String(1000))
     description = db.Column(db.Text)
     categories = db.relationship('Category', backref='project', lazy=True, cascade="all,delete")
+    type = db.Column(db.String(15), default="single")
