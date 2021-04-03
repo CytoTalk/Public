@@ -7,6 +7,7 @@ from app.views.admin.CategoryView import (CategoryUpdate, CategoryPost, Category
 from app.views.admin.ImageView import (ImagePost, ImageCreate, ImageDelete, ImageShow)
 from flask_login import login_required, current_user
 
+from app.views.admin.UserView import UserView
 from app.views.admin.all_project.CategoryView import CategoryView
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -22,6 +23,7 @@ def is_admin():
 
 AllProjectView.register(admin, trailing_slash=False)
 CategoryView.register(admin, trailing_slash=False)
+UserView.register(admin, trailing_slash=False)
 
 # Project Routes
 admin.add_url_rule('/projects/', view_func=ProjectIndex.as_view('project_index'), methods=['GET'])
