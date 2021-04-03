@@ -8,14 +8,14 @@ from app.models.Project import Project
 
 
 def get_project(project_id):
-    return Project.query.filter_by(id=project_id ).first_or_404()
+    return Project.query.filter_by(id=project_id).first_or_404()
 
 
 class AllProjectView(FlaskView):
     decorators = [login_required]
 
     def index(self):
-        projects = Project.query.all()
+        projects = Project.query.filter_by(type="combined").all()
         return render_template('admin/project_all/index.html', projects=projects)
 
     def create(self):
@@ -26,7 +26,7 @@ class AllProjectView(FlaskView):
     def store(self):
         form = ProjectAlLForm(request.form)
         if form.validate_on_submit():
-            project = Project(title=form.title.data, description=form.description.data, )
+            project = Project(title=form.title.data, description=form.description.data, type='combined')
             project.save()
             flash("Project was created successfully", 'success')
             return redirect(url_for("admin.AllProjectView:index"))

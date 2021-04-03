@@ -26,8 +26,14 @@ class ProjectView(FlaskView):
     def show(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
         if project.type == 'combined':
-            return render_template('project/show/category.html', project=project)
-        return render_template('project/show.html', project=project)
+            image_category = Category.query.filter_by(project_id=project_id, type='image').first() is not None
+            excel_categories = Category.query.filter_by(project_id=project_id, type='excel').all()
+            return render_template(
+                'project/show/category.html', project=project, image_category=image_category,
+                excel_categories=excel_categories)
+        else:
+            categories = Category.query.filter_by(project_id=project_id).all()
+            return render_template('project/show.html', project=project, categories=categories)
 
     @route('/category/<category_id>')
     def category(self, category_id):
@@ -41,7 +47,6 @@ class ProjectView(FlaskView):
         value = request.args.get('value')
         query = ExcelRecord.query.filter_by(column_id=column_id)
         if value:
-            print("value is here")
             result = query.filter(ExcelRecord.value.like(f"%{value}%")).limit(10).all()
         else:
             result = query.limit(10).all()
@@ -62,7 +67,8 @@ class ProjectView(FlaskView):
             for key, value in request.form.items():
                 conditions.append(f"(values::text like '%{value}%')")
             params = " and ".join(conditions)
-            sql = text(f"select * from (select batch_id,array_agg(value order by column_id) as values from excel_records  group by batch_id) as s where {params}")
+            sql = text(
+                f"select * from (select batch_id,array_agg(value order by column_id) as values from excel_records  group by batch_id) as s where {params}")
             result = db.engine.execute(sql)
             return jsonify(result=[list(x) for x in result])
 
@@ -73,3 +79,9 @@ class ProjectView(FlaskView):
         image = Image.query.filter_by(id=image_id).first_or_404()
         return send_from_directory(str(Path(current_app.config['ASSETS_PATH'])), filename=image.path,
                                    as_attachment=True)
+
+    @route('/project/<project_id>/images', methods=('GET',))
+    def show_project_images(self, project_id):
+        project = Project.query.filter_by(id=project_id).first_or_404()
+        categories = Category.query.filter_by(project_id=project_id, type='image').all()
+        return render_template('project/show.html', project=project, categories=categories)

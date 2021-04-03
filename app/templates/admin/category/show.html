@@ -28,6 +28,8 @@
                 <td>{{ image.category.title}}</td>
                 <td>
                     <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.image_delete',image_id = image.id) }}">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </td>

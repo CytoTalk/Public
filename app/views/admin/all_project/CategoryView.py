@@ -45,7 +45,7 @@ class CategoryView(FlaskView):
                 return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
 
         elif category_type == 'image':
-            url = url_for('admin.CategoryView:store', category_type='image')
+            url = url_for('admin.CategoryView:create', category_type='image', project_id=project_id)
             form = ImageCategoryForm()
 
             if form.validate_on_submit():
@@ -55,10 +55,9 @@ class CategoryView(FlaskView):
                 flash('Category was created successfully', 'success')
                 return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
             else:
-                abort(403)
+                return render_template('admin/project_all/category/create.html', form=form, url=url)
         else:
             abort(404)
-        return render_template('admin/project_all/category/create.html', form=form, url=url)
 
     @route('category/<category_id>', methods=('GET',))
     def show(self, category_id):
@@ -73,7 +72,8 @@ class CategoryView(FlaskView):
                 print(df_batch)
                 records.append(df_batch.to_dict('list')['value'])
             return render_template('admin/project_all/category/show/excel.html', category=category, records=records)
-        return render_template('admin/project_all/category/show/excel.html', category=category)
+        else:
+            return render_template('admin/project_all/category/show/image.html', category=category)
 
     @route('/<category_id>/edit', methods=('GET',))
     def edit(self, category_id):
