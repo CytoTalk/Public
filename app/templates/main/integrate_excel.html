@@ -7,6 +7,8 @@
                     Integrate CSV files
                 </h1>
                 <form enctype="multipart/form-data" method="post" action="{{ url_for('main.integrate_excel_files') }}">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -29,7 +31,7 @@
                                 <label for="csv_file_2">CSV File 2</label>
                                 <input class="form-control" type="file" name="csv_file_2" id="csv_file_2">
                             </div>
-                             <div class="form-group">
+                            <div class="form-group">
                                 <label for="key_column_from_file_2">Key column from file 2</label>
                                 <input class="form-control" type="number" name="key_column_from_file_2" id="key_column_from_file_2">
                             </div>
@@ -45,9 +47,9 @@
                             </div>
                         </div>
                     </div>
-                                    <div class="p-3 text-center">
-                    <button class="btn btn-success btn-lg" type="submit">Submit</button>
-                                    </div>
+                    <div class="p-3 text-center">
+                        <button class="btn btn-success btn-lg" type="submit">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
