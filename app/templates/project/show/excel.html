@@ -1,4 +1,8 @@
 {% extends 'layout/front/main.html' %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+{% endblock %}
 {% block content %}
     <h1 class="text-dark text-center">{{ category.title }}</h1>
     <p class="text-dark text-center">{{ category.description }}</p>
@@ -13,7 +17,7 @@
                         <h3>{{ column.title }}</h3>
                         <p>{{ column.description }}</p>
                         <div class="form-group">
-                            <select onchange="return handle_image_render(event)" class="form-control" name="current_image" id="{{ column.id }}">
+                            <select onfocus="handleColumnQuery({id:{{column.id}}})" class="form-control" name="current_image" id="col-{{ column.id }}">
 
                             </select>
                         </div>
@@ -24,34 +28,46 @@
         <div class="col-sm-9">
             <div  class="d-flex flex-column justify-content-center align-items-center">
 
-            <table class="table">
-                <thead>
-                <tr>
-                    {% for column in category.columns %}
-                        <th scope="col">{{ column.title }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                {% for record in records %}
+                <table class="table">
+                    <thead>
                     <tr>
-                        {% for value in record %}
-                            <td>{{ value}}</td>
+                        {% for column in category.columns %}
+                            <th scope="col">{{ column.title }}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for record in records %}
+                        <tr>
+                            {% for value in record %}
+                                <td>{{ value}}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
 {% endblock %}
 {% block scripts %}
+    <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
     <script>
-        function handle_image_render( event ){
-            const image = event.target.value
-            document.getElementById('image_container').innerHTML =`<img id="main_image" src="${image}" style="max-width: 100%;max-height:100%;object-fit: scale-down " alt="${image}">`
+        const  handleColumnQuery = data =>{
+            const url = "{{ request.host_url }}projects/project/get_column_data"
+            $(`#col-${data.id}`).select2({
+                ajax: {
+                    url: url+'/'+data.id,
+                    data: function (params) {
+                        var query = {
+                            value: params.term,
+                        }
+
+                        // Query parameters will be ?search=[term]&type=public
+                        return query;
+                    }
+                }});
         }
     </script>
 {% endblock %}

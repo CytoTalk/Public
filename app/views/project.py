@@ -4,6 +4,7 @@ from flask import render_template, send_from_directory, current_app, jsonify
 from flask_classful import FlaskView
 from flask import request, flash, redirect, url_for, render_template
 from flask_classful import FlaskView, route
+from flask_cors import cross_origin
 from flask_login import login_required
 
 from app.functions.store_excel import HandleExcel
@@ -33,6 +34,7 @@ class ProjectView(FlaskView):
             return render_template('project/show/excel.html', category=category)
 
     @route('/get_column_data/<column_id>', methods=('GET',))
+    @cross_origin()
     def get_column_data(self, column_id):
         value = request.args.get('value')
         query = ExcelRecord.query.filter_by(column_id=column_id)
@@ -42,7 +44,11 @@ class ProjectView(FlaskView):
         else:
             result = query.limit(10).all()
 
-        return jsonify(data=[e.serialize() for e in result])
+        return jsonify(results=[e.serialize() for e in result])
+
+    @route('/handle_excel_records', methods=['POST'])
+    def handle_excel_records(self):
+        pass
 
 
     @route('/category/image/<image_id>', methods=('GET',))
