@@ -6,21 +6,22 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
     <meta content="" name="description"/>
     <meta content="" name="author"/>
+    <meta http-equiv="Content-Security-Policy" content="">
     <title> CytoTalk, LLC
     </title>
     <!--    Bootstrap-->
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" rel="stylesheet">
+
     <link href="{{ url_for('static', filename='main/image/favicon.ico') }} " rel="icon" type="image/x-icon"/>
     <!-- Font Awesome icons (free version)-->
     <script crossorigin="anonymous" src="https://use.fontawesome.com/releases/v5.15.1/js/all.js"></script>
     <!-- Google fonts-->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
     <link href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic" rel="stylesheet"
-          type="text/css"/>
+    type="text/css"/>
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css"/>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{{ url_for('static', filename='main/css/styles.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='vendor/bootstrap-4.3.1/css/bootstrap.min.css') }} " rel="stylesheet"/>
 </head>
 
 <body id="page-top">
@@ -42,25 +43,51 @@
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#team">Team</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#contact">Contact</a></li>
-                {% if current_user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                {% if not current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('auth.LoginView:index') }}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('auth.RegistrationView:index') }}">Register</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link text-right" href="{{ url_for('auth.LoginView:logout') }}">Logout</a></li>
+
+                {% endif %}
+
+                {% if current_user.is_authenticated and current_user.is_admin%}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 <div style="margin-top: 100px" >
-{% with messages = get_flashed_messages(category_filter=["error"]) %}
-{% if messages %}
-<div class=flashes>
-    {% for message in messages %}
-    <div class="alert alert-danger alert-dismissible">{{ message }}</div>
-    {% endfor %}
-</div>
-{% endif %}
-{% endwith %}
-{% block content %}
-{% endblock %}
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["warning"]) %}
+        {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% block content %}
+    {% endblock %}
 </div>
 
 <!-- Footer-->
@@ -84,11 +111,10 @@
 </footer>
 
 <!-- Bootstrap core JS-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script crossorigin="anonymous" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script  src="{{ url_for('static', filename='vendor/jquery-3.6/jquery.js') }} "></script>
+<script  src="{{ url_for('static', filename='vendor/bootstrap-4.3.1/js/bootstrap.min.js') }} "></script>
 <!-- Third party plugin JS-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+{#<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>#}
 <!-- Contact form JS-->
 <!-- Core theme JS-->
 <script src="{{ url_for('static', filename='main/js/scripts.js') }}"></script>

@@ -6,6 +6,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -26,9 +38,13 @@ jobs:
       - name: Test with unittest
         run: |
           python -m unittest
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+        env:
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: github_actions
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+
       - name: Deploy Via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -37,12 +53,11 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /home/django/flask_app
-            git pull origin main
+            git pull -f origin master
             python3 -m pip install -r requirements.txt
-            python3 manage.py migrate
-            python3 manage.py upgrade
+            python3 manage.py db migrate
+            python3 manage.py db upgrade
             systemctl restart gunicorn
             chmod -R 777 /home/django/flask_app/uploads
             chmod -R 777 /home/django/flask_app/output_location
             chmod -R 777 /home/django/flask_app/assets
-            echo "Deployment successfull"
