@@ -43,6 +43,9 @@ class CategoryView(FlaskView):
                 excel.store_records()
                 flash("Data was stored successfully", "success")
                 return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
+            else:
+                return render_template('admin/project_all/category/create.html', form=form, url=url)
+
 
         elif category_type == 'image':
             url = url_for('admin.CategoryView:create', category_type='image', project_id=project_id)
