@@ -6,7 +6,9 @@ from flask import request, flash, redirect, url_for, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
 from flask_login import login_required
+from sqlalchemy import text
 
+from app import db, csrf
 from app.functions.store_excel import HandleExcel
 from app.models.Category import Category
 from app.models.Excel import ExcelRecord
@@ -46,10 +48,25 @@ class ProjectView(FlaskView):
 
         return jsonify(results=[e.serialize() for e in result])
 
-    @route('/handle_excel_records', methods=['POST'])
-    def handle_excel_records(self):
-        pass
+    @route('/handle_excel_records/<category_id>', methods=('POST', 'GET',))
+    @cross_origin()
+    @csrf.exempt
+    def handle_excel_records(self, category_id):
+        if request.method == 'GET':
+            sql = text(
+                f"select batch_id,array_agg(value order by column_id) as values from excel_records where category_id={category_id} group by batch_id limit(10) ")
+            result = db.engine.execute(sql)
+            return jsonify(result=[list(x) for x in result])
+        else:
+            conditions = []
+            for key, value in request.form.items():
+                conditions.append(f"(values::text like '%{value}%')")
+            params = " and ".join(conditions)
+            sql = text(f"select * from (select batch_id,array_agg(value order by column_id) as values from excel_records  group by batch_id) as s where {params}")
+            result = db.engine.execute(sql)
+            return jsonify(result=[list(x) for x in result])
 
+        return jsonify(HandleExcel.handle_query(dict(category_id=13)))
 
     @route('/category/image/<image_id>', methods=('GET',))
     def get_image(self, image_id):

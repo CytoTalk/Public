@@ -48,11 +48,12 @@ class HandleExcel:
 
     @staticmethod
     def handle_query(query):
-        records = ExcelRecord.query.filter_by(query)
+        records = ExcelRecord.query.filter_by(**query)
         df = pd.read_sql(records.statement, db.session.bind)
         df.drop(['CREATED_AT', 'UPDATED_AT', 'category_id', 'id'], axis=1, inplace=True)
         records = []
         for batch, df_batch in df.groupby('batch_id'):
+            if batch == 10: break
             df_batch.drop(['batch_id', 'column_id'], axis=1, inplace=True)
             records.append(df_batch.to_dict('list')['value'])
         return records

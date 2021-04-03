@@ -11,18 +11,22 @@
     <div class="row px-5">
         <div class="col-sm-3">
             <div class="container">
-                {% for column in category.columns %}
-                    <div class="border-bottom mb-2">
+                <form onsubmit="return fetch_result(event)" id="search-form" action="">
+                    {% for column in category.columns %}
+                        <div class="border-bottom mb-2">
 
-                        <h3>{{ column.title }}</h3>
-                        <p>{{ column.description }}</p>
-                        <div class="form-group">
-                            <select onfocus="handleColumnQuery({id:{{column.id}}})" class="form-control" name="current_image" id="col-{{ column.id }}">
+                            <h3>{{ column.title }}</h3>
+                            <p>{{ column.description }}</p>
+                            <div class="form-group">
+                                <select onfocus="handleColumnQuery({id:{{column.id}}})" class="form-control" name="{{ column.id }}" id="col-{{ column.id }}">
 
-                            </select>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                    <button onclick="" style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
+                </form>
+
             </div>
         </div>
         <div class="col-sm-9">
@@ -36,14 +40,8 @@
                         {% endfor %}
                     </tr>
                     </thead>
-                    <tbody>
-                    {% for record in records %}
-                        <tr>
-                            {% for value in record %}
-                                <td>{{ value}}</td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
+                    <tbody id="result-render">
+
                     </tbody>
                 </table>
             </div>
@@ -53,7 +51,52 @@
 {% endblock %}
 {% block scripts %}
     <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='vendor/axios/axios.min.js') }}"></script>
     <script>
+        const url = "{{ request.host_url }}"
+        const category = "{{ category.id }}"
+        $(document).ready(function () {
+            axios.get(url+"projects/project/handle_excel_records/"+category)
+                .then(res=>{
+                    if (res.data?.result){
+                        render_result(res.data.result)
+                    }
+                    console.log(res.data)
+
+                })
+        })
+
+        const render_result = result=>{
+
+            let container= $('#result-render')
+            container.html("")
+            result.map(data=>{
+                container.append(`
+                            <tr>
+                            ${data[1].map(value=>"<td>"+value+"</td>")}
+                            </tr>
+                            `)
+            })
+        }
+
+        const fetch_result = event =>{
+            event.preventDefault()
+            const form = new FormData(event.target)
+            if (form.entries().length===0){
+
+            }else{
+                axios.post(url+"projects/project/handle_excel_records/"+category,form)
+                    .then(res=>{
+                        if (res.data?.result){
+                            render_result(res.data.result)
+                        }
+                        console.log(res.data)
+
+                    })
+            }
+
+
+        }
         const  handleColumnQuery = data =>{
             const url = "{{ request.host_url }}projects/project/get_column_data"
             $(`#col-${data.id}`).select2({
@@ -66,7 +109,8 @@
 
                         // Query parameters will be ?search=[term]&type=public
                         return query;
-                    }
+                    },
+
                 }});
         }
     </script>

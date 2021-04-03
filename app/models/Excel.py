@@ -21,6 +21,6 @@ class ExcelRecord(db.Model, BaseModel):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': self.value,
             'text': self.value
         }
