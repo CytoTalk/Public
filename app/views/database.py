@@ -12,13 +12,13 @@ class DatabaseView(FlaskView):
     def index(self):
         databases = Project.query.all()
         print(databases)
-        return render_template('app/templates/front/database/index.html', databases=databases)
+        return render_template('front/database/index.html', databases=databases)
 
     @route('/<database_id>', methods=('GET',))
     def show(self, database_id):
         database = Project.query.filter_by(id=database_id).first_or_404()
         categories = Category.query.filter_by(database_id=database_id).all()
-        return render_template('app/templates/front/database/show.html', database=database, categories=categories)
+        return render_template('front/database/show.html', database=database, categories=categories)
 
     @route('/subproject/image/<image_id>', methods=('GET',))
     def get_image(self, image_id):
@@ -29,4 +29,4 @@ class DatabaseView(FlaskView):
     @route('/database/<database_id>/images', methods=('GET',))
     def show(self, database_id):
         database = Project.query.filter_by(id=database_id).first_or_404()
-        return render_template('app/templates/front/database/show.html', database=database)
+        return render_template('front/database/show.html', database=database)
