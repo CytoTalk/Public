@@ -1,8 +1,9 @@
 {% extends 'layout/admin/main.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
-
+{% block title %}Edit Database{% endblock %}
+{% block heading %}Edit Database{% endblock %}
 {% block content %}
-    <h1>Edit Project</h1>
+    <h1>Edit Database</h1>
     {{ wtf.quick_form(form) }}
 
 {% endblock %}

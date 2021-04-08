@@ -2,10 +2,10 @@ from . import db
 
 
 class Project(db.Model):
-    __tablename__ = 'project'
+    __tablename__ = 'database'
     id = db.Column(db.Integer,primary_key=True)
     project_name = db.Column(db.String(255),nullable=False)
-    project_category = db.relationship('Category', backref='project', lazy='dynamic')
+    project_category = db.relationship('Category', backref='database', lazy='dynamic')
 
     def __repr__(self):
         return f'Project {self.project_name}'
@@ -15,7 +15,7 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer,primary_key=True)
     category_name = db.Column(db.String(255),nullable=False)
-    project_id = db.Column(db.Integer,db.ForeignKey("project.id"))
+    project_id = db.Column(db.Integer,db.ForeignKey("database.id"))
     images = db.relationship('Image', backref='category', lazy='dynamic')
 
     def __repr__(self):

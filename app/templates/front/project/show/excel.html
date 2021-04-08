@@ -98,7 +98,7 @@
 
         }
         const  handleColumnQuery = data =>{
-            const url = "{{ request.host_url }}projects/project/get_column_data"
+            const url = "{{ request.host_url }}projects/database/get_column_data"
             $(`#col-${data.id}`).select2({
                 ajax: {
                     url: url+'/'+data.id,

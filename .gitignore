@@ -131,11 +131,11 @@ env.bak/
 venv.bak/
 pythonenv*
 
-# Spyder project settings
+# Spyder database settings
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope database settings
 .ropeproject
 
 # mkdocs documentation
@@ -210,9 +210,9 @@ Thumbs.db #thumbnail cache on Windows
 # Environments
 # .env
 
-# Spyder project settings
+# Spyder database settings
 
-# Rope project settings
+# Rope database settings
 
 # mkdocs documentation
 

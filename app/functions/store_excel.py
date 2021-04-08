@@ -1,5 +1,5 @@
 from app import db
-from app.models.Category import Category
+from app.models.Database import Category
 from app.models.Excel import ExcelColumn, ExcelRecord
 import pandas as pd
 

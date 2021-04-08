@@ -1077,7 +1077,7 @@ $.validator.addMethod( "nipPL", function( value ) {
 }, "Please specify a valid NIP number." );
 
 /**
- * Created for project jquery-validation.
+ * Created for database jquery-validation.
  * @Description Brazillian PIS or NIS number (Número de Identificação Social Pis ou Pasep) is the equivalent of a
  * Brazilian tax registration number NIS of PIS numbers have 11 digits in total: 10 numbers followed by 1 check numbers
  * that are being used for validation.

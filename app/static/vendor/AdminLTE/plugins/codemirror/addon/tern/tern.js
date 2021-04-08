@@ -13,7 +13,7 @@
 // * plugins: An object mapping plugin names to configuration
 //   options.
 // * getFile: A function(name, c) that can be used to access files in
-//   the project that haven't been loaded yet. Simply do c(null) to
+//   the database that haven't been loaded yet. Simply do c(null) to
 //   indicate that a file is not available.
 // * fileFilter: A function(value, docName, doc) that will be applied
 //   to documents before passing them on to Tern.

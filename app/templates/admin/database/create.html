@@ -1,8 +1,9 @@
 {% extends 'layout/admin/main.html' %}
+{% block title %}Create Database{% endblock %}
+{% block heading %}Create Database{% endblock %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
-    <h1>Create Category</h1>
     {{ wtf.quick_form(form) }}
 
 

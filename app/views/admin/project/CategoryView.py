@@ -10,7 +10,7 @@ from app import db, csrf
 from app.forms.admin.project_all.Categories import ExcelCategoryForm, ImageCategoryForm
 from app.forms.admin.project_all.ProjectAll import ProjectAlLForm
 from app.functions.store_excel import HandleExcel
-from app.models.Category import Category
+from app.models.Database import Category
 from app.models.Excel import ExcelRecord, ExcelColumn
 from app.models.Project import Project
 
@@ -107,7 +107,7 @@ class CategoryView(FlaskView):
         else:
             return redirect(request.url)
 
-    @route('project/<project_id>/category/<category_id>/delete', methods=('POST',))
+    @route('database/<project_id>/category/<category_id>/delete', methods=('POST',))
     def delete(self, project_id, category_id):
         category = get_category(category_id)
         category.delete()

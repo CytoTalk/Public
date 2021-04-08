@@ -345,7 +345,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     }
   });
 
-  // provided by the phpLiteAdmin project - phpliteadmin.org
+  // provided by the phpLiteAdmin database - phpliteadmin.org
   CodeMirror.defineMIME("text/x-sqlite", {
     name: "sql",
     // commands of the official SQLite client, ref: https://www.sqlite.org/cli.html#dotcmd
