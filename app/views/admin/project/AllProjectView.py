@@ -2,7 +2,7 @@ from flask import request, flash, redirect, url_for, render_template
 from flask_classful import FlaskView, route
 from flask_login import login_required
 
-from app.forms.admin.project_all.ProjectAll import ProjectAlLForm
+from app.forms.admin.project.ProjectAll import ProjectForm
 from app.models.Database import Category
 from app.models.Project import Project
 
@@ -19,12 +19,12 @@ class AllProjectView(FlaskView):
         return render_template('admin/project_all/index.html', projects=projects)
 
     def create(self):
-        form = ProjectAlLForm()
+        form = ProjectForm()
         return render_template('admin/project_all/create.html', form=form)
 
     @route('/', methods=('POST',))
     def store(self):
-        form = ProjectAlLForm(request.form)
+        form = ProjectForm(request.form)
         if form.validate_on_submit():
             project = Project(title=form.title.data, description=form.description.data, type='combined')
             project.save()
@@ -42,13 +42,13 @@ class AllProjectView(FlaskView):
     @route('/<project_id>/edit', methods=('GET',))
     def edit(self, project_id):
         project = get_project(project_id)
-        form = ProjectAlLForm(title=project.title, description=project.description)
+        form = ProjectForm(title=project.title, description=project.description)
         return render_template('admin/project_all/edit.html', form=form, project_id=project_id)
 
     @route('/<project_id>/update', methods=('POST',))
     def update(self, project_id):
         project = get_project(project_id)
-        form = ProjectAlLForm(request.form)
+        form = ProjectForm(request.form)
         if form.validate_on_submit():
             project.title = form.title.data
             project.description = form.description.data

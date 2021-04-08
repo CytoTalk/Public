@@ -2,12 +2,11 @@ from pathlib import Path
 from uuid import uuid4
 
 from flask import render_template, flash, redirect, abort, url_for, current_app, send_from_directory
-from flask.views import View
 from flask_classful import FlaskView
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
-from app.forms.admin.Image import ImageForm
+from app.forms.admin.database.Image import ImageForm
 from app.models.Image import Image
 
 

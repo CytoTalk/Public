@@ -1,9 +1,8 @@
 from flask import render_template, flash, redirect, abort, url_for
-from flask.views import View
 from flask_classful import FlaskView
 from flask_login import login_required
 
-from app.forms.admin.Category import CategoryForm
+from app.forms.admin.database.Category import CategoryForm
 from app.models.Database import DatabaseCategory as Category
 
 

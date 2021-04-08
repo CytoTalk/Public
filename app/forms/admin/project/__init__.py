@@ -6,6 +6,18 @@ from wtforms.validators import DataRequired
 PROJECT_TYPES = [(1, 'Excel'), (2, 'Image')]
 
 
+class ProjectForm(FlaskForm):
+    title = StringField('Project Name', validators=[DataRequired()])
+    description = StringField('Project description', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class SubProjectForm(FlaskForm):
+    title = StringField('Sub Project Name', validators=[DataRequired()])
+    description = StringField('Sub Project description', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
 class ExcelCategoryForm(FlaskForm):
     title = StringField('Category Name', validators=[DataRequired()])
     description = StringField('Category description', validators=[DataRequired()])

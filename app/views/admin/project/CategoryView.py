@@ -7,8 +7,8 @@ from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app import db, csrf
-from app.forms.admin.project_all.Categories import ExcelCategoryForm, ImageCategoryForm
-from app.forms.admin.project_all.ProjectAll import ProjectAlLForm
+from app.forms.admin.project.Categories import ExcelCategoryForm, ImageCategoryForm
+from app.forms.admin.project.ProjectAll import ProjectForm
 from app.functions.store_excel import HandleExcel
 from app.models.Database import Category
 from app.models.Excel import ExcelRecord, ExcelColumn
@@ -81,7 +81,7 @@ class CategoryView(FlaskView):
     @route('/<category_id>/edit', methods=('GET',))
     def edit(self, category_id):
         project = get_category(category_id)
-        form = ProjectAlLForm(title=project.title, description=project.description)
+        form = ProjectForm(title=project.title, description=project.description)
         return render_template('admin/project_all/edit.html', form=form, category_id=category_id)
 
     @route('/update_column/<column_id>', methods=('POST',))
@@ -97,7 +97,7 @@ class CategoryView(FlaskView):
     @route('/<category_id>/update', methods=('POST',))
     def update(self, category_id):
         project = get_category(category_id)
-        form = ProjectAlLForm(request.form)
+        form = ProjectForm(request.form)
         if form.validate_on_submit():
             project.title = form.title.data
             project.description = form.description.data
