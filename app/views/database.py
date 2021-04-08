@@ -20,7 +20,7 @@ class DatabaseView(FlaskView):
         categories = Category.query.filter_by(database_id=database_id).all()
         return render_template('app/templates/front/database/show.html', database=database, categories=categories)
 
-    @route('/category/image/<image_id>', methods=('GET',))
+    @route('/subproject/image/<image_id>', methods=('GET',))
     def get_image(self, image_id):
         image = Image.query.filter_by(id=image_id).first_or_404()
         return send_from_directory(str(Path(current_app.config['ASSETS_PATH'])), filename=image.path,

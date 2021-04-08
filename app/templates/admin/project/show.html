@@ -1,0 +1,37 @@
+{% extends 'layout/admin/main.html' %}
+
+{% block content %}
+    <h1>Categories in <span class="text-success">{{ project.title }}</span> </h1>
+    <a href="{{ url_for('admin.CategoryView:create',project_id=project.id,subproject_type='excel') }}" class="btn btn-success">Create Excel subproject</a>
+    <a href="{{ url_for('admin.CategoryView:create',project_id=project.id,subproject_type='image') }}" class="btn btn-success">Create Image subproject</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Type</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for subproject in project.subprojects %}
+            <tr>
+                <th scope="row">{{ subproject.id }}</th>
+                <td>{{ subproject.title}}</td>
+                <td>{{ subproject.description}}</td>
+                <td>{{ subproject.type}}</td>
+                <td>
+                    <a href="{{ url_for('admin.CategoryView:edit',subproject_id = subproject.id,project_id=project.id) }}" class="btn btn-success">Edit</a>
+                    <a href="{{ url_for('admin.CategoryView:show',subproject_id = subproject.id) }}" class="btn btn-dark">View</a>
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.CategoryView:delete',project_id=project.id,subproject_id = subproject.id) }}">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

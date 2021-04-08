@@ -9,7 +9,7 @@ from sqlalchemy import text
 from app import db, csrf
 from app.models.Project import SubProject
 from app.models.Excel import ExcelRecord
-from app.models.Project import Image
+from app.models.Project import ImageStore as Image
 from app.models.Project import Project
 
 

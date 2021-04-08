@@ -7,17 +7,13 @@ from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app.forms.admin.database import ImageForm
-from app.models.Database import Image
+from app.models.Project import Image
 
 
 class ImageView(FlaskView):
     decorators = [login_required]
 
-    def post(self, category_id):
-        form = ImageForm()
-
-        return abort(400, description="Make sure you have uploaded the correct files")
-
+    @route('/category/<category_id>/image/create')
     def create(self, category_id):
         form = ImageForm()
         if form.validate_on_submit():

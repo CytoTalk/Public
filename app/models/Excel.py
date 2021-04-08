@@ -5,7 +5,7 @@ from app.models.BaseModel import BaseModel
 class ExcelColumn(db.Model, BaseModel):
     __tablename__ = 'excel_columns'
     id = db.Column(db.Integer, primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('subproject.id'))
+    subproject_id = db.Column(db.Integer, db.ForeignKey('subproject.id'))
     title = db.Column(db.String(1000))
     description = db.Column(db.Text)
     records = db.relationship('ExcelRecord', backref='field', lazy=True, cascade="all,delete")

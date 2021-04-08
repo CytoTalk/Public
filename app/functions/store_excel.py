@@ -1,5 +1,5 @@
 from app import db
-from app.models.Database import Category
+from app.models.Project import SubProject
 from app.models.Excel import ExcelColumn, ExcelRecord
 import pandas as pd
 
@@ -10,16 +10,16 @@ import pandas as pd
 #     return entity
 
 
-def create_columns(category_id: int, title: str, description: str = None):
-    column = ExcelColumn(category_id=category_id, title=title, description=description)
+def create_columns(subproject_id: int, title: str, description: str = None):
+    column = ExcelColumn(subproject_id=subproject_id, title=title, description=description)
     column.save()
     return column
 
 
-def store_records(batch_id: int, column_id: int, category_id: int, value):
+def store_records(batch_id: int, column_id: int, subproject_id: int, value):
     record = ExcelRecord(
         batch_id=batch_id,
-        category_id=category_id,
+        subproject_id=subproject_id,
         column_id=column_id,
         value=value)
     record.save()
@@ -27,30 +27,31 @@ def store_records(batch_id: int, column_id: int, category_id: int, value):
 
 class HandleExcel:
     df = None
-    category = None
+    subproject = None
 
-    def __init__(self, file_path, category: Category):
+    def __init__(self, file_path, subproject: SubProject):
         self.df = pd.read_excel(file_path)
-        self.category = category
+        self.subproject = subproject
 
     def store_columns(self):
-        print(f"all coluns =={len(self.df.columns.to_list())}")
+        # print(f"all coluns =={len(self.df.columns.to_list())}")
         for column in self.df.columns.to_list():
-            create_columns(self.category.id, title=column, description="")
+            create_columns(self.subproject.id, title=column, description="")
 
     def store_records(self):
         last_record = ExcelRecord.query.order_by(ExcelRecord.id.desc()).first()
         batch_id = 0 if not last_record else last_record.batch_id
         for row in self.df.itertuples():
             batch_id = batch_id + 1
-            for key, column in enumerate(self.category.columns):
-                store_records(batch_id=batch_id, column_id=column.id, category_id=self.category.id, value=row[key + 1])
+            for key, column in enumerate(self.subproject.columns):
+                store_records(batch_id=batch_id, column_id=column.id, subproject_id=self.subproject.id,
+                              value=row[key + 1])
 
     @staticmethod
     def handle_query(query):
         records = ExcelRecord.query.filter_by(**query)
         df = pd.read_sql(records.statement, db.session.bind)
-        df.drop(['CREATED_AT', 'UPDATED_AT', 'category_id', 'id'], axis=1, inplace=True)
+        df.drop(['CREATED_AT', 'UPDATED_AT', 'subproject_id', 'id'], axis=1, inplace=True)
         records = []
         for batch, df_batch in df.groupby('batch_id'):
             if batch == 10: break

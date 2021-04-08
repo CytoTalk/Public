@@ -23,7 +23,7 @@ class DatabaseView(FlaskView):
             project = Database(description=form.description.data, title=form.title.data, type='single')
             project.create()
             flash('Database was created successfully', 'success')
-            return redirect(url_for('admin.project_index'))
+            return redirect(url_for('admin.DatabaseView:index'))
         return abort(403)
 
     def edit(self, database_id):
@@ -39,7 +39,7 @@ class DatabaseView(FlaskView):
             project.title = form.title.data
             flash('Database was updated successfully', 'success')
             project.save()
-            return redirect(url_for('admin.project_index'))
+            return redirect(url_for('admin.DatabaseView:index'))
         else:
             abort(403)
 
@@ -51,4 +51,4 @@ class DatabaseView(FlaskView):
         project = Database.query.filter_by(id=database_id).first_or_404()
         project.delete()
         flash('Database was deleted successfully', 'success')
-        return redirect(url_for('admin.project_index'))
+        return redirect(url_for('admin.DatabaseView:index'))

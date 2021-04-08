@@ -25,10 +25,10 @@ class ImageCategory(db.Model, BaseModel):
     title = db.Column(db.String(1000))
     sub_project_id = db.Column(db.Integer, db.ForeignKey('subproject.id'))
     description = db.Column(db.Text)
-    images = db.relationship('Image', backref='category', lazy=True, cascade="all,delete")
+    images = db.relationship('ImageStore', backref='category', lazy=True, cascade="all,delete")
 
 
-class Image(db.Model, BaseModel):
+class ImageStore(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000))
     path = db.Column(db.String)

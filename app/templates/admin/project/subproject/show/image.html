@@ -1,9 +1,9 @@
 {% extends 'layout/admin/main.html' %}
 
 {% block content %}
-    <h1>Images in <span class="text-success">{{ category.title }}</span>  category</h1>
+    <h1>Images in <span class="text-success">{{ subproject.title }}</span>  subproject</h1>
 
-    <a href="{{ url_for('admin.image_create',category_id=category.id) }}" class="btn btn-success">Add new image</a>
+    <a href="{{ url_for('admin.image_create',subproject_id=subproject.id) }}" class="btn btn-success">Add new image</a>
 
     <table class="table">
         <thead>
@@ -16,7 +16,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for image in category.images %}
+        {% for image in subproject.images %}
             <tr>
                 <th scope="row">{{ image.id }}</th>
                 <td>
@@ -25,7 +25,7 @@
                     </div>
                 </td>
                 <td>{{ image.name}}</td>
-                <td>{{ image.category.title}}</td>
+                <td>{{ image.subproject.title}}</td>
                 <td>
                     <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.image_delete',image_id = image.id) }}">
                         <button type="submit" class="btn btn-danger">Delete</button>
