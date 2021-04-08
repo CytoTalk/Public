@@ -5,8 +5,8 @@ from flask_wtf.file import FileAllowed
 
 
 class DatabaseForm(FlaskForm):
-    title = StringField('Project Name', validators=[DataRequired()])
-    description = StringField('Project description', validators=[DataRequired()])
+    title = StringField('Database Name', validators=[DataRequired()])
+    description = StringField('Database description', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
