@@ -1,14 +1,15 @@
 import datetime
 from getpass import getpass
 
-from app import create_app, db
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
+from app import create_app, db
 from app.auth.security import hash_password
-from app.models import Excel
+from app.models.Project import Project,SubProject,ImageStore,ImageCategory
+from app.models.Excel import ExcelRecord,ExcelColumn
+from app.models.Database import DatabaseCategory,Image,Database
 from app.models.User import User
-
 
 app = create_app()
 

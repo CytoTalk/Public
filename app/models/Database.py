@@ -7,7 +7,7 @@ class Database(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
     description = db.Column(db.Text)
-    categories = db.relationship('Category', backref='database', lazy=True, cascade="all,delete")
+    categories = db.relationship('DatabaseCategory', backref='database', lazy=True, cascade="all,delete")
 
 
 class DatabaseCategory(db.Model, BaseModel):
@@ -22,5 +22,5 @@ class Image(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000))
     path = db.Column(db.String)
-    category_id = db.Column(db.Integer, db.ForeignKey('databasecategory.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('database_category.id'))
     description = db.Column(db.Text)

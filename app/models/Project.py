@@ -23,7 +23,7 @@ class SubProject(db.Model, BaseModel):
 class ImageCategory(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
-    sub_project_id = db.Column(db.Integer, db.ForeignKey('subproject.id'))
+    sub_project_id = db.Column(db.Integer, db.ForeignKey('sub_project.id'))
     description = db.Column(db.Text)
     images = db.relationship('ImageStore', backref='category', lazy=True, cascade="all,delete")
 
@@ -32,5 +32,5 @@ class ImageStore(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000))
     path = db.Column(db.String)
-    category_id = db.Column(db.Integer, db.ForeignKey('imagecategory.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('image_category.id'))
     description = db.Column(db.Text)
