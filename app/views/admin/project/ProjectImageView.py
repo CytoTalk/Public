@@ -2,15 +2,15 @@ from pathlib import Path
 from uuid import uuid4
 
 from flask import render_template, flash, redirect, abort, url_for, current_app, send_from_directory
-from flask_classful import FlaskView
+from flask_classful import FlaskView, route
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app.forms.admin.database import ImageForm
-from app.models.Project import Image
+from app.models.Project import ImageStore as Image
 
 
-class ImageView(FlaskView):
+class ProjectImageView(FlaskView):
     decorators = [login_required]
 
     @route('/category/<category_id>/image/create')

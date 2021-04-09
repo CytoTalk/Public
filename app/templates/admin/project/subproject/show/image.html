@@ -1,34 +1,30 @@
 {% extends 'layout/admin/main.html' %}
 
 {% block content %}
-    <h1>Images in <span class="text-success">{{ subproject.title }}</span>  subproject</h1>
-
-    <a href="{{ url_for('admin.image_create',subproject_id=subproject.id) }}" class="btn btn-success">Add new image</a>
-
+    <h1>Categories in <span class="text-success">{{ subproject.title }}</span> </h1>
+    <a href="{{ url_for('admin.ProjectImageCategoryView:create',subproject_id=subproject.id) }}" class="btn btn-success">Create new category</a>
     <table class="table">
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Preview</th>
-            <th scope="col">Image Name</th>
-            <th scope="col">Category Name</th>
+            <th scope="col">Name</th>
+            <th scope="col"> Description</th>
             <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
-        {% for image in subproject.images %}
+        {% for category in subproject.categories %}
             <tr>
-                <th scope="row">{{ image.id }}</th>
+                <th scope="row">{{ category.id }}</th>
+                <td>{{ category.title}}</td>
+                <td>{{ category.description}}</td>
                 <td>
-                    <div style="width: 150px;height: 100px" class="d-flex flex-column justify-content-center align-items-center">
-                        <img style="width: 100%;height: 100%" src="{{ url_for('admin.image_show',image_id=image.id) }}" alt="{{ image.name }}" class="w-100">
-                    </div>
-                </td>
-                <td>{{ image.name}}</td>
-                <td>{{ image.subproject.title}}</td>
-                <td>
-                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.image_delete',image_id = image.id) }}">
+                    <a href="{{ url_for('admin.ProjectImageCategoryView:update',category_id = category.id) }}" class="btn btn-success">Edit</a>
+                    <a href="{{ url_for('admin.ProjectImageCategoryView:show',category_id = category.id) }}" class="btn btn-dark">View</a>
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.ProjectImageCategoryView:delete',category_id = category.id) }}">
                         <button type="submit" class="btn btn-danger">Delete</button>
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
                     </form>
                 </td>
             </tr>

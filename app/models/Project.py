@@ -17,13 +17,13 @@ class SubProject(db.Model, BaseModel):
     file_path = db.Column(db.String(1000))
     type = db.Column(db.String(1000))
     columns = db.relationship('ExcelColumn', backref='subproject', lazy=True, cascade="all,delete")
-    images = db.relationship('ImageCategory', backref='subproject', lazy=True, cascade="all,delete")
+    categories = db.relationship('ImageCategory', backref='subproject', lazy=True, cascade="all,delete")
 
 
 class ImageCategory(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
-    sub_project_id = db.Column(db.Integer, db.ForeignKey('sub_project.id'))
+    subproject_id = db.Column(db.Integer, db.ForeignKey('sub_project.id'))
     description = db.Column(db.Text)
     images = db.relationship('ImageStore', backref='category', lazy=True, cascade="all,delete")
 

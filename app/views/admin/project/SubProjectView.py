@@ -20,15 +20,15 @@ def get_subproject(subproject_id):
 class SubProjectView(FlaskView):
     decorators = [login_required]
 
-    @route('/store/<project_id>/<category_type>', methods=('POST', 'GET',))
-    def create(self, project_id, category_type):
+    @route('/store/<project_id>/<subproject_type>', methods=('POST', 'GET',))
+    def create(self, project_id, subproject_type):
         form, url = None, None
-        if category_type == 'excel':
-            url = url_for('admin.SubProjectView:create', project_id=project_id, category_type=category_type)
+        if subproject_type == 'excel':
+            url = url_for('admin.SubProjectView:create', project_id=project_id, subproject_type=subproject_type)
             form = ExcelCategoryForm()
             if form.validate_on_submit():
-                subproject = SubProject(title=form.title.data, description=form.description.data, type=category_type,
-                                      project_id=project_id)
+                subproject = SubProject(title=form.title.data, description=form.description.data, type=subproject_type,
+                                        project_id=project_id)
                 f = form.excel.data
                 filename = str(uuid4()) + '-' + secure_filename(f.filename)
                 path = str(Path('excel_files', filename))
@@ -40,20 +40,20 @@ class SubProjectView(FlaskView):
                 excel.store_columns()
                 excel.store_records()
                 flash("Data was stored successfully", "success")
-                return redirect(url_for("admin.AllProjectView:show", project_id=project_id))
+                return redirect(url_for("admin.ProjectView:show", project_id=project_id))
             else:
                 return render_template('admin/project/subproject/create.html', form=form, url=url)
 
-        elif category_type == 'image':
-            url = url_for('admin.SubProjectView:create', category_type='image', project_id=project_id)
-            form = ImageCategoryForm()
+        elif subproject_type == 'image':
+            url = url_for('admin.SubProjectView:create', subproject_type='image', project_id=project_id)
+            form = SubProjectForm()
 
             if form.validate_on_submit():
                 subproject = SubProject(description=form.description.data, title=form.title.data, project_id=project_id,
-                                      type='image')
+                                        type='image')
                 subproject.create()
                 flash('SubProject was created successfully', 'success')
-                return redirect(url_for("admin.SubProjectView:show", project_id=project_id))
+                return redirect(url_for("admin.ProjectView:show", project_id=project_id))
             else:
                 return render_template('admin/project/subproject/create.html', form=form, url=url)
         else:
@@ -75,10 +75,16 @@ class SubProjectView(FlaskView):
         else:
             return render_template('admin/project/subproject/show/image.html', subproject=subproject)
 
-    @route('/<subproject_id>/edit', methods=('GET',))
-    def edit(self, subproject_id):
-        project = get_subproject(subproject_id)
-        form = ProjectForm(title=project.title, description=project.description)
+    @route('/<subproject_id>/update', methods=('GET', 'POST',))
+    def update(self, subproject_id):
+        subproject = get_subproject(subproject_id)
+        form = ProjectForm(title=subproject.title, description=subproject.description)
+        if form.validate_on_submit():
+            subproject.title = form.title.data
+            subproject.description = form.description.data
+            subproject.save()
+            flash("Sub Project was updated successfully", "success")
+            return redirect(url_for("admin.ProjectView:show", project_id=subproject.project_id))
         return render_template('admin/project/edit.html', form=form, subproject_id=subproject_id)
 
     @route('/update_column/<column_id>', methods=('POST',))
@@ -91,22 +97,9 @@ class SubProjectView(FlaskView):
         flash('Column was updated successfully')
         return redirect(url_for('admin.SubProjectView:show', subproject_id=column.subproject_id))
 
-    @route('/<subproject_id>/update', methods=('POST',))
-    def update(self, subproject_id):
-        subproject = get_subproject(subproject_id)
-        form = ProjectForm(request.form)
-        if form.validate_on_submit():
-            subproject.title = form.title.data
-            subproject.description = form.description.data
-            subproject.save()
-            flash("Sub Project was updated successfully", "success")
-            return redirect(url_for("admin.SubProjectView:show"))
-        else:
-            return redirect(request.url)
-
     @route('<project_id>/subproject/<subproject_id>/delete', methods=('POST',))
     def delete(self, project_id, subproject_id):
         subproject = get_subproject(subproject_id)
         subproject.delete()
         flash("Sub Project was deleted successfully", 'success')
-        return redirect(url_for('admin.SubProjectView:show', project_id=project_id))
+        return redirect(url_for('admin.ProjectView:show', project_id=project_id))

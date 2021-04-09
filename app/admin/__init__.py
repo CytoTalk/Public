@@ -7,6 +7,8 @@ from flask_login import login_required, current_user
 from app.views.admin.UserView import UserView
 from app.views.admin.database.CategoryView import DatabaseCategoryView
 from app.views.admin.database.DatabaseImageView import DatabaseImageView
+from app.views.admin.project.ProjectImageCategoryView import ProjectImageCategoryView
+from app.views.admin.project.ProjectImageView import ProjectImageView
 from app.views.admin.project.SubProjectView import SubProjectView
 from app.views.admin.project import ProjectView
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -25,6 +27,8 @@ UserView.register(admin, trailing_slash=False)
 DatabaseView.register(admin, trailing_slash=False)
 DatabaseCategoryView.register(admin, trailing_slash=False)
 DatabaseImageView.register(admin, trailing_slash=False)
+ProjectImageCategoryView.register(admin, trailing_slash=False)
+ProjectImageView.register(admin, trailing_slash=False)
 
 @admin.route('/', methods=('GET',))
 @login_required
