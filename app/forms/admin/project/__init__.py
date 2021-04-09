@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, SubmitField, SelectField
+from wtforms import StringField, SubmitField, SelectField, MultipleFileField
 from wtforms.validators import DataRequired
 
 PROJECT_TYPES = [(1, 'Excel'), (2, 'Image')]
@@ -29,4 +29,9 @@ class ExcelCategoryForm(FlaskForm):
 class ImageCategoryForm(FlaskForm):
     title = StringField('Category Name', validators=[DataRequired()])
     description = StringField('Category description', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class ImageForm(FlaskForm):
+    images = MultipleFileField('Images', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField('Submit')
