@@ -25,17 +25,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for column in category.columns %}
+                {% for column in subproject.columns %}
                     <tr>
                         <th scope="row">{{ column.id }}</th>
                         <td>
                             {{ column.title }}
                         </td>
                         <td>{{ column.description}}</td>
-                        <td>{{ column.category.title}}</td>
+                        <td>{{ column.subproject.title}}</td>
                         <td>
                             <button onclick='handleFormEditModal({
-                                    url:"{{ url_for('admin.CategoryView:update_column',column_id=column.id) }}",
+                                    url:"{{ url_for('admin.SubProjectView:update_column',column_id=column.id) }}",
                                     title:{{ column.title|tojson }},
                                     description:{{ column.description|tojson }}
                                     })' class="btn btn-dark">Edit</button>
@@ -57,7 +57,7 @@
             <table class="table">
                 <thead>
                 <tr>
-                    {% for column in category.columns %}
+                    {% for column in subproject.columns %}
                         <th scope="col">{{ column.title }}</th>
                     {% endfor %}
                 </tr>

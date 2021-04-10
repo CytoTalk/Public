@@ -16,7 +16,8 @@ class SubProject(db.Model, BaseModel):
     description = db.Column(db.Text)
     file_path = db.Column(db.String(1000))
     type = db.Column(db.String(1000))
-    columns = db.relationship('ExcelColumn', backref='subproject', lazy=True, cascade="all,delete")
+    columns = db.relationship('ExcelColumn', backref='subproject', lazy=True, cascade="all,delete", order_by="asc("
+                                                                                                "ExcelColumn.id)",)
     categories = db.relationship('ImageCategory', backref='subproject', lazy=True, cascade="all,delete")
 
 
