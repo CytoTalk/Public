@@ -9,6 +9,8 @@
             </h3>
         </div>
         <div class="card-body">
+            <a href="{{ url_for('admin.UserView:create') }}" class="btn btn-success">Create new User</a>
+
 
             <table class="table">
                 <thead>
@@ -19,6 +21,8 @@
                     <th scope="col">Email</th>
                     <th scope="col">Email Verified</th>
                     <th scope="col">Joined on(d/m/y)</th>
+                    <th scope="col">Is Active</th>
+                    <th scope="col">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,6 +34,15 @@
                 <td>{{ user.email }}</td>
                 <td>{% if user.email_verified_at  %}Yes{% else %}No{% endif %}</td>
                 <td>{{ user.CREATED_AT.strftime('%d-%m-%Y')}}</td>
+                <td>{{ user.is_active }}</td>
+                 <td>
+                    <a href="{{ url_for('admin.UserView:update',user_id = user.id) }}" class="btn btn-success">Edit</a>
+                    <a href="{{ url_for('admin.UserView:show',user_id = user.id) }}" class="btn btn-dark">View</a>
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.UserView:delete',user_id = user.id) }}">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
                 </tr>
                 {% endfor %}
 

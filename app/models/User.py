@@ -11,4 +11,5 @@ class User(UserMixin, db.Model, BaseModel):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100))
     is_admin = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=False)
     email_verified_at = db.Column(db.TIMESTAMP)

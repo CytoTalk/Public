@@ -20,7 +20,7 @@ def send_verification_email(user: User):
     token = generate_confirmation_token(user.email)
     url = url_for('auth.VerificationView:get', token=token, _external=True)
     html = render_template(
-        'email/verify_email.html',
+        'app/templates/auth/email/verify_email.html',
         confirm_url=url)
     return send_email(to=user.email, template=html, subject="Verify your email")
 
@@ -29,6 +29,6 @@ def send_password_reset_email(user: User):
     token = generate_confirmation_token(user.email)
     url = url_for('auth.ResetPasswordView:get', token=token, _external=True)
     html = render_template(
-        'email/reset_password.html',
+        'app/templates/auth/email/reset_password.html',
         password_reset_url=url)
     return send_email(to=user.email, template=html, subject="Verify your email")

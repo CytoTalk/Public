@@ -1,0 +1,35 @@
+{% extends 'layout/admin/main.html' %}
+
+{% block content %}
+    <h1>Categories in <span class="text-success">{{ database.title }}</span> </h1>
+    <a href="{{ url_for('admin.DatabaseCategoryView:create',database_id=database.id) }}" class="btn btn-success">Create new category</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col"> Description</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in database.categories %}
+            <tr>
+                <th scope="row">{{ category.id }}</th>
+                <td>{{ category.title}}</td>
+                <td>{{ category.description}}</td>
+                <td>
+                    <a href="{{ url_for('admin.DatabaseCategoryView:update',category_id = category.id) }}" class="btn btn-success">Edit</a>
+                    <a href="{{ url_for('admin.DatabaseCategoryView:show',category_id = category.id) }}" class="btn btn-dark">View</a>
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.DatabaseCategoryView:delete',category_id = category.id) }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

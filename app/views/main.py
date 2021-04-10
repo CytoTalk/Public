@@ -13,27 +13,18 @@ from app.views.helpers import allowed_file, save_file, zip_files
 
 @main.route('/')
 def homepage():
-    # severe_healthy_path = 'assets/Severe_vs_Healthy'
-    # integrate_DEG_cluster_wise(severe_healthy_path, adj_p=0.05, logFC_cutoff=0.2, fill_zeros=True)
-    # config = current_app.config
-    # from_file = Path.joinpath(config['ASSETS_PATH'], 'from_file1_path.xlsx')
-    # to_file = Path.joinpath(config['ASSETS_PATH'], 'past_to.xlsx')
-    #
-    # integrate_excel(from_file, to_file, columns_of_interest_from_file1=[3, 5], key_from_file1=1, key_to_file2=1,
-    #                 starting_column_file2=3, new_column_name='Test', add_annotation="Gene location", add_report=True)
-
-    return render_template('main/index.html')
+    return render_template('front/main/index.html')
 
 
 @main.route('/applications', methods=('GET',))
 def applications():
-    return render_template('main/applications.html')
+    return render_template('front/main/applications.html')
 
 
 @main.route('/inegrate_deg', methods=('POST', 'GET'))
 def integrate_deg():
     if request.method == 'GET':
-        return render_template('main/integrate_GED.html')
+        return render_template('front/main/integrate_GED.html')
     req = request.form
     print(req)
     config = current_app.config
@@ -83,7 +74,7 @@ def integrate_deg():
 @main.route('/integrate_excel_files', methods=('POST', 'GET'))
 def integrate_excel_files():
     if request.method == 'GET':
-        return render_template('main/integrate_excel.html')
+        return render_template('front/main/integrate_excel.html')
     data = request.form.to_dict()
 
     if 'csv_file_1' not in request.files or 'csv_file_2' not in request.files:
@@ -92,7 +83,7 @@ def integrate_excel_files():
     config = current_app.config
 
     # print(request.files.get('csv_file_1'))
-    print(data)
+    # print(data)
     # key_from_file2 = int(request.form.get('key_from_file_2'))
     # key_from_file1 = int(request.form.get('key_from_file_1'))
     # columns_of_interest_from_file1 = request.form.get('columns_of_interest_from_file1').split(',')
