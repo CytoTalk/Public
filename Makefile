@@ -9,3 +9,5 @@ create_admin:
 		python3 manage.py create_admin
 db:
 		python3 manage.py db
+cap:
+		python3 manage.py change_admin_password

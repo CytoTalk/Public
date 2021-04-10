@@ -22,7 +22,7 @@ cors = CORS()
 
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True,template_folder='templates')
     app.config.from_object(config_options[config("APP_ENV")])
     db.init_app(app)
     login_manager.login_view = 'auth.LoginView:index'
@@ -38,12 +38,12 @@ def create_app():
     from app.main import main as main_blueprint
     from app.auth import auth as auth_blueprint
     from app.admin import admin as admin_blueprint
+    from app.database import database as database_blueprint
     from app.project import project as project_blueprint
-    from app.excel_database import excel_db
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
+    app.register_blueprint(database_blueprint)
     app.register_blueprint(project_blueprint)
-    app.register_blueprint(excel_db)
     Bootstrap(app)
     return app

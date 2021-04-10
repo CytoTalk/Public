@@ -33461,7 +33461,7 @@ exports.deflateSetHeader = deflateSetHeader;
 exports.deflate = deflate;
 exports.deflateEnd = deflateEnd;
 exports.deflateSetDictionary = deflateSetDictionary;
-exports.deflateInfo = 'pako deflate (from Nodeca project)';
+exports.deflateInfo = 'pako deflate (from Nodeca database)';
 
 /* Not implemented
 exports.deflateBound = deflateBound;
@@ -36291,7 +36291,7 @@ exports.inflate = inflate;
 exports.inflateEnd = inflateEnd;
 exports.inflateGetHeader = inflateGetHeader;
 exports.inflateSetDictionary = inflateSetDictionary;
-exports.inflateInfo = 'pako inflate (from Nodeca project)';
+exports.inflateInfo = 'pako inflate (from Nodeca database)';
 
 /* Not implemented
 exports.inflateCopy = inflateCopy;
@@ -52851,7 +52851,7 @@ var DELTA_RUN_COUNT_MASK = 0x3f;
  * and optical size without the designer needing to specify every exact style.
  *
  * Apple's documentation for these tables is not great, so thanks to the
- * Freetype project for figuring much of this out.
+ * Freetype database for figuring much of this out.
  *
  * @private
  */
@@ -69111,7 +69111,7 @@ module.exports = SVGMeasure;
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file is just added for convenience so this repository can be
-// directly checked out into a project's deps folder
+// directly checked out into a database's deps folder
 module.exports = __webpack_require__(551);
 
 

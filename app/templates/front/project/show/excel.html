@@ -1,0 +1,117 @@
+{% extends 'layout/front/main.html' %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+{% endblock %}
+{% block content %}
+    <h1 class="text-dark text-center">{{ subproject.title }}</h1>
+    <p class="text-dark text-center">{{ subproject.description }}</p>
+    <br>
+
+    <div class="row px-5">
+        <div class="col-sm-3">
+            <div class="container">
+                <form onsubmit="return fetch_result(event)" id="search-form" action="">
+                    {% for column in subproject.columns %}
+                        <div class="border-bottom mb-2">
+
+                            <h3>{{ column.title }}</h3>
+                            <p>{{ column.description }}</p>
+                            <div class="form-group">
+                                <select onfocus="handleColumnQuery({id:{{column.id}}})" class="form-control" name="{{ column.id }}" id="col-{{ column.id }}">
+
+                                </select>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button onclick="" style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
+                </form>
+
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div  class="d-flex flex-column justify-content-center align-items-center">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        {% for column in subproject.columns %}
+                            <th scope="col">{{ column.title }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody id="result-render">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='vendor/axios/axios.min.js') }}"></script>
+    <script>
+        const url = "{{ request.host_url }}"
+        const subproject = "{{ subproject.id }}"
+        $(document).ready(function () {
+            axios.get(url+"project/project/handle_excel_records/"+subproject)
+                .then(res=>{
+                    if (res.data?.result){
+                        render_result(res.data.result)
+                    }
+                    console.log(res.data)
+
+                })
+        })
+
+        const render_result = result=>{
+
+            let container= $('#result-render')
+            container.html("")
+            result.map(data=>{
+                container.append(`
+                            <tr>
+                            ${data[1].map(value=>"<td>"+value+"</td>")}
+                            </tr>
+                            `)
+            })
+        }
+
+        const fetch_result = event =>{
+            event.preventDefault()
+            const form = new FormData(event.target)
+            if (form.entries().length===0){
+
+            }else{
+                axios.post(url+"project/project/handle_excel_records/"+subproject,form)
+                    .then(res=>{
+                        if (res.data?.result){
+                            render_result(res.data.result)
+                        }
+                        console.log(res.data)
+
+                    })
+            }
+
+
+        }
+        const  handleColumnQuery = data =>{
+            const url = "{{ request.host_url }}project/project/get_column_data"
+            $(`#col-${data.id}`).select2({
+                ajax: {
+                    url: url+'/'+data.id,
+                    data: function (params) {
+                        var query = {
+                            value: params.term,
+                        }
+
+                        // Query parameters will be ?search=[term]&type=public
+                        return query;
+                    },
+
+                }});
+        }
+    </script>
+{% endblock %}

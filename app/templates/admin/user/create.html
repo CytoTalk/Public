@@ -1,0 +1,10 @@
+{% extends 'layout/admin/main.html' %}
+{% block title %}Add new user{% endblock %}
+{% block heading %}Add new user{% endblock %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+    {{ wtf.quick_form(form) }}
+
+
+{% endblock %}
