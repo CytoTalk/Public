@@ -16,20 +16,20 @@ from app.models.Project import Project
 class ProjectView(FlaskView):
     def index(self):
         projects = Project.query.all()
-        return render_template('app/templates/front/project/index.html', projects=projects)
+        return render_template('front/project/index.html', projects=projects)
 
     @route('/<project_id>', methods=('GET',))
     def show(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
         return render_template(
-            'app/templates/front/project/show/sub_project.html', project=project)
+            'front/project/show/sub_project.html', project=project)
 
     @route('/subproject/<subproject_id>')
     def subproject(self, subproject_id):
         subproject = SubProject.query.filter_by(id=subproject_id).first_or_404()
         if subproject.type == 'excel':
-            return render_template('app/templates/front/project/show/excel.html', subproject=subproject)
-        return render_template('app/templates/front/project/show/image.html', subproject=subproject)
+            return render_template('front/project/show/excel.html', subproject=subproject)
+        return render_template('front/project/show/image.html', subproject=subproject)
 
 
     @route('/get_column_data/<column_id>', methods=('GET',))
@@ -72,4 +72,4 @@ class ProjectView(FlaskView):
     def show_project_images(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
         categories = SubProject.query.filter_by(project_id=project_id, type='image').all()
-        return render_template('app/templates/front/project/show.html', project=project, categories=categories)
+        return render_template('front/project/show.html', project=project, categories=categories)
