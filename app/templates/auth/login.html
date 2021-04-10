@@ -6,13 +6,11 @@
             <div class="p-10">
 
                 <h3 class="text-center p-2 border-bottom">Login</h3>
-                <form class="py-5" method="POST" action="{{ url_for('auth.LoginView:post') }}">
                     {{ wtf.quick_form(form) }}
-                </form>
-
-                <a style="color: #0c5460" href="{{ url_for('auth.ResetPasswordView:index') }}"><p>Forgot password?</p></a>
-                <br>
-                <p>Don't have an account? <a href="{{ url_for('auth.RegistrationView:index') }}">Register</a></p>
+{##}
+{#                <a style="color: #0c5460" href="{{ url_for('auth.ResetPasswordView:index') }}"><p>Forgot password?</p></a>#}
+{#                <br>#}
+{#                <p>Don't have an account? <a href="{{ url_for('auth.RegistrationView:index') }}">Register</a></p>#}
             </div>
         </div>
     </div>
