@@ -58,11 +58,6 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     """
     store the data from file 1 in a dictionary (key is "from_file1_path" key column and value is a list from the columns of interest)
     """
-    
-    #####column_names = []
-    #####for i in columns_of_interest_from_file1:
-        #####column_names.append(c1(row=1, column=i).value)
-    
     file1_data = {}
     # get all the data from all rows (i)
     for i in range(2, 1000000):
@@ -82,8 +77,8 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
 
     # First, name the new columns with the name the user entered as an argument
     col = starting_column_file2
-    #####for j in range(0, len(columns_of_interest_from_file1)):
-        #####c2(row=1, column=starting_column_file2 + j).value = column_names[j]
+    for j in range(0, len(columns_of_interest_from_file1)):
+        c2(row=1, column=starting_column_file2 + j).value = new_column_name + '_' + str(j)
 
     # Check all rows using the key column to match key from file1 with key from file 2
     for i in range(2, 10000000):
@@ -99,28 +94,28 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     If the user is interested to add gene_location
     """
 
-    #if add_annotation == "No":
-      #  pass
+    if add_annotation == "No":
+        pass
 
-    #if add_annotation == "Gene location":
+    if add_annotation == "Gene location":
         # reading from external file (not the user files)
-     #   wb_location = openpyxl.load_workbook(os.path.join(config['PROJECT_PATH'], 'assets', 'locations.xlsx'),
+        wb_location = openpyxl.load_workbook(os.path.join(config['PROJECT_PATH'], 'assets', 'locations.xlsx'),
                                              data_only=True)
-      #  sheet_location = wb_location.active
-       # c_location = sheet_location.cell
+        sheet_location = wb_location.active
+        c_location = sheet_location.cell
 
-        #locations = {}
-        #for i in range(2, 38944):
-         #   locations[c_location(row=i, column=1).value] = c_location(row=i, column=2).value
+        locations = {}
+        for i in range(2, 38944):
+            locations[c_location(row=i, column=1).value] = c_location(row=i, column=2).value
 
-        #c2(row=1, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = "Gene location"
-        #for i in range(2, 1000000):
-         #   key = c2(row=i, column=key_to_file2).value
-          #  if key is None:
-           #     break
-           # else:
-            #    if key in locations:
-             #       c2(row=i, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = locations[key]
+        c2(row=1, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = "Gene location"
+        for i in range(2, 1000000):
+            key = c2(row=i, column=key_to_file2).value
+            if key is None:
+                break
+            else:
+                if key in locations:
+                    c2(row=i, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = locations[key]
     # saving the 2 files
     output_name = str(uuid.uuid4())
     wb2.save(os.path.join(config['OUTPUT_PATH'], output_name + '.xlsx'))
