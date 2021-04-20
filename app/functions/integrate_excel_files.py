@@ -60,8 +60,8 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     """
     
     column_names = []
-    for i in columns_of_interest_from_file1:
-        column_names.append(c1(row=1, column=i).value)
+    #####for i in columns_of_interest_from_file1:
+        #####column_names.append(c1(row=1, column=i).value)
     
     file1_data = {}
     # get all the data from all rows (i)
