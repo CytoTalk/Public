@@ -97,7 +97,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     """
     If the user is interested to add gene_location
     """
-
+"""
     if add_annotation == "No":
         pass
 
@@ -120,6 +120,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
             else:
                 if key in locations:
                     c2(row=i, column=starting_column_file2 + len(columns_of_interest_from_file1)).value = locations[key]
+    """
     # saving the 2 files
     output_name = str(uuid.uuid4())
     wb2.save(os.path.join(config['OUTPUT_PATH'], output_name + '.xlsx'))
