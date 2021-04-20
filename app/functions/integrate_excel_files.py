@@ -83,7 +83,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     # First, name the new columns with the name the user entered as an argument
     col = starting_column_file2
     for j in range(0, len(columns_of_interest_from_file1)):
-        c2(row=1, column=starting_column_file2 + j).value = columns_names[j]
+        c2(row=1, column=starting_column_file2 + j).value = column_names[j]
 
     # Check all rows using the key column to match key from file1 with key from file 2
     for i in range(2, 10000000):
