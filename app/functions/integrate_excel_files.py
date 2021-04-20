@@ -59,7 +59,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     store the data from file 1 in a dictionary (key is "from_file1_path" key column and value is a list from the columns of interest)
     """
     
-    column_names = []
+    #####column_names = []
     #####for i in columns_of_interest_from_file1:
         #####column_names.append(c1(row=1, column=i).value)
     
@@ -99,8 +99,8 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     If the user is interested to add gene_location
     """
 
-    if add_annotation == "No":
-        pass
+    #if add_annotation == "No":
+      #  pass
 
     #if add_annotation == "Gene location":
         # reading from external file (not the user files)
