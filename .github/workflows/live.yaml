@@ -44,6 +44,14 @@ jobs:
           DB_NAME: github_actions
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          CSRF_SECRET: ${{ secrets.CSRF_SECRET }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_DEFAULT_SENDER: ${{ secrets.MAIL_DEFAULT_SENDER }}
+          APP_DEBUG: ${{ secrets.APP_DEBUG }}
+          APP_ENV: ${{ secrets.APP_ENV }}
+          SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
 
       - name: Deploy Via SSH
         uses: appleboy/ssh-action@master
@@ -53,7 +61,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /home/django/flask_app
-            git pull -f origin master
+            git pull -s recursive -X theirs origin master
             python3 -m pip install -r requirements.txt
             python3 manage.py db migrate
             python3 manage.py db upgrade

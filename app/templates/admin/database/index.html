@@ -1,0 +1,33 @@
+{% extends 'layout/admin/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+    <h1>Databases</h1>
+    <a href="{{ url_for('admin.DatabaseView:create') }}" class="btn btn-success">Create new Database</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Database Name</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for database in databases %}
+            <tr>
+                <th scope="row">{{ database.id }}</th>
+                <td>{{ database.title}}</td>
+                <td>
+                    <a href="{{ url_for('admin.DatabaseView:update',database_id = database.id) }}" class="btn btn-success">Edit</a>
+                    <a href="{{ url_for('admin.DatabaseView:show',database_id = database.id) }}" class="btn btn-dark">View</a>
+                    <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.DatabaseView:delete',database_id = database.id) }}">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'layout/front/main.html' %}
+<!-- Masthead-->
+{% block content %}
+    <header style="background-image: url('{{ url_for('static',filename='main/image/header-bg.jpg') }}')" class="masthead">
+        <div class="container">
+            <div class="masthead-subheading ">Welcome To</div>
+            <div class="masthead-heading"> CytoTalk, LLC
+            </div>
+            <div class="row flex-column justify-content-center align-items-center">
+                <div class="col-sm-3">
+
+                    <a class="btn m-2 btn-light btn-block btn-md  js-scroll-trigger"
+                       href="https://www.applicagen.com/groups/5fe7dbfe3dd1636795b0f2d7" style="font-size: 30px;"> Our Activities!
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a class="m-2 btn btn-light btn-block btn-md  js-scroll-trigger" href="{{ url_for('main.applications') }}"
+                       style="font-size: 30px;">Applications
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a class="m-2 btn btn-light btn-block btn-md  js-scroll-trigger" href="{{ url_for('database.DatabaseView:index') }}"
+                       style="font-size: 30px;">Databases
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a class="m-2 btn btn-light btn-block btn-md  js-scroll-trigger" href="{{ url_for('project.ProjectView:index') }}"
+                       style="font-size: 30px;">Projects
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </header>
+    <!-- Services-->
+    <section class="page-section bg-light" id="services">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <p class="large text-muted">
+
+                        1603 Capitol Ave. Suite 310 A105, Cheyenne, Wyoming 82001, United States
+
+
+                    </p>
+
+                    <p>
+                        Email: info@cytotalk.com
+
+                    </p>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+{% endblock %}
