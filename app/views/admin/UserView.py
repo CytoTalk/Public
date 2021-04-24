@@ -3,7 +3,7 @@ from flask_classful import FlaskView, route
 from flask_login import login_required, current_user
 
 from app.forms.admin.user import UserForm
-from app.models.User import User
+from app.models.Project import User
 
 
 def get_user(user_id: int) -> User:

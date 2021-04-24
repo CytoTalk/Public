@@ -5,7 +5,7 @@ from flask_classful import FlaskView
 from flask_login import current_user, login_required
 from app import auth
 from app.email import send_verification_email
-from app.models.User import User
+from app.models.Project import User
 from app.token import confirm_token
 
 

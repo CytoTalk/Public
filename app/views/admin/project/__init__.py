@@ -3,7 +3,7 @@ from flask_classful import FlaskView, route
 from flask_login import login_required
 
 from app.forms.admin.project import ProjectForm
-from app.models.Project import Project,SubProject,ImageCategory, ImageStore as Image
+from app.models.Project import Project, SubProject, ImageCategory, ImageStore as Image
 
 
 def get_project(project_id):
@@ -14,14 +14,15 @@ class ProjectView(FlaskView):
     decorators = [login_required]
 
     def index(self):
-        projects = Project.query.all()
+        projects = Project.query.filter(Project.authorized('read')).all()
+
         return render_template('admin/project/index.html', projects=projects)
 
     @route('/create', methods=('POST', 'GET',))
     def create(self):
         form = ProjectForm()
         if form.validate_on_submit():
-            project = Project(title=form.title.data, description=form.description.data)
+            project = Project(title=form.title.data, description=form.description.data, status=form.status.data)
             project.save()
             flash("Project was created successfully", 'success')
             return redirect(url_for("admin.ProjectView:index"))
@@ -35,10 +36,11 @@ class ProjectView(FlaskView):
     @route('/<project_id>/update', methods=('GET', 'POST',))
     def update(self, project_id):
         project = get_project(project_id)
-        form = ProjectForm(title=project.title, description=project.description)
+        form = ProjectForm(title=project.title, description=project.description, status=project.status)
         if form.validate_on_submit():
             project.title = form.title.data
             project.description = form.description.data
+            project.status = form.status.data
             project.save()
             flash("Project was updated successfully", "success")
             return redirect(url_for("admin.ProjectView:index"))

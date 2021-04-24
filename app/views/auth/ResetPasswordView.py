@@ -5,7 +5,7 @@ from flask_login import login_required, login_user, current_user
 from app.email import send_password_reset_email
 from app.forms.auth.ForgotPasswordForm import ForgotPasswordForm
 from app.forms.auth.ResetPasswordForm import ResetPasswordForm
-from app.models.User import User
+from app.models.Project import User
 from app.token import confirm_token
 from app.auth.security import hash_password
 
