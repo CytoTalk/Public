@@ -4,7 +4,7 @@ from flask import flash, redirect, url_for
 from flask_login import current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import login_manager
-from app.models.User import User
+from app.models.Project import User
 
 
 def hash_password(password: str):

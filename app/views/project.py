@@ -5,6 +5,8 @@ from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
 from sqlalchemy import text
+from flask_authorize import Authorize
+from werkzeug.exceptions import Unauthorized,NotFound
 
 from app import db, csrf
 from app.models.Project import SubProject
@@ -14,13 +16,17 @@ from app.models.Project import Project
 
 
 class ProjectView(FlaskView):
+    """
+    This is where editing begins
+    """
     def index(self):
-        projects = Project.query.all()
-        return render_template('front/project/index.html', projects=projects)
+        project = Project.query.filter(Project.__permissions__.get('read')).all()
+        return render_template('front/project/index.html', projects=project)
 
     @route('/<project_id>', methods=('GET',))
     def show(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
+        print(project)
         return render_template(
             'front/project/show/sub_project.html', project=project)
 
@@ -30,7 +36,6 @@ class ProjectView(FlaskView):
         if subproject.type == 'excel':
             return render_template('front/project/show/excel.html', subproject=subproject)
         return render_template('front/project/show/image.html', subproject=subproject)
-
 
     @route('/get_column_data/<column_id>', methods=('GET',))
     @cross_origin()

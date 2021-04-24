@@ -1,6 +1,7 @@
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 from decouple import config
+from flask_authorize import Authorize
 from flask_cors import CORS
 from flask_login import LoginManager
 from flask import Flask
@@ -19,14 +20,16 @@ login_manager = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
 cors = CORS()
+authorize = Authorize()
 
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True,template_folder='templates')
+    app = Flask(__name__, instance_relative_config=True, template_folder='templates')
     app.config.from_object(config_options[config("APP_ENV")])
     db.init_app(app)
     login_manager.login_view = 'auth.LoginView:index'
     login_manager.init_app(app)
+    authorize.init_app(app)
     csrf.init_app(app)
     mail.init_app(app)
     cors.init_app(app)
