@@ -23,8 +23,7 @@ class DatabaseView(FlaskView):
             return redirect(url_for('admin.DatabaseView:index'))
         return render_template('admin/database/create.html', form=form)
 
-
-    @route('/<database_id>/update', methods=('POST','GET',))
+    @route('/<database_id>/update', methods=('POST', 'GET',))
     def update(self, database_id):
         database = Database.query.filter_by(id=database_id).first_or_404()
         form = DatabaseForm(description=database.description, title=database.title)

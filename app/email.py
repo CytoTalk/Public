@@ -2,7 +2,7 @@ from decouple import config
 from flask import render_template, url_for
 from flask_mail import Message
 from app import mail
-from app.models.User import User
+from app.models.Project import User
 from app.token import generate_confirmation_token
 
 

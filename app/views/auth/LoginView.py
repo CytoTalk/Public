@@ -3,7 +3,7 @@ from flask_classful import FlaskView, route
 from flask_login import login_user, logout_user, login_required, current_user
 # from werkzeug.security import check_password_hash
 from app.forms.auth.LoginForm import LoginForm
-from app.models.User import User
+from app.models.Project import User
 
 
 class LoginView(FlaskView):
