@@ -1,13 +1,15 @@
 from pathlib import Path
 
 import flask_login
-from flask import send_from_directory, current_app, jsonify
+from flask import send_from_directory, current_app, jsonify, abort
 from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
+from flask_login import current_user
 from sqlalchemy import text
 from app import db, csrf
-from app.models.Project import SubProject, allowed_user
+from app.auth.security import verify_project_permission
+from app.models.Project import SubProject
 from app.models.Excel import ExcelRecord
 from app.models.Project import ImageStore as Image
 from app.models.Project import Project
@@ -19,21 +21,20 @@ class ProjectView(FlaskView):
     """
 
     def index(self):
-        cu = flask_login.current_user.id
-        project = Project.query.all()
-        assoc = list(db.session.query(allowed_user).filter_by(user_id=cu))
-        public = [x for x in project if not x.status]
-        private = [x for x in project if x.status]
-        projectIds = [lis[1] for lis in assoc]
-        for i in private:
-            if i.id in projectIds:
-                public.append(i)
-        return render_template('front/project/index.html', projects=public)
+
+        projects = Project.query.filter_by(is_public=True).get()
+        if current_user.is_authenticated:
+            projects = Project.query.filter_by(is_public=False).get()
+            for project in projects:
+                if current_user in project.allowed_users:
+                    projects.append(project)
+
+        return render_template('front/project/index.html', projects=projects)
 
     @route('/<project_id>', methods=('GET',))
+    @verify_project_permission
     def show(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
-        print(project)
         return render_template(
             'front/project/show/sub_project.html', project=project)
 

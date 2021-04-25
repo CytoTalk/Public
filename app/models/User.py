@@ -13,5 +13,6 @@ class User(UserMixin,db.Model, BaseModel):
     is_admin = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=False)
     email_verified_at = db.Column(db.TIMESTAMP)
+    project_permissions = db.relationship("AllowedUser", backref="user", lazy=True, cascade="all,delete")
 
     '''priviledges'''
