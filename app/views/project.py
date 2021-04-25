@@ -1,15 +1,13 @@
 from pathlib import Path
 
+import flask_login
 from flask import send_from_directory, current_app, jsonify
 from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
 from sqlalchemy import text
-from flask_authorize import Authorize
-from werkzeug.exceptions import Unauthorized,NotFound
-
 from app import db, csrf
-from app.models.Project import SubProject
+from app.models.Project import SubProject, allowed_user
 from app.models.Excel import ExcelRecord
 from app.models.Project import ImageStore as Image
 from app.models.Project import Project
@@ -19,9 +17,18 @@ class ProjectView(FlaskView):
     """
     This is where editing begins
     """
+
     def index(self):
-        project = Project.query.filter(Project.__permissions__.get('read')).all()
-        return render_template('front/project/index.html', projects=project)
+        cu = flask_login.current_user.id
+        project = Project.query.all()
+        assoc = list(db.session.query(allowed_user).filter_by(user_id=cu))
+        public = [x for x in project if not x.status]
+        private = [x for x in project if x.status]
+        projectIds = [lis[1] for lis in assoc]
+        for i in private:
+            if i.id in projectIds:
+                public.append(i)
+        return render_template('front/project/index.html', projects=public)
 
     @route('/<project_id>', methods=('GET',))
     def show(self, project_id):

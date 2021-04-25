@@ -21,7 +21,18 @@
                         <td>{{ project.description}}</td>
                         <td>{{ project.status }} </td>
                         <td>
-                            <a href=""
+                            {% if project.status %}
+                            <a href="{{ url_for('admin.ProjectView:update',project_id = project.id) }}" class="btn btn-success">Edit</a>
+                            <a href="{{ url_for('admin.ProjectView:show',project_id = project.id) }}" class="btn btn-dark">View</a>
+                            <a href="{{ url_for('admin.ProjectView:add', project_id = project.id) }} "  class="btn btn-light" >+ Viewers</a>
+                            <a type="submit" href="{{ url_for('admin.ProjectView:remove', project_id = project.id) }}" class="btn btn-warning"> - Remove</a>
+                            <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.ProjectView:delete',project_id = project.id) }}">
+
+                                <input id="csrf_token1" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+
+                            {% else %}
                             <a href="{{ url_for('admin.ProjectView:update',project_id = project.id) }}" class="btn btn-success">Edit</a>
                             <a href="{{ url_for('admin.ProjectView:show',project_id = project.id) }}" class="btn btn-dark">View</a>
                             <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.ProjectView:delete',project_id = project.id) }}">
@@ -29,12 +40,11 @@
                                 <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
+                           {% endif %}
                         </td>
                     </tr>
                </tbody>
              </table>
            {% endfor %}
-
-
 
 {% endblock %}

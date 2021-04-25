@@ -9,7 +9,7 @@ from app.auth.security import hash_password
 from app.models.Project import Project, SubProject, ImageStore, ImageCategory
 from app.models.Excel import ExcelRecord, ExcelColumn
 from app.models.Database import DatabaseCategory, Image, Database
-from app.models.Project import User
+from app.models.User import User
 
 app = create_app()
 
@@ -71,7 +71,7 @@ def change_admin_password():
         user.save()
         print("Password was updated successfully.")
     else:
-        "No admin account found, please run python manage.py create_admin to add an admin account"
+        "No admin account found, please run python manage.py create_admin to modify_access an admin account"
 
 
 if __name__ == '__main__':

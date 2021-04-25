@@ -1,0 +1,11 @@
+{% extends 'layout/admin/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<form onsubmit="return confirm('This User has successfully been removed to the viewers list')" method="POST">
+    {{ form.csrf_token }}
+    {{ form.email }}
+    <button type="submit" class="btn btn-danger">remove</button>
+</form>
+
+{% endblock %}
