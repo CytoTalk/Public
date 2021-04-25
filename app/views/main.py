@@ -78,7 +78,7 @@ def integrate_excel_files():
     data = request.form.to_dict()
 
     if 'csv_file_1' not in request.files or 'csv_file_2' not in request.files:
-        flash('Please modify_access all the files', 'error')
+        flash('Please add all the files', 'error')
         return redirect(request.url)
     config = current_app.config
 
@@ -93,7 +93,7 @@ def integrate_excel_files():
         saved_file_1_path = save_file(request.files.get('csv_file_1'))
         saved_file_2_path = save_file(request.files.get('csv_file_2'))
     except Exception:
-        flash(' Make sure to modify_access the correct files', 'error')
+        flash(' Make sure to add the correct files', 'error')
         return redirect(request.url)
     try:
         columns_of_interest_from_file1 = list(int(x) for x in data.get('columns_of_interest_from_file1').split(','))
