@@ -71,7 +71,7 @@ def change_admin_password():
         user.save()
         print("Password was updated successfully.")
     else:
-        "No admin account found, please run python manage.py create_admin to add an admin account"
+        "No admin account found, please run python manage.py create_admin to modify_access an admin account"
 
 
 if __name__ == '__main__':

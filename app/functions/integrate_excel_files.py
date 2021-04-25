@@ -11,14 +11,14 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
                     add_report: bool = False) -> str:
     """
     :param add_report:
-    :param from_file1_path: the path of file that contain information we need to add to the other file
+    :param from_file1_path: the path of file that contain information we need to modify_access to the other file
     :param to_file2_path: the path of the file that we will paste information to
     :param columns_of_interest_from_file1: a list of columns numbers to be added from file 1
     :param key_from_file1: the number of the key column in file1 (from_file)
     :param key_to_file2: the number of the key column in file2 (to_file)
     :param starting_column_file2: the number of the column we will start pasting new information into
     :param new_column_name: the name of the new column
-    :param add_annotation: if "Gene location" is selected, that would add an extra column after merging the 2 files in a new column
+    :param add_annotation: if "Gene location" is selected, that would modify_access an extra column after merging the 2 files in a new column
 
     :return:
     """
@@ -69,7 +69,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
             # Iterate over the columns of interest and append their data in a list called 'value'
             for j in columns_of_interest_from_file1:
                 file1_data[key].append(c1(row=i, column=j).value)
-    # Now, we have a dictionary "file1_data" to be used to add information to the other file
+    # Now, we have a dictionary "file1_data" to be used to modify_access information to the other file
 
     """
     Paste the data to file 2
@@ -91,7 +91,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
                     c2(row=i, column=starting_column_file2 + j).value = file1_data[key][j]
 
     """
-    If the user is interested to add gene_location
+    If the user is interested to modify_access gene_location
     """
 
     if add_annotation == "No":
