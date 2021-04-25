@@ -1,12 +1,14 @@
 from pathlib import Path
 
-from flask import send_from_directory, current_app, jsonify
+import flask_login
+from flask import send_from_directory, current_app, jsonify, abort
 from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
+from flask_login import current_user
 from sqlalchemy import text
-
 from app import db, csrf
+from app.auth.security import verify_project_permission, verify_sub_project_permission
 from app.models.Project import SubProject
 from app.models.Excel import ExcelRecord
 from app.models.Project import ImageStore as Image
@@ -14,23 +16,34 @@ from app.models.Project import Project
 
 
 class ProjectView(FlaskView):
+    """
+    This is where editing begins
+    """
+
     def index(self):
-        projects = Project.query.all()
+
+        projects = Project.query.filter_by(is_public=True)
+        if current_user.is_authenticated:
+            projects = list(projects) + [project for project in Project.query.filter_by(is_public=False) if
+                                   project.id in [permission.project_id for permission in
+                                                  current_user.project_permissions]]
+
         return render_template('front/project/index.html', projects=projects)
 
     @route('/<project_id>', methods=('GET',))
+    @verify_project_permission
     def show(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
         return render_template(
             'front/project/show/sub_project.html', project=project)
 
     @route('/subproject/<subproject_id>')
+    @verify_sub_project_permission
     def subproject(self, subproject_id):
         subproject = SubProject.query.filter_by(id=subproject_id).first_or_404()
         if subproject.type == 'excel':
             return render_template('front/project/show/excel.html', subproject=subproject)
         return render_template('front/project/show/image.html', subproject=subproject)
-
 
     @route('/get_column_data/<column_id>', methods=('GET',))
     @cross_origin()

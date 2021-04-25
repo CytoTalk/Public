@@ -20,7 +20,6 @@ class Config:
     if os.environ.get('GITHUB_WORKFLOW'):
         SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:postgres@127.0.0.1/github_actions'
 
-
     ###########################################
     # Mail config
 
@@ -44,7 +43,6 @@ class DevConfig(Config):
 class ProdConfig(Config):
     DEVELOPMENT = False
     MAIL_USE_SSL = True
-
 
 
 config_options = {
