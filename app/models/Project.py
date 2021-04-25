@@ -1,23 +1,27 @@
+from flask_login import current_user
+
 from app import db
 from app.models.BaseModel import BaseModel
 
-allowed_user = db.Table(
-    'allowed',
-    db.Model.metadata,
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
-)
+
+class AllowedUser(db.Model, BaseModel):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 
 
 class Project(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
     description = db.Column(db.Text)
-    allowed = db.relationship("User", secondary=allowed_user)
     # ''' Add private/public check'''
-    status = db.Column("private", db.Boolean(), default=True, nullable=True)
+    is_public = db.Column(db.Boolean(), default=True, nullable=True)
 
     subprojects = db.relationship('SubProject', backref='project', lazy=True, cascade="all,delete")
+    allowed_users = db.relationship("AllowedUser", backref="project", lazy=True, cascade="all,delete")
+
+    def user_has_permission(self) -> bool:
+        return current_user.is_authenticated and current_user in self.allowed_users and not self.is_public
 
 
 class SubProject(db.Model, BaseModel):
