@@ -38,3 +38,8 @@ class ImageCategoryForm(FlaskForm):
 class ImageForm(FlaskForm):
     images = MultipleFileField('Images', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField('Submit')
+
+
+class ProjectPermissionForm(FlaskForm):
+    email = SelectField('email', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Submit')

@@ -6,7 +6,7 @@ from flask_script import Manager
 
 from app import create_app, db
 from app.auth.security import hash_password
-from app.models.Project import Project, SubProject, ImageStore, ImageCategory
+from app.models.Project import Project, SubProject, ImageStore, ImageCategory, AllowedUser
 from app.models.Excel import ExcelRecord, ExcelColumn
 from app.models.Database import DatabaseCategory, Image, Database
 from app.models.User import User
