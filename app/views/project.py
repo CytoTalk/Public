@@ -8,7 +8,7 @@ from flask_cors import cross_origin
 from flask_login import current_user
 from sqlalchemy import text
 from app import db, csrf
-from app.auth.security import verify_project_permission
+from app.auth.security import verify_project_permission, verify_sub_project_permission
 from app.models.Project import SubProject
 from app.models.Excel import ExcelRecord
 from app.models.Project import ImageStore as Image
@@ -22,12 +22,11 @@ class ProjectView(FlaskView):
 
     def index(self):
 
-        projects = Project.query.filter_by(is_public=True).get()
+        projects = Project.query.filter_by(is_public=True)
         if current_user.is_authenticated:
-            projects = Project.query.filter_by(is_public=False).get()
-            for project in projects:
-                if current_user in project.allowed_users:
-                    projects.append(project)
+            projects = list(projects) + [project for project in Project.query.filter_by(is_public=False) if
+                                   project.id in [permission.project_id for permission in
+                                                  current_user.project_permissions]]
 
         return render_template('front/project/index.html', projects=projects)
 
@@ -39,6 +38,7 @@ class ProjectView(FlaskView):
             'front/project/show/sub_project.html', project=project)
 
     @route('/subproject/<subproject_id>')
+    @verify_sub_project_permission
     def subproject(self, subproject_id):
         subproject = SubProject.query.filter_by(id=subproject_id).first_or_404()
         if subproject.type == 'excel':
