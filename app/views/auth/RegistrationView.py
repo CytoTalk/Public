@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash
 from app.auth.security import hash_password
 from app.email import send_verification_email
 from app.forms.auth.RegistrationForm import RegistrationForm
-from app.models.Project import User
+from app.models.User import User
 
 
 class RegistrationView(FlaskView):
