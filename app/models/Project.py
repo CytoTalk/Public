@@ -3,6 +3,7 @@ from app.models.BaseModel import BaseModel
 
 allowed_user = db.Table(
     'allowed',
+    db.Model.metadata,
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
 )

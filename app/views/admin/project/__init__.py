@@ -1,6 +1,7 @@
 from flask import request, flash, redirect, url_for, render_template
 from flask_classful import FlaskView, route
 from flask_login import login_required
+from sqlalchemy import and_
 
 from app import db
 from app.forms.admin.modify_access import AdditionForm
@@ -80,22 +81,20 @@ class ProjectView(FlaskView):
     @route("<project_id>/remove", methods=('GET', 'POST',))
     def remove(self, project_id):
         project = get_project(project_id)
-        print(project.id)
         form = RemoveForm()
         form.email.choices = [(user.id, user.email) for user in User.query.all()]
 
         if request.method == "POST":
-            user = form.email.data
-            fight = db.session.query(allowed_user).filter('user_id'==user, 'project_id'==project.id).delete()
-            if fight:
-                db.session.execute(fight)
+            user = int(form.email.data)
+            tuple_list = db.session.query(allowed_user).filter(user==user, project_id==project.id).delete()
+            print(tuple_list)
+            if tuple_list:
                 db.session.commit()
             else:
                 flash("The user wasn't part of the project", 'success')
 
             return redirect(url_for('admin.ProjectView:index'))
         return render_template("admin/project/remove.html", form=form)
-
 
     '''
     Possible use
