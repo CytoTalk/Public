@@ -1,0 +1,43 @@
+{% extends 'layout/front/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 m-auto">
+                <h1 class="text-dark">
+                    Convert Excel to list
+                </h1>
+                <form enctype="multipart/form-data" method="post" action="{{ url_for('main.excel_to_list') }}">
+
+                    {{ wtf.quick_form(form) }}
+                    {#<input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+                        <div class="col-sm-6 m-auto">
+                            <div class="form-group">
+                                <label for="file">Excel File</label>
+                                <input class="form-control" type="file" name="file" id="file">
+                            </div>
+                            <div class="form-group">
+                                <label for="key_column">Key Column</label>
+                                <input class="form-control" type="text" name="key_column"
+                                       id="key_column">
+                            </div>
+                            <div class="form-group">
+                                <label for="target_column">Target Column</label>
+                                <input class="form-control" type="text" name="target_column"
+                                       id="target_column">
+                            </div>
+                            <div class="form-group">
+                                <label for="delimiter">Delimiter</label>
+                                <input class="form-control" type="text" name="delimiter"
+                                       id="delimiter" placeholder="', ">
+                            </div>
+                        </div>
+                    <div class="p-3 text-center">
+                        <button class="btn btn-success btn-lg" type="submit">Submit</button>
+                    </div>#}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
