@@ -5,6 +5,8 @@ from uuid import uuid4
 from flask import render_template, current_app, send_from_directory, abort, request, flash, redirect
 from werkzeug.utils import secure_filename
 
+from app.forms.front.main.ApplicationForms import ExcelToListForm
+from app.functions.Convert_excel_to_list import file_to_network
 from app.functions.Integrate_DEG import integrate_DEG_cluster_wise
 from app.functions.integrate_excel_files import integrate_excel
 from app.main import main
@@ -135,3 +137,32 @@ def integrate_excel_files():
         return send_from_directory(config['OUTPUT_PATH'], filename=zipped_filename, as_attachment=True)
     except FileNotFoundError:
         abort(404)
+
+
+@main.route('/excel_to_list', methods=('POST', 'GET'))
+def excel_to_list():
+    form = ExcelToListForm()
+    if form.validate_on_submit():
+        if 'file' not in request.files:
+            flash('Excel file not uploaded', 'error')
+            return redirect(request.url)
+        config = current_app.config
+
+        try:
+            excel_file = save_file(request.files.get('file'))
+        except Exception:
+            flash('Make sure to modify_access the correct files', 'error')
+            return redirect(request.url)
+        file_name = file_to_network(excel_file, form.key_column.data, form.target_column.data, form.delimiter.data)
+        if not file_name:
+            flash('An error occurred while integrating the files. Please check the input and try again', 'error')
+            return redirect(request.url)
+        # file_path = str(Path.joinpath(config['OUTPUT_PATH'], file_name + '.xlsx'))
+        try:
+            return send_from_directory(config['OUTPUT_PATH'], filename=file_name, as_attachment=True)
+        except FileNotFoundError:
+            abort(404)
+
+    return render_template('front/main/excel_to_list.html',form=form)
+
+
