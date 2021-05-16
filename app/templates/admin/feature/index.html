@@ -1,0 +1,53 @@
+{% extends 'layout/admin/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Features{% endblock %}
+{% block heading %}Features{% endblock %}
+{% block content %}
+    <section class="py-4">
+    <a href="{{ url_for('admin.FeatureView:create') }}" class="btn btn-success">Create new Feature Project</a>
+    </section>
+    <div class="container-fluid">
+
+    <div class="card card-primary card-outline">
+        <div class="card-header ">
+            <h3 class="card-title">
+                Features
+            </h3>
+        </div>
+        <div class="card-body">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Is Public</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for feature in features %}
+                    <tr>
+                        <th scope="row">{{ feature.id }}</th>
+                        <td>{{ feature.title}}</td>
+                        <td>{{ feature.description}}</td>
+                        <td>{{ feature.is_public }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.FeatureView:update',feature_id = feature.id) }}" class="btn btn-success">Edit</a>
+                            <a href="{{ url_for('admin.FeatureView:show',feature_id = feature.id) }}" class="btn btn-dark">View</a>
+                            <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.FeatureView:delete',feature_id = feature.id) }}">
+                                <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}

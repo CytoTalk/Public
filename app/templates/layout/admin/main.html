@@ -77,6 +77,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ url_for('admin.FeatureView:index') }}" class="nav-link  {% if url_for('admin.FeatureView:index') in request.path  %}active{% endif %}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Feature Project
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ url_for('admin.UserView:index') }}" class="nav-link  {% if url_for('admin.UserView:index') in request.path  %}active{% endif %}">
                             <i class="nav-icon fas fa-th"></i>
                             <p>Users

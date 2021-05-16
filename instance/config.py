@@ -12,7 +12,10 @@ class Config:
     PROJECT_PATH = Path(__file__).parent.parent
     OUTPUT_PATH = Path.joinpath(PROJECT_PATH, 'output_location')
     ASSETS_PATH = Path.joinpath(PROJECT_PATH, 'assets')
+    IMAGES_PATH = Path.joinpath(ASSETS_PATH, 'images')
+    STATIC_PATH = Path.joinpath(PROJECT_PATH, 'app', 'static')
     ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+    ALLOWED_IMAGE_FILES = {'jpg', 'png', 'jpeg', 'gif'}
     UPLOAD_FOLDER = Path.joinpath(PROJECT_PATH, 'uploads')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
