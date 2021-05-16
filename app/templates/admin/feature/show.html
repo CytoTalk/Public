@@ -1,0 +1,169 @@
+{% extends 'layout/admin/main.html' %}
+{% block title %}{{ feature.title }}{% endblock %}
+{% block css %}
+{% endblock %}
+{% block heading %}<span class="text-success">{{ feature.title }}</span> {% endblock %}
+{% block content %}
+    <div class="py-2">
+
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#batch_upload">
+            Batch Upload
+        </button>
+    </div>
+    <div class="py-2">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_record_modal">
+            Add Data
+        </button>
+    </div>
+    <div class="py-2">
+        <a href="{{ url_for('admin.FeatureView:create_column',feature_id =feature.id) }}" class="btn btn-success">Create new column</a>
+
+    </div>
+    <div class="py-2">
+        <a href="{{ url_for('admin.FeatureView:download',feature_id =feature.id) }}" class="btn btn-primary">Download Records</a>
+    </div>
+    <hr>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Columns
+            </h3>
+        </div>
+        <div class="card-body">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for column in feature.columns.columns %}
+                    <tr>
+                        <td>{{ column.original_name}}</td>
+                        <td>{{ column.data_type.SQL}}</td>
+                        <td>{{ column.description}}</td>
+                        <td>
+                            <a href="{{ url_for('admin.FeatureView:update_column',feature_id = feature.id, column_name = column.column_name) }}" class="btn btn-success">Edit</a>
+                            <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')" method="POST" action="{{ url_for('admin.FeatureView:delete_column', feature_id = feature.id, column_name = column.column_name) }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Data
+            </h3>
+        </div>
+        <div class="card-body">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    {% for column in feature.columns.columns %}
+                        <th scope="col">{{ column.original_name}}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% with columns = feature.column_keys() %}
+                    {% for column in  feature.fetch_records() %}
+                        <tr>
+                            {% for key,value in column.items() %}
+                                <td>
+
+                                    {% if key in columns.keys() and columns[key]['data_type']['HTML'] =='file' %}
+                                        <div style="width: 50px; height: 50px">
+                                            <img src="{{ value }}" style="object-fit: contain;max-width: 100%;max-height: 100%" alt="No alt">
+                                        </div>
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                {% endwith %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="add_record_modal" tabindex="-1" role="dialog" aria-labelledby="RecordModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Add Record</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form enctype="multipart/form-data" method="post" action="{{ url_for('admin.FeatureView:add_data',feature_id=feature.id) }}">
+                    <div class="modal-body">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                        {% for column in feature.columns['columns'] %}
+
+                            <div class="form-group">
+                                <label for="{{ column['column_name'] }}id">{{ column['original_name'] }}</label>
+                                <input {% if column['data_type']['HTML'] != 'checkbox' %} required {% endif %} class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}" id="{{ column['column_name'] }}id" type="{{ column['data_type']['HTML'] }}" name="{{ column['column_name'] }}">
+
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="batch_upload" tabindex="-1" role="dialog" aria-labelledby="BatchRecord" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Add Record</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form enctype="multipart/form-data" method="post" action="{{ url_for('admin.FeatureView:batch_upload',feature_id=feature.id) }}">
+                    <div class="modal-body">
+
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                        <div class="form-group">
+                            <label for="excel_file">Excel File</label>
+                            <input class="form-control" type="file" name="file" id="excel_file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+{% endblock %}

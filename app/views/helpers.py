@@ -16,17 +16,24 @@ def allowed_file(filename: str) -> bool:
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-def save_file(file: FileStorage, folder_path: str = '') -> str:
+def allowed_image_extensions(filename: str) -> bool:
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_IMAGE_FILES']
+
+
+def save_file(file: FileStorage, folder_path: str = '',return_filename:bool=False) -> str:
     if not folder_path:
         folder_path = current_app.config['UPLOAD_FOLDER']
     if file.filename == '':
         print("Wrong Filename")
         raise Exception
 
-    if file and allowed_file(file.filename):
+    if file and (allowed_file(file.filename) or allowed_image_extensions(file.filename)):
         filename = str(uuid4()) + '-' + secure_filename(file.filename)
         file_path = Path.joinpath(folder_path, filename)
         file.save(file_path)
+        if return_filename:
+            return filename
         return file_path
     else:
         raise Exception
