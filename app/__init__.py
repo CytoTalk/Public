@@ -12,7 +12,6 @@ from app.views.helpers import delete_files
 from instance.config import config_options
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-from flask_dropzone import Dropzone
 
 sched = BackgroundScheduler(daemon=True)
 db = SQLAlchemy()
@@ -20,7 +19,6 @@ login_manager = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
 cors = CORS()
-dropzone = Dropzone()
 
 
 def create_app():
@@ -32,7 +30,6 @@ def create_app():
     csrf.init_app(app)
     mail.init_app(app)
     cors.init_app(app)
-    dropzone.init_app(app)
     sched.add_job(delete_files, 'interval', minutes=1, args=(app,))
     try:
         sched.start()

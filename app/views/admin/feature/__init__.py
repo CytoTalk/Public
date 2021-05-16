@@ -2,7 +2,6 @@ from io import BytesIO
 
 from flask import request, flash, redirect, url_for, render_template, abort, current_app, send_file, make_response
 from flask_classful import FlaskView, route
-from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app import db
