@@ -9,6 +9,7 @@ from app.auth.security import hash_password
 from app.models.Project import Project, SubProject, ImageStore, ImageCategory, AllowedUser
 from app.models.Excel import ExcelRecord, ExcelColumn
 from app.models.Database import DatabaseCategory, Image, Database
+from app.models.Feature import Feature
 from app.models.User import User
 
 app = create_app()

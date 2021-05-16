@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from app.views.admin.UserView import UserView
 from app.views.admin.database.CategoryView import DatabaseCategoryView
 from app.views.admin.database.DatabaseImageView import DatabaseImageView
+from app.views.admin.feature import FeatureView
 from app.views.admin.project.ProjectImageCategoryView import ProjectImageCategoryView
 from app.views.admin.project.ProjectImageView import ProjectImageView
 from app.views.admin.project.SubProjectView import SubProjectView
@@ -29,6 +30,7 @@ DatabaseCategoryView.register(admin, trailing_slash=False)
 DatabaseImageView.register(admin, trailing_slash=False)
 ProjectImageCategoryView.register(admin, trailing_slash=False)
 ProjectImageView.register(admin, trailing_slash=False)
+FeatureView.register(admin, trailing_slash=False)
 
 
 @admin.route('/', methods=('GET',))
