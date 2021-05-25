@@ -4,6 +4,7 @@
     <h1>Subprojects in <span class="text-success">{{ project.title }}</span> </h1>
     <a href="{{ url_for('admin.SubProjectView:create',project_id=project.id,subproject_type='excel') }}" class="btn btn-success">Create Excel subproject</a>
     <a href="{{ url_for('admin.SubProjectView:create',project_id=project.id,subproject_type='image') }}" class="btn btn-success">Create Image subproject</a>
+    <a href="{{ url_for('admin.SubProjectView:create',project_id=project.id,subproject_type='feature') }}" class="btn btn-success">Create Feature subproject</a>
     {% if not project.is_public %}
         <div class="card">
             <div class="card-header">

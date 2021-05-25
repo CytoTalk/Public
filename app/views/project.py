@@ -43,6 +43,10 @@ class ProjectView(FlaskView):
         subproject = SubProject.query.filter_by(id=subproject_id).first_or_404()
         if subproject.type == 'excel':
             return render_template('front/project/show/excel.html', subproject=subproject)
+        elif subproject.type == 'feature':
+            feature = subproject.features[0]
+            return render_template('front/project/show/feature.html',feature=feature, subproject=subproject)
+
         return render_template('front/project/show/image.html', subproject=subproject)
 
     @route('/get_column_data/<column_id>', methods=('GET',))

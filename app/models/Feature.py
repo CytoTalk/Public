@@ -16,7 +16,7 @@ DATA_TYPES_MAPPER = {
         "PYTHON": 'str'
     },
     "Integer": {
-        "SQL": "VARCHAR",
+        "SQL": "INTEGER",
         "HTML": "number",
         "PYTHON": 'int'
     },
@@ -44,9 +44,7 @@ def clean_column(column_name) -> str:
 
 class Feature(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, index=True)
-    description = db.Column(db.String)
-    is_public = db.Column(db.Boolean(), default=True, nullable=True)
+    subproject_id = db.Column(db.Integer, db.ForeignKey('sub_project.id'))
     columns = db.Column(JSON, default={"columns": []})
     store_table_name = f"feature_table_{id}"
 
@@ -57,7 +55,7 @@ class Feature(db.Model, BaseModel):
 
     def make_db(self):
         sql = f" CREATE TABLE feature_table_{self.id} (\
-	            i_d serial PRIMARY KEY);"
+            i_d serial PRIMARY KEY);"
         db.engine.execute(sql)
 
     def delete(self):
