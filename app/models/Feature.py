@@ -16,7 +16,7 @@ DATA_TYPES_MAPPER = {
         "PYTHON": 'str'
     },
     "Integer": {
-        "SQL": "VARCHAR",
+        "SQL": "INTEGER",
         "HTML": "number",
         "PYTHON": 'int'
     },
