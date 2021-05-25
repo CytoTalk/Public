@@ -60,12 +60,30 @@ class FeatureView(FlaskView):
     def fetch_records(self, feature_id):
         feature = get_feature(feature_id)
         if request.method == 'GET':
-            sql = text(f"select * from feature_table_{feature_id} limit 1")
+            sql = text(f"select * from feature_table_{feature_id} limit 10")
         else:
             conditions = []
             for key, value in request.form.items():
-                if value:
-                    conditions.append(f"({key}::text like '%{value}%')")
+                column = feature.get_column_data(key.replace('[]', ''))
+                if column['data_type']['HTML'] == 'number':
+                    values = sorted(request.form.getlist(key))
+                    try:
+                        low = values[0]
+                        high = values[1]
+                    except IndexError:
+                        low = 0
+                        high = 0
+                    if column['data_type']['PYTHON'] == 'int':
+                        statement = f"({key.replace('[]', '')}::integer between {low} and {high})"
+                    else:
+                        statement = f"({key.replace('[]', '')}::float between {low} and {high})"
+
+                elif column['data_type']['HTML'] == 'checkbox':
+                    if value != 'all':
+                        statement = f"{column['column_name']} ={value}"
+                else:
+                    statement = f"({key}::text like '%{value}%')"
+                conditions.append(statement)
             params = " and ".join(conditions)
             sql = text(
                 f"select * from feature_table_{feature_id} where {params} limit 10")

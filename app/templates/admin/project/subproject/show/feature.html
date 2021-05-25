@@ -2,9 +2,10 @@
 {% block title %}{{ feature.title }}{% endblock %}
 {% block css %}
 {% endblock %}
-{% block heading %}<span class="text-success">{{ feature.title }}</span> {% endblock %}
+{% block heading %}<span class="text-success">{{ subproject.title }}</span> {% endblock %}
 {% block content %}
     <div class="py-2">
+    <h3>{{ subproject.description }}</h3>
 
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#batch_upload">
             Batch Upload
@@ -121,7 +122,7 @@
 
                             <div class="form-group">
                                 <label for="{{ column['column_name'] }}id">{{ column['original_name'] }}</label>
-                                <input class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}" id="{{ column['column_name'] }}id" type="{{ column['data_type']['HTML'] }}" name="{{ column['column_name'] }}">
+                                <input  class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}" id="{{ column['column_name'] }}id" type="{{ column['data_type']['HTML'] }}" name="{{ column['column_name'] }}">
 
                             </div>
 

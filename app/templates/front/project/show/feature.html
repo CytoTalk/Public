@@ -1,0 +1,181 @@
+{% extends 'layout/front/main.html' %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/fancybox/dist/jquery.fancybox.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+{% endblock %}
+{% block content %}
+    <h1 class="text-dark text-center">{{ feature.title }}</h1>
+    <p class="text-dark text-center">{{ feature.description }}</p>
+    <br>
+
+    <div class="row px-5">
+        <div class="col-sm-3">
+            <div class="container">
+                <form onsubmit="return fetch_result(event)" id="search-form" action="">
+                    {% for column in feature.columns['columns'] %}
+                        {% if  column['data_type']['HTML'] not in ['file','checkbox','number'] %}
+                            <div class="border-bottom m-2">
+                                <h3>{{ column.original_name }}</h3>
+                                <p>{{ column.description }}</p>
+                                <div class="form-group">
+                                    <select onfocus="handleColumnQuery({column_name:'{{column.column_name}}'})" class="form-control select2" name="{{ column.column_name }}" id="col-{{ column.column_name }}">
+                                    </select>
+                                </div>
+                            </div>
+                        {% elif column['data_type']['HTML'] == 'number' %}
+                            <div class="form group border-bottom m-2">
+                                <label>{{ column.original_name }}</label>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <input step="any" class="form-control" placeholder="Min" name="{{ column.column_name }}[]" type="number">
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <input step="any" class="form-control" placeholder="Max" name="{{ column.column_name }}[]" type="number">
+
+                                </div>
+                            </div>
+
+                            </div>
+                        {% elif column['data_type']['HTML']=='checkbox' %}
+                            <div class="form-group border-bottom m-2">
+                             <label for="{{ column['column_name'] }}">{{ column['original_name'] }}</label>
+                                <select class="select2 form-control select2-container--bootstrap4" id="{{ column['column_name'] }}" name="{{ column['column_name'] }}">
+                                    <option selected value="all">All</option>
+                                    <option value="true">True</option>
+                                    <option value="false">False</option>
+                                </select>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                <div class="form-group">
+                 <button style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
+
+                </div>
+                </form>
+
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='vendor/axios/axios.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='vendor/fancybox/dist/jquery.fancybox.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        console.log("{{url_for('feature.FeatureView:get_column_data', feature_id = feature.id,column_name="xyz")}}")
+        const url = "{{ request.host_url }}"
+        const feature = "{{ feature.id }}"
+        const column_mapper = {{ feature.column_keys()|tojson }};
+
+        $(document).ready(function () {
+            axios.get(url+"feature/feature/get_records/"+feature)
+                .then(res=>{
+                    if (res.data?.result){
+                        render_result(res.data.result)
+                    }
+                    console.log(res.data)
+
+                })
+        })
+
+        const render_result = result=>{
+            const render_records = record =>{
+                let input
+                if (record.type ==='file'){
+                    input = `
+                    <div style="width: 100px; height: 100px">
+                            <a href="${ record.value }" data-fancybox="gallery" data-caption="${record.name}">
+                                <img src="${ record.value }" style="object-fit: contain;max-width: 100%;max-height: 100%" alt="${record.name}">
+                            </a>
+                     </div>`
+                }else{
+                    input = record.value
+                }
+                return `
+                        <tr>
+                            <th scope="row">${ record.name }</th>
+                            <td>${ input }</td>
+                        </tr>
+                `;
+            }
+
+            let container= $('#result-render')
+            container.html("")
+            result.map(column=>{
+                const html =`
+                <table class="table">
+                    <tbody>
+                    ${Object.values(column).map(record=>render_records(record))}
+                    </tbody>
+                </table>
+            `;
+                container.append($(html))
+            })
+        }
+
+        const fetch_result = event =>{
+            event.preventDefault()
+            const form = new FormData(event.target)
+            if (form.entries().length===0) {
+                return;
+            }
+
+            axios.post(url+"feature/feature/get_records/"+feature,form)
+                .then(res=>{
+                    if (res.data?.result && res.data?.result?.length){
+                        return render_result(res.data.result)
+                    }
+                    toastr.info('No Result found')
+
+                    console.log(res.data)
+
+                })
+
+
+
+        }
+        const  handleColumnQuery = data =>{
+            const url = "{{ request.host_url }}feature/feature/{{ feature.id }}/get_column_data"
+            $(`#col-${data.column_name}`).select2({
+                ajax: {
+                    url: url+'/'+data.column_name,
+                    data: function (params) {
+                        // Query parameters will be ?search=[term]&type=public
+                        return {
+                            value: params.term,
+                        };
+                    },
+                    processResults: function (res) {
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        const results = res.results;
+                        console.log(results)
+                        let  processed = []
+                        results.map((element)=>{
+                            console.log("element",element)
+                            processed.push({
+                                id: element[data.column_name],
+                                text: element[data.column_name]
+                            })
+                        })
+                        console.log(processed)
+
+                        return {
+                            results: processed
+                        };
+                    }
+
+                }});
+        }
+    </script>
+{% endblock %}

@@ -17,6 +17,7 @@ def get_feature(feature_id) -> FeatureModel:
 
 
 class FeatureView(FlaskView):
+    route_prefix = '/projects/'
 
     @route('/', methods=('GET',))
     def index(self):
@@ -61,7 +62,7 @@ class FeatureView(FlaskView):
         if form.validate_on_submit():
             feature.update_column(column_name=column_name, new_name=form.name.data, description=form.description.data)
             flash("Column was updated successfully", "success")
-            return redirect(url_for("admin.FeatureView:show", feature_id=feature_id))
+            return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
         return render_template('admin/feature/create.html', form=form)
 
     @route('/<feature_id>/show', methods=('GET',))
@@ -87,8 +88,9 @@ class FeatureView(FlaskView):
     def delete_column(self, feature_id, column_name):
         feature = get_feature(feature_id)
         feature.delete_column(column_name)
-        flash("Column was deleted successfully", 'success')
-        return redirect(url_for('admin.FeatureView:show', feature_id=feature_id))
+        flash("Column was deleted successfully", 'success')        
+        return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
+
 
     @route('/<feature_id>/delete', methods=('POST',))
     def delete(self, feature_id):
@@ -120,8 +122,8 @@ class FeatureView(FlaskView):
             flash("Record was created successfully", "success")
         except Exception as e:
             flash(str(e), "error")
+        return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
 
-        return redirect(url_for('admin.FeatureView:show', feature_id=feature_id))
 
     @route('/<feature_id>/upload_image', methods=['GET', 'POST'])
     def upload(self, feature_id):
@@ -164,4 +166,5 @@ class FeatureView(FlaskView):
             if_exists='append',
             index=False)
         flash("Data was uploaded successfully!", "success")
-        return redirect(url_for('admin.FeatureView:show', feature_id=feature_id))
+        return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
+
