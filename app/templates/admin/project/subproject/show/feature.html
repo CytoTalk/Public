@@ -126,7 +126,9 @@
                                         class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}"
                                         id="{{ column['column_name'] }}id"
                                         type="{{ column['data_type']['HTML'] }}"
+                                        {% if column['data_type']['HTML'] == 'number' %}
                                         step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
+                                        {% endif %}
                                         name="{{ column['column_name'] }}">
 
                             </div>
