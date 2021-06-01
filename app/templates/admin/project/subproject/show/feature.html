@@ -122,7 +122,12 @@
 
                             <div class="form-group">
                                 <label for="{{ column['column_name'] }}id">{{ column['original_name'] }}</label>
-                                <input  class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}" id="{{ column['column_name'] }}id" type="{{ column['data_type']['HTML'] }}" name="{{ column['column_name'] }}">
+                                <input
+                                        class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}"
+                                        id="{{ column['column_name'] }}id"
+                                        type="{{ column['data_type']['HTML'] }}"
+                                        step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
+                                        name="{{ column['column_name'] }}">
 
                             </div>
 
