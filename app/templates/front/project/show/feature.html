@@ -6,65 +6,76 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 {% endblock %}
 {% block content %}
-    <h1 class="text-dark text-center">{{ feature.title }}</h1>
-    <p class="text-dark text-center">{{ feature.description }}</p>
-    <br>
+<h1 class="text-dark text-center">{{ feature.title }}</h1>
+<p class="text-dark text-center">{{ feature.description }}</p>
+<br>
 
-    <div class="row px-5">
-        <div class="col-sm-3">
-            <div class="container">
-                <form onsubmit="return fetch_result(event)" id="search-form" action="">
-                    {% for column in feature.columns['columns'] %}
-                        {% if  column['data_type']['HTML'] not in ['file','checkbox','number'] %}
-                            <div class="border-bottom m-2">
-                                <h3>{{ column.original_name }}</h3>
-                                <p>{{ column.description }}</p>
-                                <div class="form-group">
-                                    <select onfocus="handleColumnQuery({column_name:'{{column.column_name}}'})" class="form-control select2" name="{{ column.column_name }}" id="col-{{ column.column_name }}">
-                                    </select>
-                                </div>
-                            </div>
-                        {% elif column['data_type']['HTML'] == 'number' %}
-                            <div class="form group border-bottom m-2">
-                                <label>{{ column.original_name }}</label>
-                            <div class="row">
+<div class="row px-5">
+    <div class="col-sm-3">
+        <div class="container">
+            <form onsubmit="return fetch_result(event)" id="search-form" action="">
+                {% for column in feature.columns['columns'] %}
+                {% if  column['data_type']['HTML'] not in ['file','checkbox','number'] %}
+                    <div class="border-bottom m-2">
+                        <h3>{{ column.original_name }}</h3>
+                        <p>{{ column.description }}</p>
+                        <div class="form-group">
+                            <select onfocus="handleColumnQuery({column_name:'{{column.column_name}}'})" class="form-control select2" name="{{ column.column_name }}" id="col-{{ column.column_name }}">
+                                <option value="all">All</option>
+                            </select>
+                        </div>
+                    </div>
+                {% elif column['data_type']['HTML'] == 'number' %}
+                    <div class="form group border-bottom m-2">
+                    <label>{{ column.original_name }}</label>
+                    <div class="row">
 
-                                <div class="col-sm-6">
-                                    <input step="any" class="form-control" placeholder="Min" name="{{ column.column_name }}[]" type="number">
-
-                                </div>
-                                <div class="col-sm-6">
-                                    <input step="any" class="form-control" placeholder="Max" name="{{ column.column_name }}[]" type="number">
-
-                                </div>
-                            </div>
-
-                            </div>
-                        {% elif column['data_type']['HTML']=='checkbox' %}
-                            <div class="form-group border-bottom m-2">
-                             <label for="{{ column['column_name'] }}">{{ column['original_name'] }}</label>
-                                <select class="select2 form-control select2-container--bootstrap4" id="{{ column['column_name'] }}" name="{{ column['column_name'] }}">
-                                    <option selected value="all">All</option>
-                                    <option value="true">True</option>
-                                    <option value="false">False</option>
-                                </select>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                <div class="form-group">
-                 <button style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
+                    <div class="col-sm-6">
+                    <input
+                    step="{% if column['data_type']['PYTHON'] == 'float' %} any{% else %}1{% endif %}"
+                    class="form-control"
+                    placeholder="Min"
+                    name="{{ column.column_name }}_min"
+                    type="number">
 
                 </div>
-                </form>
+                <div class="col-sm-6">
+                    <input
+                            step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
+                            class="form-control"
+                            placeholder="Max"
+                            name="{{ column.column_name }}_max"
+                            type="number">
 
-            </div>
-        </div>
-        <div class="col-sm-9">
-            <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
+                </div>
+                </div>
 
-            </div>
+                </div>
+                {% elif column['data_type']['HTML']=='checkbox' %}
+                <div class="form-group border-bottom m-2">
+                    <label for="{{ column['column_name'] }}">{{ column['original_name'] }}</label>
+                    <select class="select2 form-control select2-container--bootstrap4" id="{{ column['column_name'] }}" name="{{ column['column_name'] }}">
+                        <option selected value="all">All</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <div class="form-group">
+                    <button style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
+
+                </div>
+            </form>
+
         </div>
     </div>
+    <div class="col-sm-9">
+        <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 {% block scripts %}
@@ -92,7 +103,7 @@
         const render_result = result=>{
             const render_records = record =>{
                 let input
-                if (record.type ==='file'){
+                if (record.type ==='file' && record.value){
                     input = `
                     <div style="width: 100px; height: 100px">
                             <a href="${ record.value }" data-fancybox="gallery" data-caption="${record.name}">
@@ -120,7 +131,7 @@
                     </tbody>
                 </table>
             `;
-                container.append($(html))
+                container.append(html)
             })
         }
 
@@ -160,7 +171,10 @@
                         // Transforms the top-level key of the response object from 'items' to 'results'
                         const results = res.results;
                         console.log(results)
-                        let  processed = []
+                        let  processed = [{
+                            id:"all",
+                            text:"All"
+                        }]
                         results.map((element)=>{
                             console.log("element",element)
                             processed.push({

@@ -63,30 +63,45 @@ class FeatureView(FlaskView):
             sql = text(f"select * from feature_table_{feature_id} limit 10")
         else:
             conditions = []
-            for key, value in request.form.items():
-                column = feature.get_column_data(key.replace('[]', ''))
+            form = request.form.to_dict()
+            print(form)
+            for column in feature.columns['columns']:
+                # """Handle numeric columns(Floats and Ints)"""
+                statement = ""
                 if column['data_type']['HTML'] == 'number':
-                    values = sorted(request.form.getlist(key))
                     try:
-                        low = values[0]
-                        high = values[1]
+                        low = form[column['column_name'] + '_min'] if column['column_name'] + '_min' in form else None
+                        high = form[column['column_name'] + '_max'] if column['column_name'] + '_max' in form else None
+                        values = [low,high]
                     except IndexError:
-                        low = 0
-                        high = 0
-                    if column['data_type']['PYTHON'] == 'int':
-                        statement = f"({key.replace('[]', '')}::integer between {low} and {high})"
-                    else:
-                        statement = f"({key.replace('[]', '')}::float between {low} and {high})"
+                        continue
+                    if not low and not high:
+                        continue
+                    cast = 'integer' if column['data_type']['PYTHON'] == 'int' else 'float'
 
+                    if low and not high:
+                        statement = f"({column['column_name']}::{cast} >= {min(values)})"
+                    elif high and not low:
+                        statement = f"({column['column_name']}::{cast} <= {max(values)})"
+                    else:
+                        statement = f"({column['column_name']}::{cast} between {min(values)} and {max(values)})"
+                # """Handle checkbox columns"""
                 elif column['data_type']['HTML'] == 'checkbox':
-                    if value != 'all':
-                        statement = f"{column['column_name']} ={value}"
+                    if form[column['column_name']] != 'all':
+                        statement = f"{column['column_name']} ={form[column['column_name']]}"
+                elif column['data_type']['HTML'] == 'text' and form[column['column_name']]:
+                    if form[column['column_name']] != 'all':
+                        statement = f"({column['column_name']}::text = '{form[column['column_name']]}')"
                 else:
-                    statement = f"({key}::text like '%{value}%')"
-                conditions.append(statement)
+                    continue
+                if statement:
+                    conditions.append(statement)
             params = " and ".join(conditions)
-            sql = text(
-                f"select * from feature_table_{feature_id} where {params} limit 10")
+            if params:
+                sql = text(
+                    f"select * from feature_table_{feature_id} where {params} limit 10")
+            else:
+                sql = text(f"select * from feature_table_{feature_id} limit 10")
             print(sql)
         result = feature.execute_query(sql)
 
