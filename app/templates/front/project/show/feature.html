@@ -32,7 +32,7 @@
 
                     <div class="col-sm-6">
                     <input
-                    step="{% if column['data_type']['PYTHON'] == 'float' %} any{% else %}1{% endif %}"
+                    step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
                     class="form-control"
                     placeholder="Min"
                     name="{{ column.column_name }}_min"
