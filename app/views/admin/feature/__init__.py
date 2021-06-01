@@ -46,7 +46,7 @@ class FeatureView(FlaskView):
             try:
                 feature.add_column(form.name.data, form.data_type.data, form.description.data)
                 flash("Column was created successfully", "success")
-                return redirect(url_for("admin.FeatureView:show", feature_id=feature_id))
+                return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
             except Exception as e:
                 flash(str(e), "error")
         return render_template('admin/feature/create.html', form=form)
