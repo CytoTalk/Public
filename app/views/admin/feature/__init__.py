@@ -113,13 +113,11 @@ class FeatureView(FlaskView):
                     file_name = "none"
                 data[column['column_name']] = url_for('static', filename="feature_images/" + file_name, _external=True)
                 continue
-            if column['data_type']['HTML'] == 'checkbox' and column['column_name'] in form:
+            if column['data_type']['HTML'] == 'checkbox':
                 data[column['column_name']] = column['column_name'] in form
                 continue
             if form[column['column_name']]:
                 data[column['column_name']] = form[column['column_name']]
-        print(data)
-        import pdb;pdb.set_trace()
         if len(data):
             sql = "INSERT INTO %s (%s) VALUES(%s)" % (
                 f"feature_table_{feature_id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
