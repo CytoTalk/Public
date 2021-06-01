@@ -1,16 +1,10 @@
-name: Build & Deploy
+name: Manually run the actions
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-    types: [closed]
+  workflow_dispatch:
+    inputs:
 
 jobs:
   build:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       postgres:

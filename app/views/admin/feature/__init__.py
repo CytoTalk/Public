@@ -88,9 +88,8 @@ class FeatureView(FlaskView):
     def delete_column(self, feature_id, column_name):
         feature = get_feature(feature_id)
         feature.delete_column(column_name)
-        flash("Column was deleted successfully", 'success')        
+        flash("Column was deleted successfully", 'success')
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
-
 
     @route('/<feature_id>/delete', methods=('POST',))
     def delete(self, feature_id):
@@ -105,25 +104,33 @@ class FeatureView(FlaskView):
         form = request.form.to_dict()
         data = {}
         for column in feature.columns['columns']:
-            print(column)
             if column['data_type']['HTML'] == 'file':
                 file = request.files[column['column_name']]
-                file_name = save_file(file, Path.joinpath(current_app.config['STATIC_PATH'], 'feature_images'), True)
-                data[column['column_name']] = url_for('static', filename="feature_images/"+file_name, _external=True)
+                if file:
+                    file_name = save_file(file, Path.joinpath(current_app.config['STATIC_PATH'], 'feature_images'),
+                                          True)
+                else:
+                    file_name = "none"
+                data[column['column_name']] = url_for('static', filename="feature_images/" + file_name, _external=True)
                 continue
-            if column['data_type']['HTML'] == 'checkbox':
+            if column['data_type']['HTML'] == 'checkbox' and column['column_name'] in form:
                 data[column['column_name']] = column['column_name'] in form
                 continue
-            data[column['column_name']] = form[column['column_name']]
-        sql = "INSERT INTO %s (%s) VALUES(%s)" % (
-            f"feature_table_{feature_id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
-        try:
-            feature.execute_query(sql)
-            flash("Record was created successfully", "success")
-        except Exception as e:
-            flash(str(e), "error")
+            if form[column['column_name']]:
+                data[column['column_name']] = form[column['column_name']]
+        print(data)
+        import pdb;pdb.set_trace()
+        if len(data):
+            sql = "INSERT INTO %s (%s) VALUES(%s)" % (
+                f"feature_table_{feature_id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
+            try:
+                feature.execute_query(sql)
+                flash("Record was created successfully", "success")
+            except Exception as e:
+                flash(str(e), "error")
+        else:
+            flash("Please fill at least one column", 'error')
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
-
 
     @route('/<feature_id>/upload_image', methods=['GET', 'POST'])
     def upload(self, feature_id):
@@ -167,4 +174,3 @@ class FeatureView(FlaskView):
             index=False)
         flash("Data was uploaded successfully!", "success")
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
-
