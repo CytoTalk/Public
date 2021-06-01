@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: Manually run the actions
 on:
   workflow_dispatch:
     inputs:
