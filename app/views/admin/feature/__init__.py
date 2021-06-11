@@ -1,7 +1,9 @@
 from io import BytesIO
+from uuid import uuid4
 
 from flask import request, flash, redirect, url_for, render_template, abort, current_app, send_file, make_response
 from flask_classful import FlaskView, route
+from sqlalchemy import text
 from werkzeug.utils import secure_filename
 
 from app import db
@@ -10,6 +12,7 @@ from app.models.Feature import Feature as FeatureModel, DATA_TYPES_MAPPER
 from app.views.helpers import save_file
 from pathlib import Path
 import pandas as pd
+from sqlalchemy.sql.expression import func
 
 
 def get_feature(feature_id) -> FeatureModel:
@@ -172,4 +175,33 @@ class FeatureView(FlaskView):
             if_exists='append',
             index=False)
         flash("Data was uploaded successfully!", "success")
+        return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
+
+    @route('/<feature_id>/upload_images', methods=('POST',))
+    def batch_upload_image(self, feature_id):
+        feature = get_feature(feature_id)
+        key_column = request.form.get('key_column')
+        target_column = request.form.get('target_column')
+        images = request.files.getlist('images')
+        try:
+            for image in images:
+
+                file_name = str(Path(image.filename).stem)
+                image_path = save_file(image, Path.joinpath(current_app.config['STATIC_PATH'], 'feature_images'),
+                                       True)
+                image_url = url_for('static', filename="feature_images/" + image_path, _external=True)
+                sql = f"CREATE OR REPLACE FUNCTION upsert() RETURNS void AS $$ \n" \
+                      f"begin \n" \
+                      f"IF EXISTS(SELECT * FROM feature_table_{feature_id} WHERE {key_column} = '{file_name}') THEN \n \
+                        update feature_table_{feature_id} set {target_column} = '{image_url}' where {key_column} = '{file_name}';\n \
+                        ELSE \n \
+                        INSERT INTO feature_table_{feature_id}({key_column},{target_column}) values('{file_name}','{image_url}');\n \
+                        END IF; \n" \
+                      f"end \n" \
+                      f"$$ LANGUAGE plpgsql;\n" \
+                      f"select upsert()"
+                feature.execute_query(text(sql))
+            flash("Images were uploaded successfully")
+        except Exception as e:
+            flash(str(e), "error")
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
