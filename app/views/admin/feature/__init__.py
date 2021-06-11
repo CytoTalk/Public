@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from flask import request, flash, redirect, url_for, render_template, abort, current_app, send_file, make_response
 from flask_classful import FlaskView, route
+from psycopg2._psycopg import AsIs
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
 
@@ -167,14 +168,27 @@ class FeatureView(FlaskView):
     def batch_upload(self, feature_id):
         feature = get_feature(feature_id)
         file = request.files['file']
+        key_column = request.form.get('key_column')
         df = pd.read_excel(file, index_col=False)
         df.columns = df.columns.str.lower()
-        df.to_sql(
-            f'feature_table_{feature.id}',
-            db.engine,
-            if_exists='append',
-            index=False)
-        flash("Data was uploaded successfully!", "success")
+        try:
+            for index, row in df.iterrows():
+                update_values = ",".join(f"'{x}'" for k, x in row.items())
+                sql = f"CREATE OR REPLACE FUNCTION upsert() RETURNS void AS $$ \n" \
+                      f"begin \n" \
+                      f"IF EXISTS(SELECT * FROM feature_table_{feature_id} WHERE {key_column} = '{row[key_column]}') THEN \n \
+                        update feature_table_{feature_id} set ({','.join(row.keys())}) = ({update_values}) where {key_column} = '{row[key_column]}';\n \
+                        ELSE \n \
+                        INSERT INTO feature_table_{feature_id}({','.join(row.keys())}) values({update_values});\n \
+                        END IF; \n" \
+                      f"end \n" \
+                      f"$$ LANGUAGE plpgsql;\n" \
+                      f"select upsert()"
+                feature.execute_query(text(sql))
+            flash("Data was uploaded successfully!", "success")
+
+        except Exception as e:
+            flash(str(e),'error')
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
 
     @route('/<feature_id>/upload_images', methods=('POST',))
@@ -185,7 +199,6 @@ class FeatureView(FlaskView):
         images = request.files.getlist('images')
         try:
             for image in images:
-
                 file_name = str(Path(image.filename).stem)
                 image_path = save_file(image, Path.joinpath(current_app.config['STATIC_PATH'], 'feature_images'),
                                        True)
