@@ -160,7 +160,7 @@ class FeatureView(FlaskView):
         buffer.seek(0)
         df.to_excel(buffer, sheet_name='data', index=False)
         resp = make_response(buffer.getvalue())
-        resp.headers['Content-Disposition'] = f'attachment; filename={secure_filename(feature.id)}.xlsx'
+        resp.headers['Content-Disposition'] = f'attachment; filename={secure_filename(feature.subproject.title)}.xlsx'
         resp.headers["Content-type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         return resp
 

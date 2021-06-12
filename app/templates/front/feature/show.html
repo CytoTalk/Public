@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='vendor/fancybox/dist/jquery.fancybox.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/ajax-pagination/dist/bs-pagination.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 {% endblock %}
 {% block content %}
@@ -42,6 +43,7 @@
             <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
 
             </div>
+            <ul id="pagination" class="pagination"></ul>
         </div>
     </div>
 
@@ -50,6 +52,7 @@
     <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ url_for('static',filename='vendor/axios/axios.min.js') }}"></script>
     <script src="{{ url_for('static',filename='vendor/fancybox/dist/jquery.fancybox.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='vendor/ajax-pagination/dist/pagination.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         console.log("{{url_for('feature.FeatureView:get_column_data', feature_id = feature.id,column_name="xyz")}}")
@@ -68,7 +71,18 @@
                 })
         })
 
-        const render_result = result=>{
+        const render_result = res=>{
+
+            $('#pagination').pagination({
+              total: res.total_result,
+              current: res.page,
+              length: res.per_page,
+              size: 5,
+              prev: "&lt;",
+              next: "&gt;",
+              click: function (e) {
+                  console.log(e) }
+            });
             const render_records = record =>{
                 let input
                 if (record.type ==='file'){
@@ -103,14 +117,14 @@
             })
         }
 
-        const fetch_result = event =>{
+        const fetch_result = (event,page=1,per_page=10) =>{
             event.preventDefault()
             const form = new FormData(event.target)
             if (form.entries().length===0) {
                 return;
             }
 
-            axios.post(url+"feature/feature/get_records/"+feature,form)
+            axios.post(url+"feature/feature/get_records/"+feature+`?page=${page}&per_page=${per_page}`,form)
                 .then(res=>{
                     if (res.data?.result && res.data?.result?.length){
                         return render_result(res.data.result)
