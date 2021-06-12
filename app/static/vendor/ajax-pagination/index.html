@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Pagination</title>
+    <!-- boostrap分页css文件 -->
+    <!--<link rel="stylesheet" type="text/css" href="dist/bs-pagination.min.css">-->
+	<link rel="stylesheet" type="text/css" href="dist/pagination.min.css">
+	<style type="text/css">
+		.container{
+			margin: 100px auto;
+		}
+		.box,.show{
+			margin: 20px auto;
+			text-align: center;
+		}
+		.show{
+			padding: 10px 0;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="box">
+	    <ul id="example-1" class="pagination"></ul>
+	    <div class="show"></div>
+	</div>
+	<div class="box">
+	    <ul id="example-2" class="pagination"></ul>
+	    <div class="show"></div>
+	</div>
+	<div class="box">
+	    <ul id="example-3" class="pagination"></ul>
+	    <div class="show"></div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script type="text/javascript" src="dist/pagination.min.js"></script>
+<script type="text/javascript">
+$('#example-1').pagination({
+    total: 100, // 总数据条数
+    current: 2, // 当前页码
+    length: 10, // 每页数据量
+    size: 2, // 显示按钮个数
+    /**
+     * [click description]
+     * @param  {[object]} options = {
+     *      current: options.current,
+     *      length: options.length,
+     *      total: options.total
+     *  }
+     * @param  {[object]} $target [description]
+     * @return {[type]}         [description]
+     */
+    click: function(options,$target) { // 点击按钮事件
+    	console.log(options);
+        $target.next(".show").text('Current: '+options.current);
+    }
+});
+$('#example-2').pagination({
+    total: 100, // 总数据条数
+    current: 2, // 当前页码
+    length: 10, // 每页数据量
+    size: 2, // 显示按钮个数
+    prev: 'Previous',
+    next: 'Next',
+    /**
+     * [click description]
+     * @param  {[object]} options = {
+     *      current: options.current,
+     *      length: options.length,
+     *      total: options.total
+     *  }
+     * @param  {[object]} $target [description]
+     * @return {[type]}         [description]
+     */
+    click: function(options,$target) { // 点击按钮事件
+        console.log(options);
+        $target.next(".show").text('Current: '+options.current);
+    }
+});
+$('#example-3').pagination({
+    total: 100, // 总数据条数
+    current: 2, // 当前页码
+    length: 10, // 每页数据量
+    size: 2, // 显示按钮个数
+    /**
+     * ajax请求远程数据
+     * 此方法阻止按钮渲染
+     * 直到调用refresh方法
+     * @param  {[object]} options = {
+     *      current: options.current,
+     *      length: options.length,
+     *      total: options.total
+     *  }
+     * @param  {[function]} refresh 回调函数以刷新分页按钮
+     * @param  {[object]} $target [description]
+     * @return {[type]}         [description]
+     */
+    ajax: function(options, refresh, $target){
+    	$.ajax({
+    		url: 'test.json',
+    		data:{
+                current: options.current,
+                length: options.length
+            },
+            dataType: 'json'
+    	}).done(function(res){
+    		console.log(res.data);
+    		// do something
+    		// 请务必调用此方法，否则分页按钮不会刷新
+    		refresh({
+    			total: res.total,// 可选
+    			length: res.length // 可选
+    		});
+    	}).fail(function(error){
+
+    	});
+    }
+});
+</script>
+</body>
+</html>
