@@ -3,104 +3,128 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='vendor/fancybox/dist/jquery.fancybox.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='vendor/ajax-pagination/dist/bs-pagination.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 {% endblock %}
 {% block content %}
-<h1 class="text-dark text-center">{{ feature.title }}</h1>
-<p class="text-dark text-center">{{ feature.description }}</p>
-<br>
+    <h1 class="text-dark text-center">{{ feature.title }}</h1>
+    <p class="text-dark text-center">{{ feature.description }}</p>
+    <br>
 
-<div class="row px-5">
-    <div class="col-sm-3">
-        <div class="container">
-            <form onsubmit="return fetch_result(event)" id="search-form" action="">
-                {% for column in feature.columns['columns'] %}
-                {% if  column['data_type']['HTML'] not in ['file','checkbox','number'] %}
-                    <div class="border-bottom m-2">
-                        <h3>{{ column.original_name }}</h3>
-                        <p>{{ column.description }}</p>
-                        <div class="form-group">
-                            <select onfocus="handleColumnQuery({column_name:'{{column.column_name}}'})" class="form-control select2" name="{{ column.column_name }}" id="col-{{ column.column_name }}">
-                                <option value="all">All</option>
-                            </select>
-                        </div>
+    <div class="row px-5">
+        <div class="col-sm-3">
+            <div class="container">
+                <form method="get" onsubmit="return handle_form(event)" id="search-form" action="{{ url_for('feature.FeatureView:fetch_records', feature_id = feature.id) }}">
+                    {% for column in feature.columns['columns'] %}
+                        {% if  column['data_type']['HTML'] not in ['file','checkbox','number'] %}
+                            <div class="border-bottom m-2">
+                                <h3>{{ column.original_name }}</h3>
+                                <p>{{ column.description }}</p>
+                                <div class="form-group">
+                                    <select onfocus="handleColumnQuery({column_name:'{{column.column_name}}'})" class="form-control select2" name="{{ column.column_name }}" id="col-{{ column.column_name }}">
+                                        <option value="all">All</option>
+                                        <option value="null">Empty</option>
+                                    </select>
+                                </div>
+                            </div>
+                        {% elif column['data_type']['HTML'] == 'number' %}
+                            <div class="form group border-bottom m-2">
+                                <label>{{ column.original_name }}</label>
+                                <div class="row">
+
+                                    <div class="col-sm-6">
+                                        <input
+                                                step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
+                                                class="form-control"
+                                                placeholder="Min"
+                                                name="{{ column.column_name }}_min"
+                                                type="number">
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input
+                                                step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
+                                                class="form-control"
+                                                placeholder="Max"
+                                                name="{{ column.column_name }}_max"
+                                                type="number">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        {% elif column['data_type']['HTML']=='checkbox' %}
+                            <div class="form-group border-bottom m-2">
+                                <label for="{{ column['column_name'] }}">{{ column['original_name'] }}</label>
+                                <select class="select2 form-control select2-container--bootstrap4" id="{{ column['column_name'] }}" name="{{ column['column_name'] }}">
+                                    <option selected value="all">All</option>
+                                    <option value="true">True</option>
+                                    <option value="false">False</option>
+                                </select>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="form-group">
+                        <button style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
+
                     </div>
-                {% elif column['data_type']['HTML'] == 'number' %}
-                    <div class="form group border-bottom m-2">
-                    <label>{{ column.original_name }}</label>
-                    <div class="row">
+                </form>
 
-                    <div class="col-sm-6">
-                    <input
-                    step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
-                    class="form-control"
-                    placeholder="Min"
-                    name="{{ column.column_name }}_min"
-                    type="number">
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div>
+                <button onclick="download_result()" class="btn btn-success"><i class="fa fa-download"></i> Download Result</button>
+            </div>
+            <p class="right"><span class="font-weight-bold" id="total_result"></span> <span class="float-right"></span>result(s) found</p>
+            <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
 
-                </div>
-                <div class="col-sm-6">
-                    <input
-                            step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
-                            class="form-control"
-                            placeholder="Max"
-                            name="{{ column.column_name }}_max"
-                            type="number">
+            </div>
+            <ul id="pagination" class="pagination"></ul>
 
-                </div>
-                </div>
-
-                </div>
-                {% elif column['data_type']['HTML']=='checkbox' %}
-                <div class="form-group border-bottom m-2">
-                    <label for="{{ column['column_name'] }}">{{ column['original_name'] }}</label>
-                    <select class="select2 form-control select2-container--bootstrap4" id="{{ column['column_name'] }}" name="{{ column['column_name'] }}">
-                        <option selected value="all">All</option>
-                        <option value="true">True</option>
-                        <option value="false">False</option>
-                    </select>
-                </div>
-                {% endif %}
-                {% endfor %}
-                <div class="form-group">
-                    <button style="border-radius: 0" type="submit" class="btn btn-success">Apply</button>
-
-                </div>
-            </form>
 
         </div>
     </div>
-    <div class="col-sm-9">
-        <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
-
-        </div>
-    </div>
-</div>
 
 {% endblock %}
 {% block scripts %}
     <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ url_for('static',filename='vendor/axios/axios.min.js') }}"></script>
     <script src="{{ url_for('static',filename='vendor/fancybox/dist/jquery.fancybox.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='vendor/ajax-pagination/dist/pagination.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        console.log("{{url_for('feature.FeatureView:get_column_data', feature_id = feature.id,column_name="xyz")}}")
         const url = "{{ request.host_url }}"
         const feature = "{{ feature.id }}"
         const column_mapper = {{ feature.column_keys()|tojson }};
+        let form_params = {per_page: 10,page: 1,_download:0}
 
         $(document).ready(function () {
             axios.get(url+"feature/feature/get_records/"+feature)
                 .then(res=>{
                     if (res.data?.result){
-                        render_result(res.data.result)
+                        render_result(res.data)
                     }
-                    console.log(res.data)
-
                 })
         })
+        const download_result =()=>{
+            download_url = url+"feature/feature/get_records/"+feature+ "?"+ jQuery.param({...form_params,_download:1} )
+            window.location.href=download_url
+        }
 
-        const render_result = result=>{
+        const render_result = res=>{
+            $('#total_result').html(res.total_result)
+            $('#pagination').pagination({
+                total: res.total_result,
+                current: res.page,
+                length: res.per_page,
+                size: 3,
+                prev: "&lt;",
+                next: "&gt;",
+                click: function (e) {
+                    form_params.page=e.current
+                    fetch_result() }
+            });
             const render_records = record =>{
                 let input
                 if (record.type ==='file' && record.value){
@@ -123,7 +147,7 @@
 
             let container= $('#result-render')
             container.html("")
-            result.map(column=>{
+            res.result.map(column=>{
                 const html =`
                 <table class="table">
                     <tbody>
@@ -134,19 +158,26 @@
                 container.append(html)
             })
         }
+        const handle_form = event=>{
+             event.preventDefault()
+                const form = new FormData(event.target)
+                if (form.entries().length===0) {
+                    return;
+                }
+                form.forEach(function(value, key){
+                    form_params[key] = value;
+                });
+            fetch_result()
+        }
 
-        const fetch_result = event =>{
-            event.preventDefault()
-            const form = new FormData(event.target)
-            if (form.entries().length===0) {
-                return;
-            }
+        const fetch_result = () =>{
 
-            axios.post(url+"feature/feature/get_records/"+feature,form)
+            axios.get(url+"feature/feature/get_records/"+feature,{params:form_params})
                 .then(res=>{
                     if (res.data?.result && res.data?.result?.length){
-                        return render_result(res.data.result)
+                        return render_result(res.data)
                     }
+                    form_params._download=0
                     toastr.info('No Result found')
 
                     console.log(res.data)
@@ -174,6 +205,9 @@
                         let  processed = [{
                             id:"all",
                             text:"All"
+                        },{
+                            id:"null",
+                            text:"Empty"
                         }]
                         results.map((element)=>{
                             console.log("element",element)

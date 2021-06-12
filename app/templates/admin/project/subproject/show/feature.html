@@ -4,13 +4,20 @@
 {% endblock %}
 {% block heading %}<span class="text-success">{{ subproject.title }}</span> {% endblock %}
 {% block content %}
-    <div class="py-2">
     <h3>{{ subproject.description }}</h3>
+    <div class="py-2">
 
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#batch_upload">
             Batch Upload
         </button>
     </div>
+    {% if  feature.columns.columns | selectattr('data_type')| map(attribute='data_type') | selectattr('HTML','equalto','file') | list|count %}
+        <div class="py-2">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#batch_upload_image">
+                Batch Upload Images
+            </button>
+        </div>
+    {% endif %}
     <div class="py-2">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_record_modal">
             Add Data
@@ -156,6 +163,19 @@
                     <div class="modal-body">
 
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+                                    <div class="form-group">
+                                        <label for="key_column">Key Column in both excel file and database</label>
+                                        <select name="key_column" class="form-control" id="key_column">
+                                            {% for column in feature.columns.columns %}
+                                                {% if column.data_type.HTML != 'file' %}
+
+                                                    <option value="{{ column.column_name }}">{{ column.original_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
                         <div class="form-group">
                             <label for="excel_file">Excel File</label>
                             <input class="form-control" type="file" name="file" id="excel_file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
@@ -171,7 +191,70 @@
             </div>
         </div>
     </div>
+    {% if  feature.columns.columns | selectattr('data_type')| map(attribute='data_type') | selectattr('HTML','equalto','file') | list|count %}
 
+        <div class="modal fade" id="batch_upload_image" tabindex="-1" role="dialog" aria-labelledby="BatchUpload Image" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Batch Upload Image</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form enctype="multipart/form-data" method="post" action="{{ url_for('admin.FeatureView:batch_upload_image',feature_id=feature.id) }}">
+                        <div class="modal-body">
+
+                            <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                            <div class="row">
+                                <div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <label for="key_column">Key Column</label>
+                                        <select name="key_column" class="form-control" id="key_column">
+                                            {% for column in feature.columns.columns %}
+                                                {% if column.data_type.HTML != 'file' %}
+
+                                                    <option value="{{ column.column_name }}">{{ column.original_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <label for="target_column">Target Column</label>
+                                        <select name="target_column" class="form-control" id="target_column">
+                                            {% for column in feature.columns.columns %}
+                                                {% if column.data_type.HTML == 'file' %}
+                                                    <option value="{{ column.column_name }}">{{ column.original_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="images">Images(Select Multiple)</label>
+                                        <input class="form-control" type="file" name="images" id="images" accept="image/*" multiple>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
 {% endblock %}
 {% block scripts %}
 {% endblock %}
