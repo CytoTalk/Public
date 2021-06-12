@@ -1,15 +1,67 @@
-from pathlib import Path
+from io import BytesIO
 
-import sqlalchemy
-from flask import send_from_directory, current_app, jsonify, abort
+import pandas as pd
+from flask import jsonify, make_response
 from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
-from flask_login import current_user
+from flask_paginate import get_page_args
 from sqlalchemy import text
-from app import db, csrf
+from werkzeug.utils import secure_filename
+
+from app import csrf, db
 from app.models.Feature import Feature
 from app.views.admin.feature import get_feature
+
+
+def fetch_record_post(feature: Feature, per_page: int, offset: int):
+    conditions = []
+    form = request.args.to_dict()
+    for column in feature.columns['columns']:
+        # """Handle numeric columns(Floats and Ints)"""
+        if column['column_name'] not in form: continue
+        statement = ""
+        if column['data_type']['HTML'] == 'number':
+            try:
+                low = form[column['column_name'] + '_min'] if column['column_name'] + '_min' in form else None
+                high = form[column['column_name'] + '_max'] if column['column_name'] + '_max' in form else None
+                values = [low, high]
+            except IndexError:
+                continue
+            if not low and not high:
+                continue
+            cast = 'integer' if column['data_type']['PYTHON'] == 'int' else 'float'
+
+            if low and not high:
+                statement = f"({column['column_name']}::{cast} >= {min(values)})"
+            elif high and not low:
+                statement = f"({column['column_name']}::{cast} <= {max(values)})"
+            else:
+                statement = f"({column['column_name']}::{cast} between {min(values)} and {max(values)})"
+        # """Handle checkbox columns"""
+        elif column['data_type']['HTML'] == 'checkbox':
+            if form[column['column_name']] != 'all':
+                statement = f"{column['column_name']} ={form[column['column_name']]}"
+        elif column['data_type']['HTML'] == 'text' and form[column['column_name']]:
+            if form[column['column_name']] != 'all':
+                if form[column['column_name']] == 'null':
+                    statement = f"({column['column_name']} is null)"
+                else:
+                    statement = f"({column['column_name']}::text = '{form[column['column_name']]}')"
+        else:
+            continue
+        if statement:
+            conditions.append(statement)
+    params = " and ".join(conditions)
+    limit_and_offset = f" limit {per_page} offset {offset}"
+    if "_download" in request.args and int(form['_download']):
+        limit_and_offset = f""
+    if params:
+        sql = text(
+            f"select *, count(*) OVER() AS total_count from feature_table_{feature.id} where {params} {limit_and_offset}")
+    else:
+        sql = text(f"select * , count(*) OVER() AS total_count from feature_table_{feature.id} {limit_and_offset}")
+    return sql
 
 
 class FeatureView(FlaskView):
@@ -59,64 +111,46 @@ class FeatureView(FlaskView):
     @csrf.exempt
     def fetch_records(self, feature_id):
         feature = get_feature(feature_id)
-        if request.method == 'GET':
-            sql = text(f"select * from feature_table_{feature_id} limit 10")
+
+        page, per_page, offset = get_page_args(page_parameter='page',
+                                               per_page_parameter='per_page')
+        sql = fetch_record_post(feature, per_page, offset)
+
+        if "_download" in request.args and int(request.args.get("_download")):
+            columns = [column['column_name'] for column in feature.columns['columns']]
+            df = pd.read_sql(sql, db.engine)
+            df.drop(df.columns[[0]], axis=1, inplace=True)  # df.columns is zero-based pd.Index
+            df.drop(df.columns[[-1]], axis=1, inplace=True)  # df.columns is zero-based pd.Index
+            df.columns = columns
+
+            buffer = BytesIO()
+            buffer.seek(0)
+            df.to_excel(buffer, sheet_name='data', index=False)
+            resp = make_response(buffer.getvalue())
+            resp.headers[
+                'Content-Disposition'] = f'attachment; filename={secure_filename(feature.subproject.title)}.xlsx'
+            resp.headers["Content-type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            return resp
         else:
-            conditions = []
-            form = request.form.to_dict()
-            print(form)
-            for column in feature.columns['columns']:
-                # """Handle numeric columns(Floats and Ints)"""
-                statement = ""
-                if column['data_type']['HTML'] == 'number':
-                    try:
-                        low = form[column['column_name'] + '_min'] if column['column_name'] + '_min' in form else None
-                        high = form[column['column_name'] + '_max'] if column['column_name'] + '_max' in form else None
-                        values = [low,high]
-                    except IndexError:
+            result = feature.execute_query(sql)
+            total_result = 0
+
+            res = []
+            columns = feature.column_keys()
+            for item in result:
+                print(item)
+                data = {}
+                for key, value in item.items():
+                    if key == 'i_d':
                         continue
-                    if not low and not high:
+                    if key == 'total_count':
+                        total_result = value
                         continue
-                    cast = 'integer' if column['data_type']['PYTHON'] == 'int' else 'float'
+                    data = {**data,
+                            key: {"type": columns[key]['data_type']['HTML'],
+                                  "name": columns[key]['original_name'],
+                                  "value": value}
+                            }
+                res.append(data)
 
-                    if low and not high:
-                        statement = f"({column['column_name']}::{cast} >= {min(values)})"
-                    elif high and not low:
-                        statement = f"({column['column_name']}::{cast} <= {max(values)})"
-                    else:
-                        statement = f"({column['column_name']}::{cast} between {min(values)} and {max(values)})"
-                # """Handle checkbox columns"""
-                elif column['data_type']['HTML'] == 'checkbox':
-                    if form[column['column_name']] != 'all':
-                        statement = f"{column['column_name']} ={form[column['column_name']]}"
-                elif column['data_type']['HTML'] == 'text' and form[column['column_name']]:
-                    if form[column['column_name']] != 'all':
-                        statement = f"({column['column_name']}::text = '{form[column['column_name']]}')"
-                else:
-                    continue
-                if statement:
-                    conditions.append(statement)
-            params = " and ".join(conditions)
-            if params:
-                sql = text(
-                    f"select * from feature_table_{feature_id} where {params} limit 10")
-            else:
-                sql = text(f"select * from feature_table_{feature_id} limit 10")
-            print(sql)
-        result = feature.execute_query(sql)
-
-        res = []
-        columns = feature.column_keys()
-        for item in result:
-            data = {}
-            for key, value in item.items():
-                if key == 'i_d':
-                    continue
-                data = {**data,
-                        key: {"type": columns[key]['data_type']['HTML'],
-                              "name": columns[key]['original_name'],
-                              "value": value}
-                        }
-            res.append(data)
-
-        return jsonify(result=res)
+        return jsonify(page=page, per_page=per_page, total_result=total_result, result=res)
