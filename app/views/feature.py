@@ -1,17 +1,17 @@
 from io import BytesIO
 
 import pandas as pd
-from flask import jsonify, make_response
+from flask import jsonify, make_response, url_for, abort
 from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
 from flask_paginate import get_page_args
 from sqlalchemy import text
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, redirect
 
 from app import csrf, db
 from app.models.Feature import Feature
-from app.views.admin.feature import get_feature
+from app.views.admin.feature import get_feature, insert_feature_data
 
 
 def fetch_record_post(feature: Feature, per_page: int, offset: int):
@@ -138,10 +138,14 @@ class FeatureView(FlaskView):
             res = []
             columns = feature.column_keys()
             for item in result:
-                print(item)
                 data = {}
                 for key, value in item.items():
                     if key == 'i_d':
+                        # data = {**data,
+                        #         key: {"type": "number",
+                        #               "name": "i_d",
+                        #               "value": value}
+                        #         }
                         continue
                     if key == 'total_count':
                         total_result = value
@@ -154,3 +158,23 @@ class FeatureView(FlaskView):
                 res.append(data)
 
         return jsonify(page=page, per_page=per_page, total_result=total_result, result=res)
+
+    @route('/<feature_id>', methods=('POST',))
+    def add_data(self, feature_id):
+        feature: Feature = get_feature(feature_id)
+        permission = feature.subproject.user_has_permission()
+        if not permission or (permission and 'CREATE' not in permission.permissions):
+            return abort(403, "You don't have permission to add data to this item")
+
+        insert_feature_data(feature)
+        return redirect(url_for('project.ProjectView:subproject', subproject_id=feature.subproject.id))
+
+    @route('/<feature_id>/record/<record_id>/delete', methods=('GET',))
+    def delete_record(self, feature_id: int, record_id: int):
+        feature = get_feature(feature_id)
+        permission = feature.subproject.user_has_permission()
+        if not permission or (permission and 'CREATE' not in permission.permissions):
+            return abort(403, "You don't have permission to delete data from this item")
+
+        feature.delete_record(record_id)
+        return redirect(url_for('project.ProjectView:subproject', subproject_id=feature.subproject.id))

@@ -1,15 +1,12 @@
 from pathlib import Path
-
-import flask_login
 from flask import send_from_directory, current_app, jsonify, abort
 from flask import request, render_template
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
-from flask_login import current_user
 from sqlalchemy import text
 from app import db, csrf
-from app.auth.security import verify_project_permission, verify_sub_project_permission
-from app.models.Project import SubProject
+from app.auth.security import verify_sub_project_permission
+from app.models.Project import SubProject, allowed_projects_for_user
 from app.models.Excel import ExcelRecord
 from app.models.Project import ImageStore as Image
 from app.models.Project import Project
@@ -22,18 +19,15 @@ class ProjectView(FlaskView):
 
     def index(self):
 
-        projects = Project.query.filter_by(is_public=True)
-        if current_user.is_authenticated:
-            projects = list(projects) + [project for project in Project.query.filter_by(is_public=False) if
-                                   project.id in [permission.project_id for permission in
-                                                  current_user.project_permissions]]
+        projects = allowed_projects_for_user()
 
         return render_template('front/project/index.html', projects=projects)
 
     @route('/<project_id>', methods=('GET',))
-    @verify_project_permission
     def show(self, project_id):
         project = Project.query.filter_by(id=project_id).first_or_404()
+        if not project.user_has_permission():
+            return abort(403, "You are not allowed to view this item")
         return render_template(
             'front/project/show/sub_project.html', project=project)
 
@@ -45,7 +39,11 @@ class ProjectView(FlaskView):
             return render_template('front/project/show/excel.html', subproject=subproject)
         elif subproject.type == 'feature':
             feature = subproject.features[0]
-            return render_template('front/project/show/feature.html',feature=feature, subproject=subproject)
+            return render_template(
+                'front/project/show/feature.html',
+                feature=feature,
+                subproject=subproject,
+                permission=subproject.user_has_permission())
 
         return render_template('front/project/show/image.html', subproject=subproject)
 

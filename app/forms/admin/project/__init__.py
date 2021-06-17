@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, SubmitField, SelectField, MultipleFileField, BooleanField
+from wtforms import StringField, SubmitField, SelectField, MultipleFileField, BooleanField, SelectMultipleField
 from wtforms.validators import DataRequired
 
 PROJECT_TYPES = [(1, 'Excel'), (2, 'Image')]
+PERMISSION_CHOICES = [('CREATE', 'CREATE'), ('READ', 'READ'), ('UPDATE', 'UPDATE'), ('DELETE', 'DELETE')]
 
 
 class ProjectForm(FlaskForm):
@@ -18,6 +19,7 @@ class ProjectForm(FlaskForm):
 class SubProjectForm(FlaskForm):
     title = StringField('Sub Project Name', validators=[DataRequired()])
     description = StringField('Sub Project description', validators=[DataRequired()])
+    status = BooleanField("private")
     submit = SubmitField('Submit')
 
 
@@ -40,6 +42,7 @@ class ImageForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class ProjectPermissionForm(FlaskForm):
+class ModelPermissionForm(FlaskForm):
     email = SelectField('email', choices=[], validators=[DataRequired()])
+    permission = SelectMultipleField('Permission (Select all that apply)', choices=PERMISSION_CHOICES, validators=[DataRequired()])
     submit = SubmitField('Submit')

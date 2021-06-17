@@ -1,8 +1,14 @@
 {% extends 'layout/admin/main.html' %}
+{% from 'macros.html' import user_permission_handler with context %}
+
 
 {% block content %}
     <h1>Categories in <span class="text-success">{{ subproject.title }}</span> </h1>
     <a href="{{ url_for('admin.ProjectImageCategoryView:create',subproject_id=subproject.id) }}" class="btn btn-success">Create new category</a>
+    <div>
+    {{ user_permission_handler(subproject) }}
+    </div>
+
     <table class="table">
         <thead>
         <tr>

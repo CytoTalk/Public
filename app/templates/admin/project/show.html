@@ -22,16 +22,18 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for user in project.allowed_users %}
-                        <tr>
-                            <td>{{ user.user.first_name }} {{ user.user.last_name }}</td>
-                            <td>
+                    {% if project.allowed_users %}
+                        {% for user in project.allowed_users %}
+                            <tr>
+                                <td>{{ user.user.first_name }} {{ user.user.last_name }}</td>
+                                <td>
 
-                                <a href="{{ url_for('admin.ProjectView:remove', project_id = project.id,user_id = user.user_id) }}" class="btn btn-warning">Revoke Permission</a>
-                            </td>
-                        </tr>
+                                    <a href="{{ url_for('admin.ProjectView:remove', project_id = project.id,user_id = user.user_id) }}" class="btn btn-warning">Revoke Permission</a>
+                                </td>
+                            </tr>
 
-                    {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                     </tbody>
                 </table>
 
