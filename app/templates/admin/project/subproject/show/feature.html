@@ -1,4 +1,5 @@
 {% extends 'layout/admin/main.html' %}
+{% from 'macros.html' import user_permission_handler with context %}
 {% block title %}{{ feature.title }}{% endblock %}
 {% block css %}
 {% endblock %}
@@ -30,6 +31,7 @@
     <div class="py-2">
         <a href="{{ url_for('admin.FeatureView:download',feature_id =feature.id) }}" class="btn btn-primary">Download Records</a>
     </div>
+    {{ user_permission_handler(subproject) }}
     <hr>
     <div class="card card-primary card-outline">
         <div class="card-header">

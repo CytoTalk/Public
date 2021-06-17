@@ -1,0 +1,40 @@
+{% macro user_permission_handler(subproject) %}
+
+    {% if not subproject.is_public %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <p>Allowed Users</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('admin.SubProjectView:add', subproject_id = subproject.id) }} "  class="btn btn-light btn-info" >Add members</a>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if subproject.allowed_users %}
+                        {% for user in subproject.allowed_users %}
+                            <tr>
+                                <td>{{ user.user.first_name }} {{ user.user.last_name }}</td>
+                                <td>
+
+                                    <a href="{{ url_for('admin.SubProjectView:remove', subproject_id = subproject.id,user_id = user.user_id) }}" class="btn btn-warning">Revoke Permission</a>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    {% endif %}
+
+{% endmacro %}

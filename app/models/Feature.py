@@ -1,4 +1,6 @@
 import re
+
+from flask import flash
 from sqlalchemy.orm.attributes import flag_modified
 
 from app import db
@@ -110,3 +112,11 @@ class Feature(db.Model, BaseModel):
 
     def column_keys(self) -> dict:
         return {x['column_name']: x for x in self.columns['columns']}
+
+    def delete_record(self, i_d: int):
+        sql = f"DELETE  FROM feature_table_{self.id} WHERE i_d={i_d};"
+        try:
+            self.execute_query(sql)
+            flash("Record was deleted successfully", "success")
+        except Exception as e:
+            flash(str(e), "error")

@@ -1,19 +1,19 @@
 from pathlib import Path
 from uuid import uuid4
 import pandas as pd
-from flask import request, flash, redirect, url_for, render_template, abort, current_app, jsonify
+from flask import request, flash, redirect, url_for, render_template, abort, current_app
 from flask_classful import FlaskView, route
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app import db, csrf
 from app.forms.admin.feature import FeatureForm
-from app.forms.admin.project import ProjectForm, SubProjectForm, ExcelCategoryForm, ImageCategoryForm
+from app.forms.admin.project import ProjectForm, SubProjectForm, ExcelCategoryForm
 from app.functions.store_excel import HandleExcel
 from app.models.Excel import ExcelRecord, ExcelColumn
-from app.models.Project import Project, SubProject
+from app.models.Project import SubProject
 from app.models.Feature import Feature as FeatureModel
-from app.views.feature import FeatureView
+from app.views.admin.project import create_user_permission, revoke_user_permission
 
 
 def get_subproject(subproject_id):
@@ -69,7 +69,8 @@ def handle_feature_create(project_id, subproject_type):
             title=form.title.data,
             description=form.description.data,
             project_id=project_id,
-            type=subproject_type
+            type=subproject_type,
+            is_public=not form.status.data
         )
         sub_project.create()
         feature = FeatureModel(
@@ -155,3 +156,23 @@ class SubProjectView(FlaskView):
         subproject.delete()
         flash("Sub Project was deleted successfully", 'success')
         return redirect(url_for('admin.ProjectView:show', project_id=project_id))
+
+    '''
+    Add users
+    '''
+
+    @route('<subproject_id>/add', methods=('GET', 'POST',))
+    def add(self, subproject_id):
+        subproject: SubProject = get_subproject(subproject_id)
+        return create_user_permission(
+            subproject,
+            url_for('admin.SubProjectView:show', subproject_id=subproject_id))
+
+    '''remove users'''
+
+    @route("project/<subproject_id>/allowed_user/<user_id>/revoke", methods=('GET',))
+    def remove(self, subproject_id, user_id):
+        subproject = get_subproject(subproject_id)
+        return revoke_user_permission(
+            subproject, user_id,
+            url_for('admin.SubProjectView:show', subproject_id=subproject_id))

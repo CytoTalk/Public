@@ -1,24 +1,49 @@
 from io import BytesIO
-from uuid import uuid4
 
-from flask import request, flash, redirect, url_for, render_template, abort, current_app, send_file, make_response
+from flask import request, flash, redirect, url_for, render_template, current_app, make_response
 from flask_classful import FlaskView, route
-from psycopg2._psycopg import AsIs
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
 
-from app import db
 from app.forms.admin.feature import FeatureForm, ColumnForm
 from app.models.Feature import Feature as FeatureModel, DATA_TYPES_MAPPER
 from app.views.helpers import save_file
 from pathlib import Path
 import pandas as pd
-from sqlalchemy.sql.expression import func
 
 
 def get_feature(feature_id) -> FeatureModel:
     return FeatureModel.query.filter_by(id=feature_id).first_or_404()
 
+
+def insert_feature_data(feature: FeatureModel):
+    form = request.form.to_dict()
+    data = {}
+    for column in feature.columns['columns']:
+        if column['data_type']['HTML'] == 'file':
+            file = request.files[column['column_name']]
+            if file:
+                file_name = save_file(file, Path.joinpath(current_app.config['STATIC_PATH'], 'feature_images'),
+                                      True)
+            else:
+                file_name = "none"
+            data[column['column_name']] = url_for('static', filename="feature_images/" + file_name, _external=True)
+            continue
+        if column['data_type']['HTML'] == 'checkbox':
+            data[column['column_name']] = column['column_name'] in form
+            continue
+        if form[column['column_name']]:
+            data[column['column_name']] = form[column['column_name']]
+    if len(data):
+        sql = "INSERT INTO %s (%s) VALUES(%s)" % (
+            f"feature_table_{feature.id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
+        try:
+            feature.execute_query(sql)
+            flash("Record was created successfully", "success")
+        except Exception as e:
+            flash(str(e), "error")
+    else:
+        flash("Please fill at least one column", 'error')
 
 class FeatureView(FlaskView):
     route_prefix = '/projects/'
@@ -105,33 +130,8 @@ class FeatureView(FlaskView):
     @route('/<feature_id>/add_data', methods=('POST',))
     def add_data(self, feature_id):
         feature = get_feature(feature_id)
-        form = request.form.to_dict()
-        data = {}
-        for column in feature.columns['columns']:
-            if column['data_type']['HTML'] == 'file':
-                file = request.files[column['column_name']]
-                if file:
-                    file_name = save_file(file, Path.joinpath(current_app.config['STATIC_PATH'], 'feature_images'),
-                                          True)
-                else:
-                    file_name = "none"
-                data[column['column_name']] = url_for('static', filename="feature_images/" + file_name, _external=True)
-                continue
-            if column['data_type']['HTML'] == 'checkbox':
-                data[column['column_name']] = column['column_name'] in form
-                continue
-            if form[column['column_name']]:
-                data[column['column_name']] = form[column['column_name']]
-        if len(data):
-            sql = "INSERT INTO %s (%s) VALUES(%s)" % (
-                f"feature_table_{feature_id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
-            try:
-                feature.execute_query(sql)
-                flash("Record was created successfully", "success")
-            except Exception as e:
-                flash(str(e), "error")
-        else:
-            flash("Please fill at least one column", 'error')
+        insert_feature_data(feature)
+
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
 
     @route('/<feature_id>/upload_image', methods=['GET', 'POST'])
@@ -188,7 +188,7 @@ class FeatureView(FlaskView):
             flash("Data was uploaded successfully!", "success")
 
         except Exception as e:
-            flash(str(e),'error')
+            flash(str(e), 'error')
         return redirect(url_for('admin.SubProjectView:show', subproject_id=feature.subproject_id))
 
     @route('/<feature_id>/upload_images', methods=('POST',))
