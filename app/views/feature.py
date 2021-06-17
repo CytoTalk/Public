@@ -141,11 +141,11 @@ class FeatureView(FlaskView):
                 data = {}
                 for key, value in item.items():
                     if key == 'i_d':
-                        data = {**data,
-                                key: {"type": "number",
-                                      "name": "i_d",
-                                      "value": value}
-                                }
+                        # data = {**data,
+                        #         key: {"type": "number",
+                        #               "name": "i_d",
+                        #               "value": value}
+                        #         }
                         continue
                     if key == 'total_count':
                         total_result = value
