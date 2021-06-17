@@ -1,10 +1,10 @@
 {% extends 'layout/admin/main.html' %}
 
+{% from 'macros.html' import user_permission_handler with context %}
 {% block content %}
-    {#    <h1>Columns in <span class="text-success">{{ subproject.title }}</span>  subproject</h1>#}
-
-    {#    <a href="{{ url_for('admin.CategoryView',category_type='excel') }}" class="btn btn-success">Add Excel file</a>#}
-
+    <div>
+    {{ user_permission_handler(subproject) }}
+    </div>
     <div class="card card-primary card-outline">
         <div class="card-header">
             <h3 class="card-title">

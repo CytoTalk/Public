@@ -74,8 +74,22 @@
         </div>
         <div class="col-sm-9">
             <div>
-                <button onclick="download_result()" class="btn btn-success"><i class="fa fa-download"></i> Download Result</button>
+                <div>
+
+                    <button onclick="download_result()" class="btn btn-success"><i class="fa fa-download"></i> Download Result</button>
+                </div>
+                <div>
+                    {% if permission and "CREATE" in permission.permissions %}
+
+                        <div class="py-2">
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_record_modal">
+                                Add Data
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
+            <hr>
             <p class="right"><span class="font-weight-bold" id="total_result"></span> <span class="float-right"></span>result(s) found</p>
             <div class="d-flex flex-column justify-content-center align-items-center"  id="result-render">
 
@@ -85,6 +99,45 @@
 
         </div>
     </div>
+    {% if permission and "CREATE" in permission.permissions %}
+        <div class="modal fade" id="add_record_modal" tabindex="-1" role="dialog" aria-labelledby="RecordModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Add Record</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form enctype="multipart/form-data" method="post" action="{{ url_for('feature.FeatureView:add_data',feature_id=feature.id) }}">
+                        <div class="modal-body">
+                            <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                            {% for column in feature.columns['columns'] %}
+
+                                <div class="form-group">
+                                    <label for="{{ column['column_name'] }}id">{{ column['original_name'] }}</label>
+                                    <input
+                                            class="{% if column['data_type']['HTML'] == 'checkbox' %} checkbox {% else %} form-control {% endif %}"
+                                            id="{{ column['column_name'] }}id"
+                                            type="{{ column['data_type']['HTML'] }}"
+                                            {% if column['data_type']['HTML'] == 'number' %}
+                                            step="{% if column['data_type']['PYTHON'] == 'float' %}any{% else %}1{% endif %}"
+                                            {% endif %}
+                                            name="{{ column['column_name'] }}">
+
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
 {% block scripts %}
@@ -159,14 +212,14 @@
             })
         }
         const handle_form = event=>{
-             event.preventDefault()
-                const form = new FormData(event.target)
-                if (form.entries().length===0) {
-                    return;
-                }
-                form.forEach(function(value, key){
-                    form_params[key] = value;
-                });
+            event.preventDefault()
+            const form = new FormData(event.target)
+            if (form.entries().length===0) {
+                return;
+            }
+            form.forEach(function(value, key){
+                form_params[key] = value;
+            });
             fetch_result()
         }
 

@@ -35,10 +35,8 @@ def email_verified(func):
 def verify_project_permission(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        project = Project.query.get(kwargs['project_id'])
-        if project.is_public or (project and current_user.is_authenticated and not project.is_public and project.id in [permitted.project_id
-                                                                                                  for permitted in
-                                                                                                  current_user.project_permissions]):
+        project: Project = Project.query.get(kwargs['project_id'])
+        if project.user_has_permission():
             return func(*args, **kwargs)
         return abort(403, "You are not allowed to view this item")
 
@@ -48,11 +46,8 @@ def verify_project_permission(func):
 def verify_sub_project_permission(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        sub_project = SubProject.query.get(kwargs['subproject_id'])
-        project = sub_project.project
-        if project.is_public or (project and current_user.is_authenticated and not project.is_public and project.id in [permitted.project_id
-                                                                                                  for permitted in
-                                                                                                  current_user.project_permissions]):
+        sub_project: SubProject = SubProject.query.get(kwargs['subproject_id'])
+        if sub_project.user_has_permission():
             return func(*args, **kwargs)
         return abort(403, "You are not allowed to view this item")
 
