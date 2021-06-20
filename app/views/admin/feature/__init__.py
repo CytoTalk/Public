@@ -18,6 +18,39 @@ def get_feature(feature_id) -> FeatureModel:
 
 def insert_feature_data(feature: FeatureModel):
     form = request.form.to_dict()
+    data = handle_record_form_data(feature, form)
+    if len(data):
+        sql = "INSERT INTO %s (%s) VALUES(%s)" % (
+            f"feature_table_{feature.id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
+        try:
+            feature.execute_query(sql)
+            flash("Record was created successfully", "success")
+        except Exception as e:
+            flash(str(e), "error")
+    else:
+        flash("Please fill at least one column", 'error')
+
+
+def edit_feature_data(feature: FeatureModel, record_id: int):
+    form = request.form.to_dict()
+    data = handle_record_form_data(feature, form)
+    if len(data):
+        key_pair_values = [f"{key}='{value}'" for key, value in data.items()]
+        sql = f"UPDATE feature_table_{feature.id} SET \n" \
+              f"{','.join(key_pair_values)}\n" \
+              f"WHERE i_d={record_id}" \
+              f";"
+        try:
+            print(sql)
+            feature.execute_query(text(sql))
+            flash("Record was updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "error")
+    else:
+        flash("Please fill at least one column", 'error')
+
+
+def handle_record_form_data(feature, form):
     data = {}
     for column in feature.columns['columns']:
         if column['data_type']['HTML'] == 'file':
@@ -34,16 +67,8 @@ def insert_feature_data(feature: FeatureModel):
             continue
         if form[column['column_name']]:
             data[column['column_name']] = form[column['column_name']]
-    if len(data):
-        sql = "INSERT INTO %s (%s) VALUES(%s)" % (
-            f"feature_table_{feature.id}", ",".join(data.keys()), ",".join(f"'{x}'" for x in data.values()))
-        try:
-            feature.execute_query(sql)
-            flash("Record was created successfully", "success")
-        except Exception as e:
-            flash(str(e), "error")
-    else:
-        flash("Please fill at least one column", 'error')
+    return data
+
 
 class FeatureView(FlaskView):
     route_prefix = '/projects/'
