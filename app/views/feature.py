@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename, redirect
 
 from app import csrf, db
 from app.models.Feature import Feature
-from app.views.admin.feature import get_feature, insert_feature_data
+from app.views.admin.feature import get_feature, insert_feature_data, edit_feature_data
 
 
 def fetch_record_post(feature: Feature, per_page: int, offset: int):
@@ -58,9 +58,9 @@ def fetch_record_post(feature: Feature, per_page: int, offset: int):
         limit_and_offset = f""
     if params:
         sql = text(
-            f"select *, count(*) OVER() AS total_count from feature_table_{feature.id} where {params} {limit_and_offset}")
+            f"select *, count(*) OVER() AS total_count from feature_table_{feature.id} where {params} ORDER BY i_d {limit_and_offset}")
     else:
-        sql = text(f"select * , count(*) OVER() AS total_count from feature_table_{feature.id} {limit_and_offset}")
+        sql = text(f"select * , count(*) OVER() AS total_count from feature_table_{feature.id} ORDER BY i_d {limit_and_offset}")
     return sql
 
 
@@ -141,11 +141,6 @@ class FeatureView(FlaskView):
                 data = {}
                 for key, value in item.items():
                     if key == 'i_d':
-                        # data = {**data,
-                        #         key: {"type": "number",
-                        #               "name": "i_d",
-                        #               "value": value}
-                        #         }
                         continue
                     if key == 'total_count':
                         total_result = value
@@ -155,11 +150,47 @@ class FeatureView(FlaskView):
                                   "name": columns[key]['original_name'],
                                   "value": value}
                             }
-                res.append(data)
+                res.append(dict(id=item[0], columns=data))
 
         return jsonify(page=page, per_page=per_page, total_result=total_result, result=res)
 
-    @route('/<feature_id>', methods=('POST',))
+    @route('/<feature_id>/record/<data_id>', methods=("GET",))
+    def show_feature_data(self, feature_id, data_id):
+
+        feature: Feature = get_feature(feature_id)
+        permission = feature.subproject.user_has_permission()
+        if not permission or (permission and 'UPDATE' not in permission.permissions):
+            return abort(403, "You don't have permission to edit this item")
+
+        sql = f"Select * from feature_table_{feature_id} where i_d={data_id} LIMIT 1"
+        result = feature.execute_query(sql).fetchone()
+        if not result:
+            abort(404, "Record not found")
+
+        data = {}
+        for key, value in result.items():
+            if key == 'i_d':
+                continue
+            data = {**data,
+                    key: value
+                    }
+        return jsonify(data)
+
+    @route('/<feature_id>/record/<record_id>/edit', methods=('POST',))
+    def edit_data(self, feature_id, record_id):
+        feature: Feature = get_feature(feature_id)
+        permission = feature.subproject.user_has_permission()
+        if not permission or (permission and 'UPDATE' not in permission.permissions):
+            return abort(403, "You don't have permission to edit this item")
+
+        sql = f"Select * from feature_table_{feature_id} where i_d={record_id} LIMIT 1"
+        result = feature.execute_query(sql).fetchone()
+        if not result:
+            abort(404, "Record not found")
+        edit_feature_data(feature, record_id)
+        return redirect(url_for('project.ProjectView:subproject', subproject_id=feature.subproject.id))
+
+    @route('/<feature_id>/record', methods=('POST',))
     def add_data(self, feature_id):
         feature: Feature = get_feature(feature_id)
         permission = feature.subproject.user_has_permission()
@@ -169,12 +200,11 @@ class FeatureView(FlaskView):
         insert_feature_data(feature)
         return redirect(url_for('project.ProjectView:subproject', subproject_id=feature.subproject.id))
 
-    @route('/<feature_id>/record/<record_id>/delete', methods=('GET',))
+    @route('/<feature_id>/record/<record_id>/delete', methods=('POST',))
     def delete_record(self, feature_id: int, record_id: int):
         feature = get_feature(feature_id)
         permission = feature.subproject.user_has_permission()
-        if not permission or (permission and 'CREATE' not in permission.permissions):
+        if not permission or (permission and 'DELETE' not in permission.permissions):
             return abort(403, "You don't have permission to delete data from this item")
-
         feature.delete_record(record_id)
         return redirect(url_for('project.ProjectView:subproject', subproject_id=feature.subproject.id))
