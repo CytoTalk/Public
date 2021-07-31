@@ -60,7 +60,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     """
     file1_data = {}
     # get all the data from all rows (i)
-    for i in range(2, 1000000):
+    for i in range(2, 10000000):
         key = c1(row=i, column=key_from_file1).value
         if key is None:  # if the ~row is empty (~end of file)
             break
@@ -70,6 +70,12 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
             for j in columns_of_interest_from_file1:
                 file1_data[key].append(c1(row=i, column=j).value)
     # Now, we have a dictionary "file1_data" to be used to modify_access information to the other file
+    
+    #store column names in a list to paste them later
+    column_names = []
+    for i in columns_of_interest_from_file1:
+        column_names.append(c1(row=1, column=i).value)
+
 
     """
     Paste the data to file 2
@@ -77,8 +83,12 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
 
     # First, name the new columns with the name the user entered as an argument
     col = starting_column_file2
-    for j in range(0, len(columns_of_interest_from_file1)):
-        c2(row=1, column=starting_column_file2 + j).value = new_column_name + '_' + str(j)
+    #for j in range(0, len(columns_of_interest_from_file1)):
+        #c2(row=1, column=starting_column_file2 + j).value = new_column_name + '_' + str(j)
+    j = 0
+    for i in column_names:
+        c2(row=1, column=starting_column_file2 + j).value = i
+        j+=1
 
     # Check all rows using the key column to match key from file1 with key from file 2
     for i in range(2, 10000000):
