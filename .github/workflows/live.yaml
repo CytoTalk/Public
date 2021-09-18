@@ -76,7 +76,7 @@ jobs:
           # Target directory
           TARGET: ${{ secrets.REMOTE_TARGET_PROD_DIGITAL_OCEAN }}
           # Arguments to pass to rsync
-          ARGS: "-rltgoDzvO"
+          ARGS: "-rltgoDzvO --exclude-from='excludesFile'"
 
       - name: Run Migrations
         uses: appleboy/ssh-action@master
@@ -86,6 +86,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /home/django/flask_app
+            . venv/bin/activate
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt;
             python3 manage.py db migrate
             python3 manage.py db upgrade
             systemctl restart gunicorn
