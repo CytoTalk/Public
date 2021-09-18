@@ -1,0 +1,39 @@
+{% extends 'layout/admin/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Edit Course Details{% endblock %}
+{% block heading %}Edit Course Details{% endblock %}
+{% block content %}
+    <h1>Edit Course Info</h1>
+
+    <form
+            method="post"
+            action="{{ url_for('admin.CourseView:update',course_id=course.id) }}"
+            enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-sm-7">
+                    {{ wtf.quick_form(form) }}
+
+        </div>
+        <div class="col-sm-5">
+
+        <div class="form-group">
+            <label for="images_to_delete">Select The Images you wish to delete</label>
+            <div class="row">
+                {% for image in course.images|selectattr('is_main_picture','equalto',False) %}
+                    <div class="col-sm">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div>
+                                <input type="checkbox" value="{{ image.public_id }}" name="images_to_delete" id="images_to_delete">
+                            </div>
+                            <div style="max-width: 200px;">
+                                <img src="{{ image.url }}" class="img img-fluid" alt="{{ course.title }} image">
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+    </div>
+    </form>
+{% endblock %}
