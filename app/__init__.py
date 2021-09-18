@@ -46,11 +46,13 @@ def create_app():
     from app.database import database as database_blueprint
     from app.project import project as project_blueprint
     from app.feature import feature as feature_blueprint
+    from app.courses import course as course_blueprint
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(database_blueprint)
     app.register_blueprint(project_blueprint)
     app.register_blueprint(feature_blueprint)
+    app.register_blueprint(course_blueprint)
     Bootstrap(app)
     return app

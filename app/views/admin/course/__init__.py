@@ -11,12 +11,15 @@ def get_course(course_id: int) -> Course:
     return Course.query.get(course_id)
 
 
-def unique_slug(text) -> str:
+def unique_slug(text, course=None) -> str:
     slug = slugify(text)
-    course = Course.query.filter_by(slug=slug).all()
-    if not course:
+    query = Course.query.filter(Course.slug == slug)
+    if course:
+        query.filter(Course.id != course.id)
+    res = query.all()
+    if not res:
         return slug
-    return slug + f"-{len(course)}"
+    return slug + f"-{len(res)}"
 
 
 class CourseView(FlaskView):
@@ -88,7 +91,7 @@ class CourseView(FlaskView):
             course.short_description = form.short_description.data
             course.title = form.title.data
             course.price = form.price.data
-            course.slug = unique_slug(form.title.data)
+            course.slug = unique_slug(form.title.data, course)
             course.save()
             images_to_delete = request.form.getlist('images_to_delete')
             if images_to_delete:
