@@ -3,6 +3,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from flask import render_template, current_app, send_from_directory, abort, request, flash, redirect
+from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app.forms.front.main.ApplicationForms import ExcelToListForm
@@ -19,6 +20,7 @@ def homepage():
 
 
 @main.route('/applications', methods=('GET',))
+@login_required
 def applications():
     return render_template('front/main/applications.html')
 

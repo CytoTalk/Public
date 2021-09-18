@@ -11,6 +11,7 @@ from app.views.admin.project.ProjectImageCategoryView import ProjectImageCategor
 from app.views.admin.project.ProjectImageView import ProjectImageView
 from app.views.admin.project.SubProjectView import SubProjectView
 from app.views.admin.project import ProjectView
+from app.views.admin.course import CourseView
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -31,6 +32,7 @@ DatabaseImageView.register(admin, trailing_slash=False)
 ProjectImageCategoryView.register(admin, trailing_slash=False)
 ProjectImageView.register(admin, trailing_slash=False)
 FeatureView.register(admin, trailing_slash=False)
+CourseView.register(admin, trailing_slash=False)
 
 
 @admin.route('/', methods=('GET',))
