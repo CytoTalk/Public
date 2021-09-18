@@ -53,7 +53,23 @@ jobs:
           APP_ENV: ${{ secrets.APP_ENV }}
           SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
 
-      - name: Deploy Via SSH
+      - name: Deploy to Production Site
+        uses: easingthemes/ssh-deploy@v2.1.4
+        with:
+          # Private Key
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          # Remote host
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          # Remote user
+          REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+          # Source directory
+          SOURCE: ''
+          # Target directory
+          TARGET: ${{ secrets.REMOTE_TARGET_PROD_DIGITAL_OCEAN }}
+          # Arguments to pass to rsync
+          ARGS: "-rltgoDzvO"
+
+      - name: Run Migrations
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -61,8 +77,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /home/django/flask_app
-            git pull -s recursive -X theirs origin master
-            python3 -m pip install -r requirements.txt
             python3 manage.py db migrate
             python3 manage.py db upgrade
             systemctl restart gunicorn
