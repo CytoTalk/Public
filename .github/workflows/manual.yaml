@@ -52,6 +52,9 @@ jobs:
           APP_DEBUG: ${{ secrets.APP_DEBUG }}
           APP_ENV: ${{ secrets.APP_ENV }}
           SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
+          CLOUDINARY_NAME: ${{ secrets.CLOUDINARY_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
 
       - name: Deploy to Production Site
         uses: easingthemes/ssh-deploy@v2.1.4
