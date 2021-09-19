@@ -5,35 +5,23 @@
     <div class="container text-dark">
         <div class="card">
             <div class="row w-100 p-2 ">
-                <div class="col-sm-7">
+                <div class="col-sm-12">
                     <div>
                         <div class="d-flex flex-wrap align-items-center">
                             <h3>{{ course.title }} </h3>
-                            <div class="d-inline-block">
+                          {#  <div class="d-inline-block">
                                 <i class="fas fa-star  fa-sm  text-warning"></i>
                                 <i class="fas fa-star  fa-sm  text-warning"></i>
                                 <i class="fas fa-star  fa-sm  text-warning"></i>
                                 <i class="fas fa-star  fa-sm  text-warning"></i>
                                 <i class="fas fa-star  fa-sm  text-warning"></i>
-                            </div>
+                            </div>#}
                         </div>
                         <hr>
                     </div>
-                    <div>
-                        <p>{{ course.long_description |safe}}</p>
 
-
-                        <button
-                                href="{{ url_for('course.CourseView:show', course_slug=course.slug) }}"
-                                class="btn btn-warning text-dark text-bold text-center rounded-5 shadow-1-soft btn-primary btn-lg md-20">
-                            Get Started for USD {{ course.price }}
-                        </button>
-                    </div>
-
-                </div>
-                <div class="col-sm-5 ">
-                    <div class="d-flex justify-content-end">
-                        <div id="courseImages" style="height: 400px; width: 500px; overflow: hidden;background-color: #1f1f1f" class="carousel slide carousel-fade" data-mdb-ride="carousel">
+                    <div class="d-flex justify-content-center py-5">
+                        <div id="courseImages" style="height: 500px; width: 100%; overflow: hidden;background-color: #1f1f1f" class="carousel slide carousel-fade" data-mdb-ride="carousel">
                             <!-- Indicators -->
                             <div class="carousel-indicators">
                                 <button type="button" data-mdb-target="#courseImages" data-mdb-slide-to="0" class="active" aria-current="true"></button>
@@ -78,10 +66,32 @@
                         </div>
 
                     </div>
+                    <div>
+                        <p>{{ course.long_description |safe}}</p>
+
+                        <div class="text-center">
+
+                        <button
+                                onclick="showMoreInfo()"
+
+                                class="btn btn-warning text-dark text-bold text-center rounded-5 shadow-1-soft btn-primary btn-lg md-20">
+                            Get Started for USD {{ course.price }}
+                        </button>
+                            <div id="moreInfoSection"></div>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
 
+{% endblock %}
+{% block scripts %}
+    <script>
+    function showMoreInfo() {
+        $('#moreInfoSection').html(`<p>For more information about our courses, send an email to <a href="mailto:info@cytotalk.com">info@cytotalk.com</a></p>`)
+    }
+    </script>
 {% endblock %}
