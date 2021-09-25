@@ -1,17 +1,18 @@
 from flask import Blueprint, render_template, abort
-
-from app.views.admin.database import DatabaseView
-
 from flask_login import login_required, current_user
+
 from app.views.admin.UserView import UserView
+from app.views.admin.course import CourseView
+from app.views.admin.database import DatabaseView
 from app.views.admin.database.CategoryView import DatabaseCategoryView
 from app.views.admin.database.DatabaseImageView import DatabaseImageView
 from app.views.admin.feature import FeatureView
+from app.views.admin.monthly_plan import MonthlyPlanView
+from app.views.admin.project import ProjectView
 from app.views.admin.project.ProjectImageCategoryView import ProjectImageCategoryView
 from app.views.admin.project.ProjectImageView import ProjectImageView
 from app.views.admin.project.SubProjectView import SubProjectView
-from app.views.admin.project import ProjectView
-from app.views.admin.course import CourseView
+from app.views.admin.services import ServiceView
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -33,6 +34,8 @@ ProjectImageCategoryView.register(admin, trailing_slash=False)
 ProjectImageView.register(admin, trailing_slash=False)
 FeatureView.register(admin, trailing_slash=False)
 CourseView.register(admin, trailing_slash=False)
+ServiceView.register(admin, trailing_slash=False)
+MonthlyPlanView.register(admin, trailing_slash=False)
 
 
 @admin.route('/', methods=('GET',))
