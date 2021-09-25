@@ -2,17 +2,17 @@ import cloudinary
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 from decouple import config
+from flask import Flask
+from flask_bootstrap import Bootstrap
 from flask_cors import CORS
 from flask_login import LoginManager
-from flask import Flask
 from flask_mail import Mail
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 
 from app.main import main
 from app.views.helpers import delete_files
 from instance.config import config_options
-from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
 
 sched = BackgroundScheduler(daemon=True)
 db = SQLAlchemy()
@@ -47,6 +47,8 @@ def create_app():
     from app.project import project as project_blueprint
     from app.feature import feature as feature_blueprint
     from app.courses import course as course_blueprint
+    from app.services import service as service_blueprint
+    from app.monthly_plan import monthly_plan as monthly_plan_blueprint
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
@@ -54,5 +56,7 @@ def create_app():
     app.register_blueprint(project_blueprint)
     app.register_blueprint(feature_blueprint)
     app.register_blueprint(course_blueprint)
+    app.register_blueprint(service_blueprint)
+    app.register_blueprint(monthly_plan_blueprint)
     Bootstrap(app)
     return app

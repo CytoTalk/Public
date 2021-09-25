@@ -38,9 +38,9 @@
           type="text/css"/>
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css"/>
     <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{{ url_for('static', filename='main/css/custom.css') }}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='vendor/material-design/css/mdb.min.css') }} " rel="stylesheet"/>
     {#    <link href="{{ url_for('static', filename='main/css/styles.css') }}" rel="stylesheet"/>#}
-    <link href="{{ url_for('static', filename='main/css/custom.css') }}" rel="stylesheet"/>
     {% block css %}{% endblock %}
 </head>
 
@@ -84,7 +84,7 @@
                 <li class="nav-item">
 
                     <a class="nav-link" href="{{ url_for('main.applications') }}"
-                      >Applications
+                    >Applications
                     </a>
                 </li>
                 <li class="nav-item">
@@ -94,6 +94,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('course.CourseView:index') }}">Courses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('monthly_plans.MonthlyPlanView:index') }}">Monthly Plans</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('services.ServiceView:index') }}">Services</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('project.ProjectView:index') }}">Projects</a>
