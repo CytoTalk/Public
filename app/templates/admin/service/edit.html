@@ -1,0 +1,53 @@
+{% extends 'layout/admin/main.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Edit Service Details{% endblock %}
+{% block heading %}Edit Service Details{% endblock %}
+{% block content %}
+    <h1>Edit Service Info</h1>
+
+    <form
+            method="post"
+            action="{{ url_for('admin.ServiceView:update',service_id=service.id) }}"
+            enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-sm-7">
+                {{ wtf.quick_form(form) }}
+
+            </div>
+            <div class="col-sm-5">
+
+                <div class="form-group">
+                    <label for="images_to_delete">Select The Images you wish to delete</label>
+                    <div class="row">
+                        {% for image in service.images|selectattr('is_main_picture','equalto',False) %}
+                            <div class="col-sm">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <input type="checkbox" value="{{ image.public_id }}" name="images_to_delete"
+                                               id="images_to_delete">
+                                    </div>
+                                    <div style="max-width: 200px;">
+                                        <img src="{{ image.url }}" class="img img-fluid"
+                                             alt="{{ service.title }} image">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block scripts %}
+
+
+    <script src="{{ url_for('static',filename='vendor/AdminLTE/plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <script>
+        $('#long_description').summernote()
+    </script>
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet"
+          href="{{ url_for('static',filename='vendor/AdminLTE/plugins/summernote/summernote-bs4.min.css') }}">
+{% endblock %}

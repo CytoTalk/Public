@@ -84,16 +84,34 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                     </li>#}
                     <li class="nav-item">
-                        <a href="{{ url_for('admin.UserView:index') }}" class="nav-link  {% if url_for('admin.UserView:index') in request.path  %}active{% endif %}">
+                        <a href="{{ url_for('admin.UserView:index') }}"
+                           class="nav-link  {% if url_for('admin.UserView:index') in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-th"></i>
                             <p>Users
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('admin.CourseView:index') }}" class="nav-link  {% if url_for('admin.CourseView:index') in request.path  %}active{% endif %}">
+                        <a href="{{ url_for('admin.CourseView:index') }}"
+                           class="nav-link  {% if url_for('admin.CourseView:index') in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-th"></i>
                             <p>Courses
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.ServiceView:index') }}"
+                           class="nav-link  {% if url_for('admin.ServiceView:index') in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Services
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('admin.MonthlyPlanView:index') }}"
+                           class="nav-link  {% if url_for('admin.MonthlyPlanView:index') in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Monthly Plans
                             </p>
                         </a>
                     </li>

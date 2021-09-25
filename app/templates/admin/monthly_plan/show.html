@@ -1,0 +1,27 @@
+{% extends 'layout/admin/main.html' %}
+{% block title %}View MonthlyPlan details {% endblock %}
+{% block heading %}View MonthlyPlan details {% endblock %}
+{% block content %}
+    <a href="{{ url_for('admin.MonthlyPlanView:update', monthly_plan_id=monthly_plan.id) }}" class="btn btn-success">Edit</a>
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>Title</td>
+            <td>{{ monthly_plan.title }}</td>
+        </tr>
+        <tr>
+            <td>Price</td>
+            <td>{{ monthly_plan.price }}</td>
+        </tr>
+        <tr>
+            <td>Short Description</td>
+            <td>{{ monthly_plan.short_description }}</td>
+        </tr>
+        <tr>
+            <td>Long Description</td>
+            <td>{{ monthly_plan.long_description|safe }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
