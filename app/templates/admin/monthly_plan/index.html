@@ -1,0 +1,60 @@
+{% extends 'layout/admin/main.html' %}
+{% block title %}MonthlyPlans{% endblock %}
+{% block content %}
+
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                Cytotalk MonthlyPlan
+            </h3>
+        </div>
+        <div class="card-body">
+            <a href="{{ url_for('admin.MonthlyPlanView:create') }}" class="btn btn-success">Create new MonthlyPlan</a>
+
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Short Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Created on(d/m/y)</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for monthly_plan in monthly_plans %}
+                    <tr>
+                        <td>
+                            <div style="max-width: 150px;">
+                                {% with main_image = monthly_plan.images|selectattr("is_main_picture", "equalto", True)|first %}
+                                    <img src="{{ main_image.url }}" class="img img-fluid"
+                                         alt="{{ monthly_plan.title }} main image">
+                                {% endwith %}
+                            </div>
+                        </td>
+                        <td>{{ monthly_plan.title }}</td>
+                        <td>{{ monthly_plan.short_description }}</td>
+                        <td>{{ monthly_plan.price }}</td>
+                        <td>{{ monthly_plan.CREATED_AT.strftime('%d-%m-%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.MonthlyPlanView:update',monthly_plan_id = monthly_plan.id) }}"
+                               class="btn btn-success">Edit</a>
+                            <a href="{{ url_for('admin.MonthlyPlanView:show',monthly_plan_id = monthly_plan.id) }}"
+                               class="btn btn-dark">View</a>
+                            <form onsubmit="return confirm('This action cannot be reverted. Do you want to continue?')"
+                                  method="POST"
+                                  action="{{ url_for('admin.MonthlyPlanView:delete',monthly_plan_id = monthly_plan.id) }}">
+                                <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

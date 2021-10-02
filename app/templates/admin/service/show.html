@@ -1,0 +1,27 @@
+{% extends 'layout/admin/main.html' %}
+{% block title %}View Service details {% endblock %}
+{% block heading %}View Service details {% endblock %}
+{% block content %}
+    <a href="{{ url_for('admin.ServiceView:update', service_id=service.id) }}" class="btn btn-success">Edit</a>
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>Title</td>
+            <td>{{ service.title }}</td>
+        </tr>
+        <tr>
+            <td>Price</td>
+            <td>{{ service.price }}</td>
+        </tr>
+        <tr>
+            <td>Short Description</td>
+            <td>{{ service.short_description }}</td>
+        </tr>
+        <tr>
+            <td>Long Description</td>
+            <td>{{ service.long_description|safe }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
