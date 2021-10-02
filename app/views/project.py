@@ -72,7 +72,7 @@ class ProjectView(FlaskView):
         else:
             conditions = []
             for key, value in request.form.items():
-                conditions.append(f"(values::text like '%{value}%')")
+                conditions.append(f"(values::text ilike '%{value}%')")
             params = " and ".join(conditions)
             sql = text(
                 f"select * from (select batch_id,array_agg(value order by column_id) as values from excel_records  group by batch_id) as s where {params}")
