@@ -1,15 +1,17 @@
 from pathlib import Path
-from flask import send_from_directory, current_app, jsonify, abort
+
 from flask import request, render_template
+from flask import send_from_directory, current_app, jsonify, abort
 from flask_classful import FlaskView, route
 from flask_cors import cross_origin
 from sqlalchemy import text
+
 from app import db, csrf
 from app.auth.security import verify_sub_project_permission
-from app.models.Project import SubProject, allowed_projects_for_user
 from app.models.Excel import ExcelRecord
 from app.models.Project import ImageStore as Image
 from app.models.Project import Project
+from app.models.Project import SubProject, allowed_projects_for_user
 
 
 class ProjectView(FlaskView):
@@ -50,10 +52,10 @@ class ProjectView(FlaskView):
     @route('/get_column_data/<column_id>', methods=('GET',))
     @cross_origin()
     def get_column_data(self, column_id):
-        value = request.args.get('value')
-        query = ExcelRecord.query.filter_by(column_id=column_id)
+        value = request.args.get('term')
+        query = ExcelRecord.query.distinct(ExcelRecord.value).filter_by(column_id=column_id)
         if value:
-            result = query.filter(ExcelRecord.value.like(f"%{value}%")).limit(10).all()
+            result = query.filter(ExcelRecord.value.ilike(f"%{value}%")).limit(10).all()
         else:
             result = query.limit(10).all()
         return jsonify(results=[e.serialize() for e in result])
