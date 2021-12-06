@@ -11,15 +11,14 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
                     add_report: bool = False) -> str:
     """
     :param add_report:
-    :param from_file1_path: the path of file that contain information we need to add to the other file
+    :param from_file1_path: the path of file that contain information we need to modify_access to the other file
     :param to_file2_path: the path of the file that we will paste information to
     :param columns_of_interest_from_file1: a list of columns numbers to be added from file 1
     :param key_from_file1: the number of the key column in file1 (from_file)
     :param key_to_file2: the number of the key column in file2 (to_file)
     :param starting_column_file2: the number of the column we will start pasting new information into
     :param new_column_name: the name of the new column
-    :param add_annotation: if "Gene location" is selected, that would add an extra column after merging the 2 files in a new column
-
+    :param add_annotation: if "Gene location" is selected, that would modify_access an extra column after merging the 2 files in a new column
     :return:
     """
     if columns_of_interest_from_file1 is None:
@@ -30,14 +29,14 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     Check User errors
     """
     if len(columns_of_interest_from_file1) < 1:
-        return 'You should specify the numbers of columns of interest from file 1 to be added to file 2.'
+        return 'You should specify the number of columns of interest from file 1 to be added to file 2.'
     for i in columns_of_interest_from_file1:
         if type(i) != int:
             return 'The number of each column of interest should be an integer'
         if i < 0:
-            return 'The number of each column of interest should be greater than 0'
+            return 'The number of each column of interest should be an integer greater than 0'
     if type(key_to_file2) != int or type(key_from_file1) != int:
-        return 'The key column should be the number of the column to be a key to match the 2 files and should be ' \
+        return 'The key column should be the number of the column to be a key to match the 2 files together and should be ' \
                'greated than zero '
     if key_to_file2 < 1 or key_from_file1 < 1:
         return 'The number of the key column must be at least 1'
@@ -60,7 +59,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
     """
     file1_data = {}
     # get all the data from all rows (i)
-    for i in range(2, 1000000):
+    for i in range(2, 10000000):
         key = c1(row=i, column=key_from_file1).value
         if key is None:  # if the ~row is empty (~end of file)
             break
@@ -69,19 +68,32 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
             # Iterate over the columns of interest and append their data in a list called 'value'
             for j in columns_of_interest_from_file1:
                 file1_data[key].append(c1(row=i, column=j).value)
-    # Now, we have a dictionary "file1_data" to be used to add information to the other file
+    # Now, we have a dictionary "file1_data" to be used to modify_access information to the other file
 
     """
     Paste the data to file 2
     """
 
-    # First, name the new columns with the name the user entered as an argument
-    col = starting_column_file2
-    for j in range(0, len(columns_of_interest_from_file1)):
-        c2(row=1, column=starting_column_file2 + j).value = new_column_name + '_' + str(j)
+    #Names of columns of interest
+    columns_names = []
+    for j in columns_of_interest_from_file1:
+        columns_names.append(c1(row=1, column=j).value)
+    
+    #Specify the starting column
+    starting_column_file2 = 1
+    for i in range(1, 100000):
+        if c2(row=1, column=i).value == None:  # if the ~row is empty (~end of file)
+            starting_column_file2 = i
+            break
+    
+    # First, name the new columns
+    start = 0
+    for j in columns_names:
+        c2(row=1, column=starting_column_file2 + start).value = j
+        start+=1
 
     # Check all rows using the key column to match key from file1 with key from file 2
-    for i in range(2, 10000000):
+    for i in range(2, 100000000):
         key = c2(row=i, column=key_to_file2).value
         if key is None:
             break
@@ -91,7 +103,7 @@ def integrate_excel(from_file1_path: str, to_file2_path: str, columns_of_interes
                     c2(row=i, column=starting_column_file2 + j).value = file1_data[key][j]
 
     """
-    If the user is interested to add gene_location
+    If the user is interested to modify_access gene_location
     """
 
     if add_annotation == "No":
